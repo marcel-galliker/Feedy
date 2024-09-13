@@ -7,16 +7,22 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fd_main", "fd_main.vcxproj"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Linux = Debug|Linux
 		Debug|x64 = Debug|x64
 		Debug|x86 = Debug|x86
+		Release|Linux = Release|Linux
 		Release|x64 = Release|x64
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|Linux.ActiveCfg = Debug|x64
+		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|Linux.Build.0 = Debug|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|x64.ActiveCfg = Debug|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|x64.Build.0 = Debug|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|x86.ActiveCfg = Debug|Win32
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Debug|x86.Build.0 = Debug|Win32
+		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Release|Linux.ActiveCfg = Release|x64
+		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Release|Linux.Build.0 = Release|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Release|x64.ActiveCfg = Release|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Release|x64.Build.0 = Release|x64
 		{CFBBD757-3778-4161-96EC-2F1898A9B20C}.Release|x86.ActiveCfg = Release|Win32

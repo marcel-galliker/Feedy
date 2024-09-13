@@ -1,6 +1,7 @@
+// define IP-Port in: Project->Properties->launchSettings.json  --> http.applicationUrl .... (line 10)
+//
+
 using Feedy_WEB.Models;
-using Feedy_WEB.Source;
-using System.Threading;
 
 var builder = WebApplication.CreateBuilder(args);
 
