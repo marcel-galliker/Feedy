@@ -1,0 +1,20 @@
+﻿@page
+@model Feedy_WEB.Pages.ConfigModel
+@{
+ <!--   ViewData["Title"] = "Config";-->
+}
+
+<h1>Configuration</h1>
+
+<div>
+    <div>        
+        Configuration: @Html.DisplayFor(model => model.config.name) <br />
+        Description:   @Html.DisplayFor(model => model.config.descrpition) <br />
+        Counter:       @Html.DisplayFor(model => model.config.counter) <br />
+        <button id="add" onclick="add_clicked()">ADD</button>
+    </div>
+</div>
+
+<script>
+    function add_clicked() { websocket.send("config.add=1"); websocket.send("config.test"); }
+</script>
