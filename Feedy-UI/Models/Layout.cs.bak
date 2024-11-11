@@ -1,0 +1,445 @@
+﻿using EZ_Editor.DLL;
+using EZ_Editor.Services;
+using GE_Utilities;
+using System;
+using System.Collections.ObjectModel;
+using System.Reflection;
+using System.Runtime.InteropServices;
+using static EZ_Editor.Services.EzDef;
+
+namespace EZ_Editor.Models
+{
+    public class Layout : GeBindable
+    {
+        private PrintHead _PrintHead;
+        private SLabelDef _Label;
+        
+        public SStepRep StepRep = new SStepRep();
+
+        //--- Property TextBox ---------------------------------------
+        private ObservableCollection<SBoxDef> _TextBox    = new ObservableCollection<SBoxDef>();
+        private Collection<SBoxDef>           _TextBoxOrg = new Collection<SBoxDef>();
+
+        //--- Constructor --------------------------------------
+        public Layout()
+        {
+            EzGlobals.PrinterCfg.PropertyChanged += PrinterCfg_PropertyChanged;
+        }
+
+        private void PrinterCfg_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "HeadCnt" || e.PropertyName == "HeadType")
+            {
+                _update_HeightMM();
+            }
+        }
+
+        //--- TextBox ----------------------------------------
+        public ObservableCollection<SBoxDef> TextBox
+        {
+            get { return _TextBox; }
+        }
+
+        //--- GetLayout ---------------------------------------------
+        public SLayout GetLayout()
+        {
+            SLayout layout=new SLayout();
+           
+            layout.label = new SLabelDef()
+            {
+                dpiX       = DpiX,
+                dpiY       = DpiY,
+                widthMM    = (int)(WidthMM+0.5),
+                heightMM   = (int)(HeightMM+0.5),
+                boxCnt     = _TextBox.Count,
+                rotate180  = Rotate180,
+                zoom       = (int)Zoom,
+                stepRep    = StepRep.GetStepRep(),
+                provePrint = EzGlobals.ProvePrint.GetProvePrint(),
+            };
+
+            layout.label.dotSizes_pl = new double[4];
+
+            if(_PrintHead.DotSizes!=null)
+            {
+                int idx;
+                for (idx=0; idx<_PrintHead.DotSizes.Length; idx++)
+                {
+                    if (DotSize==_PrintHead.DotSizes[idx]) break;
+                }
+                if (idx<_PrintHead.DotSizes.Length) layout.label.dotSize = idx;
+            }
+            layout.label.bitsPerPixel = (DotSize<0)? 2: 1;
+            if (layout.label.bitsPerPixel==1)
+            {
+                layout.label.dotSizes_pl[1] = DotSize;
+            }
+            else
+            {
+                for (int i=0; i<3 && i<_PrintHead.DotSizes.Length; i++)
+                {
+                    layout.label.dotSizes_pl[i] = _PrintHead.DotSizes[i];
+                }
+            }
+            layout.label.planes = Planes;
+
+            int size       = Marshal.SizeOf(typeof(SLayout));
+            int size_def   = Marshal.SizeOf(typeof(SLabelDef));
+            int size_item  = Marshal.SizeOf(typeof(SBoxDef));
+            int cnt=(size-size_def)/size_item;
+
+            layout.textBox = new SBoxDef[cnt];
+            for (int i=0; i< _TextBox.Count; i++)
+            {
+                layout.textBox[i] = _TextBox[i];
+            }
+            return layout;
+        }
+
+        //--- Save --------------------------------------------
+        public void Save()
+        { 
+            SLayout layout = GetLayout();
+            SLayoutMsg startMsg = new SLayoutMsg();
+            startMsg.label = layout.label;
+            EzGlobals.EzInterface.SendMsg(EzGuiMsg.SAVE_JOB_LABEL, ref startMsg);
+            SLoadTxtBoxMsg boxMsg = new SLoadTxtBoxMsg() {  };
+            for (int i=0; i< _TextBox.Count; i++)
+            {
+                boxMsg.box = _TextBox[i];
+                EzGlobals.EzInterface.SendMsg(EzGuiMsg.SAVE_JOB_TEXTBOX, ref boxMsg);
+            }
+        }
+
+        //--- Update -----------------------
+        public void Update(SLabelDef label)
+        {
+            _Label = label;
+            _TextBox.Clear();
+            _TextBoxOrg.Clear();
+            _PrintHead=new PrintHead() { HeadType=EzGlobals.PrinterCfg.HeadType };
+            if (_PrintHead.DotSizes!=null)
+            {
+                if (label.dotSize>=0 && label.dotSize<_PrintHead.DotSizes.Length)
+                    DotSize  = _PrintHead.DotSizes[label.dotSize];
+                else
+                    DotSize =  _PrintHead.DotSizes[_PrintHead.DotSizes.Length-1];
+            }
+            _Label.bitsPerPixel = (DotSize<0)? 2: 1;
+            Planes       = label.planes;
+            BoxCnt       = label.boxCnt;
+            DpiX         = label.dpiX;
+            DpiY         = label.dpiY;
+            WidthMM      = label.widthMM;
+            Rotate180    = label.rotate180;
+            Zoom         = label.zoom;
+            
+            _update_HeightMM();
+			StepRep.Update(label.stepRep);
+            EzGlobals.ProvePrint.Update(label.provePrint);
+        }
+        
+        //--- AddBox ----------------------------
+        public void AddBox(SBoxDef def)
+        {
+            _TextBox.Add(def);
+            _TextBoxOrg.Add(def);
+        }
+
+        //--- _check_changed -----------------------
+        private bool _check_changed<type>(type def, type org)
+        {
+            FieldInfo[] fields = def.GetType().GetFields();
+            try
+            {
+                foreach (FieldInfo field in fields)
+                {
+                    if (field.FieldType.IsArray)
+                    {
+
+                    }
+                    else
+                    {
+                        var test1=field.GetValue(def);
+                        var test2=field.GetValue(org);
+                      //  Console.WriteLine("{0}: {1} == {2}", field.Name, test1, test2);
+                        if (test1!=null && test2!=null && !test1.Equals(test2))
+                            return true;
+                    }
+                }
+                return false;
+            }
+            catch(Exception ex) 
+            {
+                Console.WriteLine(ex.Message);
+                return true;
+            }
+        }
+
+        //--- Property IsLoading ---------------------------------------
+        private bool _IsLoading;
+        public bool IsLoading
+        {
+            get { return _IsLoading; }
+            set { SetProperty(ref _IsLoading, value); }
+        }
+
+        //--- Property IsChanged ---------------------------------------
+        private bool _IsChanged=false;
+        public bool IsChanged
+        {
+            get { return _IsChanged; }
+            set { 
+                    if (!_IsLoading)
+                    {
+                        SetProperty(ref _IsChanged, value); 
+                        if (_IsChanged) EzGlobals.Job.IsChanged = true;
+                    }
+                }
+        }
+
+        //--- _checkChanged -----------------
+        private void _checkChanged()
+        {
+            SLayout layout = GetLayout();
+
+            bool changed=_check_changed(layout.label, _Label);
+            if (_TextBoxOrg.Count==0) 
+                return;
+            for (int i=0; i< layout.label.boxCnt && !changed; i++)
+            {
+                changed |= _check_changed(_TextBox[i], _TextBoxOrg[i]);
+            }
+            IsChanged = changed;
+        }
+
+        //--- _update_HeightMM -------------------------------
+        public void _update_HeightMM()
+        {
+            _PrintHead = new PrintHead() { HeadType=EzGlobals.PrinterCfg.HeadType};
+            if (_PrintHead.HeadType!=EPrintHeadType.EZ_64) 
+            {
+                DpiY = _PrintHead.DpiY;
+            }
+            HeightMM = (int)((25400/DpiY) * _PrintHead.Jets * EzGlobals.PrinterCfg.HeadCnt);
+        }
+
+        //--- Property BoxCnt ---------------------------------------
+        private int _BoxCnt;
+        public int BoxCnt
+        {
+            get { return _BoxCnt; }
+            set { SetProperty(ref _BoxCnt, value); }
+        }
+
+        //--- Property DpiX ---------------------------------------
+        private int _DpiX=600;
+        public int DpiX
+        {
+            get { return _DpiX; }
+            set {   
+                    if (SetProperty(ref _DpiX, value))
+                    {
+                        IsChanged|=(_DpiX!=_Label.dpiX);
+                        CalcInkVolume(_Pixels);
+                    } 
+                }
+        }
+
+        //--- Property DpiY ---------------------------------------
+        private int _DpiY=600;
+        public int DpiY
+        {
+            get { return _DpiY; }
+            set {   if (SetProperty(ref _DpiY, value))
+                    {
+                        _update_HeightMM();
+                        CalcInkVolume(_Pixels); 
+                    }
+                }
+        }
+
+        //--- Property DotSize ---------------------------------------
+        private double _DotSize=0;
+        public double DotSize
+        {
+            get {   return _DotSize; }
+            set {   if (SetProperty(ref _DotSize, value)) 
+                    {
+                        IsChanged|=(_DotSize!=_Label.dotSize);
+                        CalcInkVolume(_Pixels); 
+                    }
+                }
+        }
+
+        //--- Property Planes ---------------------------------------
+        private int Planes
+        {
+            get { 
+                    int Planes=0;
+                    
+                    for (int i=0; i<_PlaneUsed.Length; i++)
+                    {
+                        if (_PlaneUsed[i]) Planes |= (1<<i);
+                    }
+                    if (Planes!=0) return Planes; 
+                    else return 1;
+                }
+            set { 
+                    int used=(value==0)? 1: value;
+                    
+                    PlaneUsed_0 =  (used & (1<<0)) !=0;
+                    PlaneUsed_1 =  (used & (1<<1)) !=0;
+                    PlaneUsed_2 =  (used & (1<<2)) !=0;
+                    PlaneUsed_3 =  (used & (1<<3)) !=0;
+                    
+                    CalcInkVolume(_Pixels);
+            }
+        }
+
+        //--- Property PlaneUsed ---------------------------------------
+        private bool[] _PlaneUsed = new bool[4];
+        public bool PlaneUsed_0
+        {
+            get { return _PlaneUsed[0]; }
+            set {   if (SetProperty(ref _PlaneUsed[0], value)) 
+                    {
+                        CalcInkVolume(_Pixels); 
+                        IsChanged|=(Planes!=_Label.planes);
+                    }
+                }
+        }
+
+        public bool PlaneUsed_1
+        {
+            get { return _PlaneUsed[1]; }
+            set {   if (SetProperty(ref _PlaneUsed[1], value)) 
+                    {
+                        CalcInkVolume(_Pixels); 
+                        IsChanged|=(Planes!=_Label.planes);
+                    }
+                }
+        }
+        public bool PlaneUsed_2
+        {
+            get { return _PlaneUsed[2]; }
+            set {   if (SetProperty(ref _PlaneUsed[2], value)) 
+                    {
+                        CalcInkVolume(_Pixels); 
+                        IsChanged|=(Planes!=_Label.planes);
+                    }
+                }
+        }
+        public bool PlaneUsed_3
+        {
+            get { return _PlaneUsed[3]; }
+            set {   if (SetProperty(ref _PlaneUsed[3], value)) 
+                    {
+                        CalcInkVolume(_Pixels); 
+                        IsChanged|=(Planes!=_Label.planes);
+                    }
+                }
+        }
+
+
+        //--- CalcInkVolume ---------------------------------------
+        private double _Pixels;
+        
+        public void CalcInkVolume(double pixels)
+        {
+            if (EzGlobals.User.Type<=EN_UserType.USER_supervisor) return;
+            if (EzGlobals.Job.IsLoading)return;
+            if (EzGlobals.PrinterStatus.JobState>=EnJobState.JS_starting && EzGlobals.PrinterStatus.JobState<=EnJobState.JS_stopping) return;
+
+            if (pixels>0)
+                Console.WriteLine("pixels="+pixels);
+            if (HeightPx!=0 && DpiY!=0 && _PrintHead!=null)
+            {
+                _Pixels   = pixels;
+                double coverage = pixels/(HeightPx*WidthPx);
+                double widthDt  = EzGlobals.Layout.WidthMM   /25400 * EzGlobals.Layout.DpiX;
+                double heightDt = _PrintHead.Jets * EzGlobals.PrinterCfg.HeadCnt;
+                double area     = widthDt*heightDt;
+                double dots     = coverage*area;
+                double volume   = dots*Math.Abs(DotSize)*1e-12;
+                double ml1000   = volume*1000000;
+                int cnt=0;
+                for (int i=0; i<_PlaneUsed.Length; i++)
+                    if (_PlaneUsed[i]) cnt++;
+                Ink1000ml = Math.Round(ml1000*cnt, 2);
+                _checkChanged();
+            //  Console.WriteLine("Pixels={0}, dots={1}, ml={2}", PixelsInLabel, dots, ml1000);
+            }
+            else Ink1000ml=0;
+        }
+
+        //--- Property Ink1000ml ---------------------------------------
+        private double _Ink1000ml;
+        public double Ink1000ml
+        {
+            get { return _Ink1000ml; }
+            set { SetProperty(ref _Ink1000ml, value); }
+        }
+
+        //--- Property Rotate180 ---------------------------------------
+        private bool _Rotate180;
+        public bool Rotate180
+        {
+            get { return _Rotate180; }
+            set { 
+                    SetProperty(ref _Rotate180, value); 
+                    IsChanged|=(_Rotate180!=_Label.rotate180);
+                }
+        }
+
+        //--- Property WidthMM ---------------------------------------
+        private double _WidthMM;
+        public double WidthMM
+        {
+            get { return _WidthMM; }
+            set { 
+                    SetProperty(ref _WidthMM, value);
+                    IsChanged|=(_WidthMM!=_Label.widthMM);
+                }
+        }
+
+        //--- Property HeightMM ---------------------------------------
+        private int _HeightMM;
+        public int HeightMM
+        {
+            get { return _HeightMM; }
+            set { SetProperty(ref _HeightMM, value); }
+        }
+
+        //--- Property WidthPx ---------------------------------------
+        private double _WidthPx;
+        public double WidthPx
+        {
+            get { return _WidthPx; }
+            set { if (SetProperty(ref _WidthPx, value))
+                    CalcInkVolume(_Pixels);
+                }
+        }
+
+        //--- Property HeightPx ---------------------------------------
+        private double _HeightPx;
+        public double HeightPx
+        {
+            get { return _HeightPx; }
+            set { if (SetProperty(ref _HeightPx, value))
+                    CalcInkVolume(_Pixels);
+                }
+        }
+
+        //--- Property Zoom ---------------------------------------
+        private double _Zoom=100.0;
+        public double Zoom
+        {
+            get {   
+                    if (_Zoom<=0) return 100.0;
+                    return _Zoom; 
+                }
+            set { SetProperty(ref _Zoom, value); }
+        }
+    }
+}

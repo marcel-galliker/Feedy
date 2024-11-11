@@ -1,0 +1,38 @@
+﻿using GE_Utilities;
+using System.Collections;
+using System.Collections.Generic;
+using EZ_Editor.Services;
+using static EZ_Editor.Models.LicenseType;
+
+namespace EZ_Editor.Models.Enums
+{
+    public class EN_LicenseType: IEnumerable
+    {
+        private static List<GeEnum<LicenseType.LicenseType>> _List;
+
+        //--- _init_list ---------------------
+        internal static List<GeEnum<LicenseType.LicenseType>> _init_list()
+        {
+            List<GeEnum<LicenseType.LicenseType>> list; 
+            list = new List<GeEnum<LicenseType.LicenseType>>();
+            list.Add(new GeEnum<LicenseType>(LicenseType.LIC_undef,     "LIC-undef"));
+            list.Add(new GeEnum<LicenseType>(LicenseType.LIC_DEMO,      "LIC-DEMO"));
+            list.Add(new GeEnum<LicenseType>(LicenseType.LIC_Prep,      "LIC-Prep"));
+            list.Add(new GeEnum<LicenseType>(LicenseType.LIC_Printer,   "LIC-Printer"));
+            return list;
+        }
+
+        //--- constructor --------------------------------
+        public EN_LicenseType()
+        {
+            if (_List==null) _List=_init_list();
+        }
+
+        //--- enumerator -----------------------------------
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)new GeListEnumerator<GeEnum<LicenseType.LicenseType>>(_List);
+        }
+
+    }
+}

@@ -1,0 +1,201 @@
+﻿<UserControl x:Class="EZ_Editor.Views.JobView.JobView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:uc="clr-namespace:EZ_Editor.Views.UserControls"
+             xmlns:local="clr-namespace:EZ_Editor.Views.JobView"
+             mc:Ignorable="d"
+             d:DesignHeight="350" d:DesignWidth="500"
+             Loaded="UserControl_Loaded">
+
+    <UserControl.Resources>
+        <local:Filename_Converter   x:Key="Filename_Converter"/>
+        <local:Folder_Converter     x:Key="Folder_Converter"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource HeaderHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <!-- header _______________________________________________________________________-->
+        <Grid Grid.Row="0"  Grid.ColumnSpan="2" Background="{StaticResource View.Header.Background.Brush}">
+            <Grid Margin="0,5">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="TicketOutline" 
+                                                VerticalAlignment="Center" 
+                                                Margin="10,0"
+                                                Height="30" Width="30"/>
+                    <TextBlock x:Name="TB_Job" Text="Job" FontSize="{StaticResource FontSizeLarge}" VerticalAlignment="Center"/>
+                </StackPanel>
+            </Grid>
+        </Grid>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <Grid x:Name="JobGrid" Margin="5">
+                <Grid.Resources>
+                    <Style TargetType="{x:Type TextBlock}">
+                        <Setter Property="Margin" Value="0,5,0,5"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="100"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="200"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="0" x:Name="RowDataFolder"/>
+                    <RowDefinition Height="auto" x:Name="RowDataFile"/>
+                    <RowDefinition Height="auto" x:Name="RowCounter"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto" x:Name="RowCamera" />
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Description"/>
+                <TextBox   Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="3" 
+                    VerticalContentAlignment="Center"
+                    x:Name="TB_Description"
+                    Text="{Binding Description}" AcceptsReturn="True" />
+
+                <TextBlock Grid.Row="1" x:Name="TB_DataType" Text="Data Type" VerticalAlignment="Center"/>
+                <Grid x:Name="GRID_DataType" Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" VerticalAlignment="Center" Margin="0,5">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <RadioButton x:Name="RB_Counter" Grid.Column="0" Checked="RB_Counter_Checked">
+                        <iconPacks:PackIconMaterial  Kind="Counter"/>
+                    </RadioButton>
+                    <RadioButton x:Name="RB_DataFile" Grid.Column="2" Checked="RB_DataFile_Checked">
+                        <iconPacks:PackIconMaterial Kind="FileDocumentOutline" />
+                    </RadioButton>
+                </Grid>
+
+                <TextBlock Grid.Row="2" Text="Data Folder"/>
+                <TextBox   Grid.Row="2" Grid.Column="2" Grid.ColumnSpan="3"
+                    Text="{Binding DataFile, Converter={StaticResource Folder_Converter}}" 
+                    VerticalContentAlignment="Center" 
+                    IsReadOnly="True"
+                    IsEnabled="False"
+                    />
+
+                <TextBlock Grid.Row="3" x:Name="TB_DataFile" Text="Data File"/>
+                <TextBox   Grid.Row="3" Grid.Column="2" Grid.ColumnSpan="2"
+                    x:Name="TX_Filename"
+                    Text="{Binding DataFile, Converter={StaticResource Filename_Converter}}" 
+                    VerticalContentAlignment="Center" IsReadOnly="True"
+                    PreviewMouseDown="Datafile_PreviewMouseDown"/>
+                <uc:FileOpen x:Name="FileOpenPopup" PlacementTarget="{Binding ElementName=TX_Filename}" Placement="Bottom"/>
+
+                <TextBlock Grid.Row="4" x:Name="TB_CounterMax" Text="Counter Max"/>
+                <utilities:GeNumBox   Grid.Row="4" Grid.Column="2" Text="{Binding MaxRecNo}"
+                    VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+
+                <TextBlock Grid.Row="5" x:Name="TB_NextRecord" Text="Next Record"/>
+                <utilities:GeNumBox   Grid.Row="5" Grid.Column="2" Text="{Binding NextRecNo}"
+                    VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+
+                <StackPanel x:Name="SP_ReadPrintField" Grid.Row="5" Grid.Column="4" Orientation="Horizontal" >
+                <iconPacks:PackIconMaterial Kind="VideoOutline" VerticalAlignment="Center" Margin=" -25,0,0,0"/>
+
+                <TextBlock x:Name="TB_KeyField" Text="Field" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="BC_KeyField" MinWidth="100" SelectedIndex="{Binding KeyFieldNo}"/>
+                </StackPanel>
+
+                <utilities:GeSeparator Grid.Row="6" Grid.ColumnSpan="4" Icon="ArrowLeftRight" Text="Distances" x:Name="DISTANCE_SEP"/>
+
+                <!-- 7 ___________________________________________________________-->
+                <TextBlock Grid.Row="7" Grid.Column="0" x:Name="TB_ProductDt" Text="Product Dt"/>
+                <!--<CheckBox  Grid.Row="7" Grid.Column="2" IsChecked="{Binding AutoPD}"  VerticalAlignment="Center" HorizontalAlignment="Center"/> -->
+                <ComboBox  Grid.Row="7" Grid.Column="2" 
+                        x:Name="CB_AutoPD" 
+                        SelectedValue="{Binding AutoPD}"
+                        SelectionChanged="CB_AutoPD_SelectionChanged"
+                        Margin="0,2" />
+
+                <!-- 8 ___________________________________________________________-->
+                <TextBlock Grid.Row="8" Grid.Column="0" x:Name="TB_PG_PG_Dist" Text="PG-PG Distance"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" x:Name="TB_PD_PG_Dist" Text="PD-PG Distance" Visibility="Collapsed"/>
+                <utilities:GeNumBoxMM   Grid.Row="8" Grid.Column="2" x:Name="TB_PrintGoDistance" 
+                   VerticalAlignment="Stretch" 
+                   VerticalContentAlignment="Center" 
+                   HorizontalContentAlignment="Right"
+                   Margin="0,2,24,2"/>
+                <uc:Units Grid.Row="8" Grid.Column="2"/>
+
+                <local:OnlineChange Grid.Row="8" Grid.Column="4" x:Name="OC_PrintGoDistance" Visibility="{Binding JobState, Converter={StaticResource JobState_Converter}}"/>
+
+                <!-- 9 ___________________________________________________________-->
+                <TextBlock Grid.Row="9" Grid.Column="0" x:Name="TB_SortDist" Text="Sort Distance"/>
+                <utilities:GeNumBoxMM   Grid.Row="9" Grid.Column="2" x:Name="TB_SortDistMM" 
+                    VerticalAlignment="Stretch" 
+                    VerticalContentAlignment="Center" 
+                    HorizontalContentAlignment="Right" 
+                    Margin="0,2,24,2"/>
+                <uc:Units Grid.Row="9" Grid.Column="2"/>
+
+                <ComboBox    Grid.Row="9" Grid.Column="3" 
+                        x:Name="CB_SortLength" 
+                        SelectedValue="{Binding SortLength, Converter={StaticResource Dist_Converter}}"
+                        Margin="5,2" />
+
+                <StackPanel x:Name="SP_SortField" Grid.Row="9" Grid.Column="4" Orientation="Horizontal" >
+                    <TextBlock x:Name="TB_SortField" Text="Field" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                    <ComboBox x:Name="BC_SortField" MinWidth="100" SelectedIndex="{Binding SortFieldNo}"/>
+                </StackPanel>
+                <StackPanel x:Name="SP_SortSize" Grid.Row="9" Grid.Column="4" Orientation="Horizontal">
+                    <TextBlock Text="Every  "/>
+                    <TextBox Text="{Binding SortSize}" Width="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+                </StackPanel>
+
+                <local:OnlineChange Grid.Row="9" Grid.Column="4" x:Name="OC_SortDistMM" Visibility="{Binding JobState, Converter={StaticResource JobState_Converter}}"/>
+
+                <!-- 10 ___________________________________________________________-->
+                <StackPanel Grid.Row="10" Grid.Column="0" Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="VideoOutline" VerticalAlignment="Center" Margin="0,0,5,0"/>
+                    <TextBlock  x:Name="TB_CamTriggerDist" Text="Distance"/>
+                </StackPanel>
+                <utilities:GeNumBoxMM   Grid.Row="10" Grid.Column="2" x:Name="TB_CamTriggerDistMM" 
+                       VerticalAlignment="Stretch" 
+                       VerticalContentAlignment="Center" 
+                       HorizontalContentAlignment="Right" 
+                       Margin="0,2,24,2"/>
+                <uc:Units Grid.Row="10" Grid.Column="2"/>
+
+                <ComboBox    Grid.Row="10" Grid.Column="3" 
+                         x:Name="CB_CamTriggerLength" 
+                         SelectedValue="{Binding CamTriggerLength}"
+                         Margin="5,2" />
+
+                <!-- 11 ___________________________________________________________-->
+                <TextBlock Grid.Row="11" Grid.Column="0" x:Name="TB_MACHINE_END" Text="Machine End"/>
+                <utilities:GeNumBoxMM   Grid.Row="11" Grid.Column="2" x:Name="NB_MACHINE_END" 
+                   VerticalAlignment="Stretch" 
+                   VerticalContentAlignment="Center" 
+                   HorizontalContentAlignment="Right"
+                   Margin="0,2,24,2"/>
+                <uc:Units Grid.Row="11" Grid.Column="2"/>
+
+                <!--
+                <StackPanel x:Name="SP_CamTriggerSize" Grid.Row="9" Grid.Column="4" Orientation="Horizontal">
+                    <TextBlock Text="Every  "/>
+                    <TextBox Text="{Binding CamTriggerSize}" Width="70" VerticalContentAlignment="Center" HorizontalContentAlignment="Right"/>
+                </StackPanel>
+                -->
+                <local:OnlineChange Grid.Row="10" Grid.Column="4" x:Name="OC_CamTriggerDistMM" Visibility="{Binding JobState, Converter={StaticResource JobState_Converter}}"/>
+
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

@@ -1,0 +1,184 @@
+﻿<UserControl x:Class="Feedy.Views.Main.TopBar"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:uc="clr-namespace:Feedy.Views.UserControls"
+             xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:local="clr-namespace:Feedy.Views.Main"
+             mc:Ignorable="d" 
+             Background="White"
+             d:DesignHeight="100" d:DesignWidth="1200">
+
+    <Grid Background="{StaticResource View.Top.Background.Brush}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto" MinWidth="250"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- LEFT _____________________________________________________________________-->
+        <Grid Grid.Column="0" HorizontalAlignment="stretch" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="0"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Expander Style="{DynamicResource EZ_ExpanderStyle}" 
+                  ExpandDirection="Left" 
+                  VerticalAlignment="Top" 
+                  HorizontalAlignment="Left" 
+                  IsExpanded="False"
+                  Expanded="Expander_Expanded"
+                  Collapsed="Expander_Collapsed" />
+
+            <utilities:GeButton Grid.Column="1" x:Name="BTN_Run" Click="Start_Clicked" 
+                IsBusy="{Binding JobState, Converter={StaticResource JobStateBusy_Converter}}">
+                <iconPacks:PackIconMaterial Kind="{Binding JobState, Converter={StaticResource JobState_Converter}}" 
+                                            Foreground="{Binding JobState, Converter={StaticResource JobState_Converter}}"
+                                           />
+            </utilities:GeButton>
+        </Grid>
+
+        <Grid  Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="100"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <uc:Progress x:Name="UC_Progress"/>
+            <iconPacks:PackIconMaterial x:Name="ICON_Remaining"  Kind="TimerSand" Grid.Column="1" Foreground="{StaticResource EzEditor.Brush.Dark.Foreground}" VerticalAlignment="Center" Margin="5,0,2,0"/>
+            <TextBlock Grid.Column="2" x:Name="TX_Remaining" 
+                       Text="{Binding RemainingSec, Converter={StaticResource RemainingTime_Converter}}" 
+                       FontSize="{StaticResource FontSizeStd}" 
+                       VerticalAlignment="Center"/>
+
+            <!--- speed _________________________________-->
+            <Grid Grid.Column="3" x:Name="Grid_Speed">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="60"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <iconPacks:PackIconMaterial Grid.RowSpan="2" Kind="Speedometer" Foreground="{StaticResource EzEditor.Brush.Dark.Foreground}" VerticalAlignment="Center" Margin="5,0,10,0"/>
+                <Grid Grid.Row="0" Grid.Column="1" HorizontalAlignment="Stretch"  VerticalAlignment="Center">
+                    <TextBlock x:Name="TX_MachineSpeed" Text="{Binding MachineSpeed, Converter={StaticResource MachineSpeed_Converter}}" VerticalAlignment="Bottom"/>
+                    <uc:UnitsSpeed/>
+                </Grid>
+                <Grid Grid.Row="1" Grid.Column="1" HorizontalAlignment="Stretch" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding PrintingSpeed, Converter={StaticResource PrintingSpeed_Converter}}" VerticalAlignment="Bottom"/>
+                    <TextBlock Text="p/h" FontSize="{StaticResource FontSizeXS}" VerticalAlignment="Bottom" HorizontalAlignment="Right"/>
+                </Grid>
+            </Grid>
+
+            <!--- DEMO ___            
+            <TextBlock Grid.Column="0" x:Name="TX_Demo" Text="  DEMO" FontSize="50" VerticalAlignment="Center" Foreground="Orange" />
+            -->
+
+            <!--- IO _______________________________________-->
+            <!--
+            <Button Grid.Column="4" MinWidth="20" Margin="10,0,0,0" BorderThickness="0" Click="IO_Clicked">
+                <GroupBox  Header="I/O" FontSize="{StaticResource FontSizeXS}" Foreground="DarkGray" x:Name="IO_Group">
+                    <Grid x:Name="Grid_IO" />
+                </GroupBox>
+            </Button>
+            <local:IO_Test x:Name="IO_Test" Placement="Bottom" MinWidth="100" MinHeight="100" PlacementTarget="{Binding ElementName=IO_Group}" AllowsTransparency="True">
+            </local:IO_Test>
+            -->
+        </Grid>
+
+        <!-- Right _____________________________________________________________________-->
+        <Grid Grid.Column="2">
+            <StackPanel  x:Name="FileCommands" Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button x:Name="BTN_Job" Background="Transparent" BorderThickness="0" Click="Job_Clicked">
+                    <Grid>
+                        <StackPanel Orientation="Horizontal">
+                            <iconPacks:PackIconMaterial Kind="TicketOutline" 
+                                                VerticalAlignment="Center" 
+                                                Margin="10,0"
+                                                Height="30" Width="30"/>
+                            <TextBlock MinWidth="150" Text="{Binding FileName}" FontSize="{StaticResource FontSizeLarge}" VerticalAlignment="Center" FontWeight="Bold"/>
+                            <iconPacks:PackIconMaterial Kind="ContentSaveOutline" Foreground="{StaticResource DataGrid.Brush.Selected.Background}" VerticalAlignment="Center" Margin="5" 
+                                                    Visibility="{Binding IsChanged, Converter={StaticResource bool2Hide_Converter}}"/>
+                        </StackPanel>
+                        <Grid x:Name="TB_JobBtnDisabled" Background="Red" Visibility="Collapsed">
+                            <TextBlock x:Name="TB_JobBtnDisabled_Text" Text="Disabled while printing" 
+                                   HorizontalAlignment="Center" 
+                                   VerticalAlignment="Center" 
+                                   FontSize="{StaticResource FontSizeLarge}" />
+                        </Grid>
+                    </Grid>
+                </Button>
+                <Popup x:Name="JobCmdPopup" >
+                    <StackPanel Background="AliceBlue">
+                        <utilities:GeButton Click="Open_Clicked" Margin="5">
+                            <iconPacks:PackIconMaterial Kind="FolderOpenOutline" />
+                        </utilities:GeButton>
+
+                        <utilities:GeButton Click="Save_Clicked" Margin="5">
+                            <iconPacks:PackIconMaterial Kind="ContentSaveOutline" />
+                        </utilities:GeButton>
+
+                        <utilities:GeButton Click="SaveAs_Clicked" x:Name="CB_SaveAs" Margin="5">
+                            <iconPacks:PackIconMaterial Kind="ContentSaveEditOutline" />
+                        </utilities:GeButton>
+
+                        <utilities:GeButton Click="Reload_Clicked" Margin="5">
+                            <iconPacks:PackIconMaterial Kind="Reload" />
+                        </utilities:GeButton>
+
+                        <utilities:GeButton Click="Delete_Clicked" Margin="5" x:Name="CB_Delete" >
+                            <iconPacks:PackIconMaterial Kind="DeleteOutline" />
+                        </utilities:GeButton>
+
+                        <utilities:GeButton Click="New_Clicked" Margin="5">
+                            <Grid>
+                                <!--  <iconPacks:PackIconMaterial Kind="FolderPlusOutline" /> -->
+                                <iconPacks:PackIconMaterial Kind="FolderOutline" Width="30" Height="30"/>
+                                <TextBlock Text="new" FontSize="{StaticResource FontSizeXS}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                            </Grid>
+                        </utilities:GeButton>
+
+                    </StackPanel>
+                </Popup>
+
+            </StackPanel>
+            <uc:FileOpen x:Name="FileOpenPopup" PlacementTarget="{Binding ElementName=FileCommands}" Placement="Bottom"/>
+            <!-- -->
+        </Grid>
+
+        <Grid Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3" Margin="-58,0,0,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="891*"/>
+                <ColumnDefinition Width="265*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <uc:ErrorState Grid.ColumnSpan="2" />
+            <Button x:Name="BTN_IO_Test" Grid.Column="2" MinWidth="20" BorderThickness="0" Click="IO_Clicked" HorizontalAlignment="Right">
+                <GroupBox  Header="I/O" FontSize="{StaticResource FontSizeXS}" Foreground="DarkGray" x:Name="IO_Group">
+                    <Grid x:Name="Grid_IO" />
+                </GroupBox>
+            </Button>
+            <local:IO_Test x:Name="IO_Test" Placement="Bottom" MinWidth="100" MinHeight="100" PlacementTarget="{Binding ElementName=IO_Group}" AllowsTransparency="True">
+            </local:IO_Test>
+
+        </Grid>
+
+        <!-- RIGHT _____________________________________________________________________-->
+        <!--
+        <uc:PrinterButtons Grid.Column="2" HorizontalAlignment="Right"/>
+        -->
+
+    </Grid>
+</UserControl>

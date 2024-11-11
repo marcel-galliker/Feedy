@@ -1,0 +1,321 @@
+﻿using EZ_Editor.Models;
+using EZ_Editor.Services;
+using GE_Utilities;
+using System;
+using System.IO;
+using System.Threading;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+
+namespace EZ_Editor.Views.Main
+{
+    /// <summary>
+    /// Interaction logic for TopBar.xaml
+    /// </summary>
+    public partial class TopBar : UserControl
+    {
+
+        private System.Windows.Shapes.Rectangle[] _Inputs = new System.Windows.Shapes.Rectangle[4];
+        private System.Windows.Shapes.Rectangle[] _Outputs= new System.Windows.Shapes.Rectangle[4];
+
+        public TopBar()
+        {
+            InitializeComponent();
+
+            DataContext = EzGlobals.PrinterStatus;
+            FileCommands.DataContext = EzGlobals.Job;
+            TX_Remaining.DataContext = EzGlobals.Job;
+            Grid_Speed.DataContext   = EzGlobals.Job;
+            TX_MachineSpeed.DataContext = EzGlobals.HyperBoard;
+
+        //  TX_Demo.Visibility =  EzGlobals.EzArgs.Demo? Visibility.Visible:Visibility.Collapsed;
+
+            EzGlobals.HyperBoard.PropertyChanged += HyperBoard_PropertyChanged;
+            _create_io();
+            _update_io();
+        }
+
+        //--- HyperBoard_PropertyChanged ----------------------------------------
+        private void HyperBoard_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Contains("Input") || e.PropertyName.Contains("Output")) _update_io();
+        }
+
+        //--- Expander_Expanded ------------------------------
+        private void Expander_Expanded(object sender, RoutedEventArgs e)
+        {
+            if (EzGlobals.Menu!=null) EzGlobals.Menu.IsExpanded=true;
+        }
+
+        //--- Expander_Collapsed ---------------------------------------
+        private void Expander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            if (EzGlobals.Menu!=null) EzGlobals.Menu.IsExpanded = false;
+        }
+
+        //--- Start_Clicked ----------------------------------------
+        private int _LastClickTime=0;
+        private void Start_Clicked(object sender, RoutedEventArgs e)
+        {
+       //     BTN_Run.IsBusy=true;
+            if (EzGlobals.PrinterStatus.JobState>EnJobState.JS_off)
+            {
+                EzGlobals.Job.Stop(); 
+            }
+            else
+            { 
+                if (Environment.TickCount-_LastClickTime<1000) return; // filter double clicks
+
+                if (EzGlobals.HyperBoard.Head[0].TempBackground==Brushes.Red)
+                {
+                    EzGlobals.Events.AddError(0, "Head Temperature too low");
+                }
+               // else
+                {
+                //    EzGlobals.PrinterCfg.Save();
+
+                    IO_Test.IsOpen = false;
+                    EzGlobals.Job.Save();
+                    EzGlobals.Job.Start();
+                    EzGlobals.FileView.JobStarted();
+                }
+            }
+            _LastClickTime = Environment.TickCount;
+        }
+
+        //--- _update_files -------------------------
+        private void _update_files(Action action)
+        {
+            if (EzGlobals.EzArgs.Prep || EzGlobals.EzArgs.MIC)
+            {
+                EzGlobals.Job.Files.Clear();
+                if (Directory.Exists(EzGlobals.License.JobsDir))
+                {
+                    string[] files=Directory.GetDirectories(EzGlobals.License.JobsDir);
+                    foreach (string file in files) EzGlobals.Job.Files.AddFile(Path.GetFileName(file));
+                }
+            }
+            else
+            {
+                Thread thread = new Thread(()=>
+                {
+                    int cnt=EzGlobals.Job.ListLoaded;
+                    EzGlobals.Job.LoadList();
+                    while (EzGlobals.Job.ListLoaded==cnt)
+                        Thread.Sleep(10);
+                    GeBindable.Invoke(action);
+                });            
+                thread.Start();
+            }
+        }
+
+        //--- Open_Clicked ---------------------------------------
+        private void Open_Clicked(object sender, RoutedEventArgs e)
+        {
+            _update_files(()=>FileOpenPopup.Files  = EzGlobals.Job.Files);
+            FileOpenPopup.IsSaveAs = false;
+            FileOpenPopup.Title    = "Open job";
+            FileOpenPopup.Filter   = "XML files (*.xml)|*.xml";
+            FileOpenPopup.Files    = EzGlobals.Job.Files;
+            FileOpenPopup.IsOpen   = true;
+            FileOpenPopup.OnSelected   = EzGlobals.Job.Load;
+            FileOpenPopup.OnImport = _ImportJob;
+            FileOpenPopup.SelectFolder=true;
+            JobCmdPopup.IsOpen   = false;
+        }
+
+        //--- _ImportJob --------------------------------
+        private void _ImportJob(string srcPath)
+        {
+            Console.WriteLine("ImportJob {0}", srcPath);
+            string[] part=srcPath.Split(Path.DirectorySeparatorChar);
+            if (part.Length>0)
+            {
+                string jobName=part[part.Length-1];
+                string dstPath = EzGlobals.License.JobsDir+jobName;
+                if (Directory.Exists(dstPath))
+                {
+                    foreach(var file in Directory.GetFiles(dstPath))
+                    {
+                        try { File.Delete(file);}
+                        catch(Exception){}
+                    }
+                }
+                else 
+                {
+                    try { Directory.CreateDirectory(dstPath);}
+                    catch(Exception) { return;}
+                }
+
+                dstPath = dstPath +Path.DirectorySeparatorChar;
+                foreach(var file in Directory.GetFiles(srcPath))
+                {
+                    if (!file.Contains("done"))
+                    {
+                        try {File.Copy(file, dstPath+Path.GetFileName(file), true); }
+                        catch (Exception) { return;}
+                    }
+                }
+
+                 EzGlobals.Job.Load(jobName);
+            }
+        }
+
+        //--- New_Clicked -----------------------------------------------
+        private void New_Clicked(object sender, RoutedEventArgs e)
+        {
+            _update_files(()=>FileOpenPopup.Files  = EzGlobals.Job.Files);
+
+            FileOpenPopup.IsSaveAs = true;
+            FileOpenPopup.Title  = "New job";
+            FileOpenPopup.Files  = EzGlobals.Job.Files;
+            FileOpenPopup.OnSave = EzGlobals.Job.SaveNew;
+            FileOpenPopup.IsOpen = true;
+            JobCmdPopup.IsOpen   = false;
+        }
+
+        //--- Save_Clicked ---------------------------------------
+        private void Save_Clicked(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.Job.Save();
+            JobCmdPopup.IsOpen   = false;
+        }
+
+        //--- Reload_Clicked ---------------------------
+        private void Reload_Clicked(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.Job.Load();
+            JobCmdPopup.IsOpen   = false;
+        }
+
+        //--- SaveAs_Clicked -----------------------------------------------
+        private void SaveAs_Clicked(object sender, RoutedEventArgs e)
+        {
+            _update_files(()=>FileOpenPopup.Files  = EzGlobals.Job.Files);
+
+            FileOpenPopup.IsSaveAs = true;
+            FileOpenPopup.Title  = "Save job as";
+            FileOpenPopup.Files  = EzGlobals.Job.Files;
+            FileOpenPopup.OnSave = EzGlobals.Job.SaveAs;
+            FileOpenPopup.IsOpen = true;
+            JobCmdPopup.IsOpen   = false;
+        }
+
+        //--- Delete_Clicked -----------------------------------------------
+        private void Delete_Clicked(object sender, RoutedEventArgs e)
+        {
+            _update_files(()=>FileOpenPopup.Files  = EzGlobals.Job.Files);
+
+            FileOpenPopup.IsSaveAs = false;
+            FileOpenPopup.Title    = "Delete Job";
+            FileOpenPopup.Files    = EzGlobals.Job.Files;
+            FileOpenPopup.OnDelete = EzGlobals.Job.Delete;
+            FileOpenPopup.IsOpen   = true;
+            JobCmdPopup.IsOpen     = false;
+        }
+
+        //--- Clean_Clicked -----------------------------------------------
+        private void Clean_Clicked(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.Job.Save(EzGlobals.Job.FileName);
+            EzGlobals.Job.Clean(EzGlobals.Job.FileName);
+            JobCmdPopup.IsOpen = false;
+        }
+
+        //--- Job_Clicked ----------------------------
+        private void Job_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (EzGlobals.PrinterStatus.IsPrinting) 
+            {
+                TB_JobBtnDisabled_Text.Text="Disabled while printing";
+                TB_JobBtnDisabled.Visibility= Visibility.Visible;
+                GeBindable.InvokeDelayed(2000, ()=>TB_JobBtnDisabled.Visibility= Visibility.Collapsed);
+                return;
+            }
+            if (!FileOpenPopup.IsOpen)
+            {
+
+            //    JobCmdPopup.HorizontalOffset = BTN_Job.ActualWidth-JobCmdPopup.ActualWidth;
+                JobCmdPopup.IsOpen = !JobCmdPopup.IsOpen;
+                Visibility visible = (EzGlobals.User.Type==EN_UserType.USER_operator) ? Visibility.Collapsed : Visibility.Visible;
+                CB_Delete.Visibility= visible;
+                CB_Clean.Visibility = visible;
+            }
+        }
+
+        //--- _create_io --------------------
+        private void _create_io()
+        {
+            Grid_IO.RowDefinitions.Add(new RowDefinition { Height=new GridLength(1, GridUnitType.Star)});
+            Grid_IO.RowDefinitions.Add(new RowDefinition { Height=new GridLength(1, GridUnitType.Star)});
+
+            for (int i=0; i<4; i++)
+            {
+                Grid_IO.ColumnDefinitions.Add(new ColumnDefinition { Width=new GridLength(12)});
+
+                System.Windows.Shapes.Rectangle rect= new System.Windows.Shapes.Rectangle();
+                rect.Width=10;
+                rect.Height=10;
+                rect.RadiusX=5;
+                rect.RadiusY=5;
+                rect.Stroke = Brushes.DarkGray;
+                rect.StrokeThickness = 1;
+                rect.VerticalAlignment = VerticalAlignment.Center;
+                rect.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetColumn(rect, i);
+                Grid.SetRow(rect, 0);
+                _Inputs[i] = rect;
+                Grid_IO.Children.Add(_Inputs[i]);
+
+                rect= new System.Windows.Shapes.Rectangle();
+                rect.Width=10;
+                rect.Height=10;
+                rect.RadiusX=5;
+                rect.RadiusY=5;
+                rect.Stroke = Brushes.DarkGray;
+                rect.StrokeThickness = 1;
+                rect.Fill = Brushes.LightGreen;
+                rect.VerticalAlignment = VerticalAlignment.Center;
+                rect.HorizontalAlignment = HorizontalAlignment.Center;
+                Grid.SetColumn(rect, i);
+                Grid.SetRow(rect, 1);
+                _Outputs[i] = rect;
+                Grid_IO.Children.Add(_Outputs[i]);
+            }
+        }
+
+        //--- _update_io ---------------------------------------
+        private void _update_io()
+        {
+            for (int i=0; i<4; i++)
+            {
+                _Inputs[i].Fill  = ((EzGlobals.HyperBoard.Input  & (1<<i))==0)? Brushes.Transparent : Brushes.Yellow;
+                _Outputs[i].Fill = ((EzGlobals.HyperBoard.Output & (1<<i))==0)? Brushes.Transparent : Brushes.LightGreen;
+            }
+        }
+
+        //--- IO_Clicked ----------------------------
+        private void IO_Clicked(object sender, RoutedEventArgs e)
+        {
+            if (EzGlobals.PrinterStatus.IsPrinting) 
+            {
+                TB_JobBtnDisabled_Text.Text="Disabled while printing";
+                TB_JobBtnDisabled.Visibility = Visibility.Visible;
+                GeBindable.InvokeDelayed(2000, ()=>TB_JobBtnDisabled.Visibility= Visibility.Collapsed);
+                return;
+            }
+
+            if (EzGlobals.User.Type!=EN_UserType.USER_service)
+            {
+                TB_JobBtnDisabled_Text.Text="Disabled for user";
+                TB_JobBtnDisabled.Visibility = Visibility.Visible;
+                IO_Test.IsOpen = false;
+                GeBindable.InvokeDelayed(2000, ()=>TB_JobBtnDisabled.Visibility= Visibility.Collapsed);
+                return;
+            }
+
+            IO_Test.IsOpen = !IO_Test.IsOpen;
+        }
+    }
+}

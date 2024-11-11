@@ -1,0 +1,151 @@
+﻿<Window x:Class="GE_Utilities.GeNumPad"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        TouchUp="Window_TouchUp"
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Resources\AllStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style TargetType="{x:Type Button}" >
+                <Setter Property="Margin" Value="1"/>
+                <Setter Property="Background" Value="#FF373737"/>
+                <Setter Property="Foreground" Value="{StaticResource DataGrid.Brush.Selected.Background}"/>
+                <!--   <Setter Property="Foreground" Value="White"/> -->
+                <Setter Property="FontSize"   Value="{StaticResource FontSizeXL}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="1">
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    
+    <Grid Background="Transparent">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" x:Name="_Left"/>
+                <ColumnDefinition Width="100" x:Name="_Width"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" x:Name="_Top"/>
+                <RowDefinition Height="10" x:Name="_Height"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- darken screen -->
+            <Rectangle Grid.Row="0" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="0" Grid.Column="1" Fill="#66808080"/>
+            <Rectangle Grid.Row="0" Grid.Column="2" Fill="#66808080"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="1" Grid.Column="2" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="1" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="2" Fill="#66808080"/>
+        </Grid>
+        <Canvas>
+
+            <Grid x:Name="Pad" SizeChanged="Pad_SizeChanged">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+
+                <Button
+                    Grid.ColumnSpan="2"
+                    BorderBrush="#FF569DE5"
+                    Content="{Binding Result}"
+                    Width="auto"
+                    Background="White"
+                    />
+
+                <!-- Background="{StaticResource RX.Green}"-->
+
+                <Button Grid.Row="1" Grid.Column="0" Content="7" Click="button_clicked" />
+                <Button Grid.Row="1" Grid.Column="1" Content="8" Click="button_clicked" />
+                <Button Grid.Row="1" Grid.Column="2" Content="9" Click="button_clicked" />
+                <Button Grid.Row="2" Grid.Column="0" Content="4" Click="button_clicked" />
+                <Button Grid.Row="2" Grid.Column="1" Content="5" Click="button_clicked" />
+                <Button Grid.Row="2" Grid.Column="2" Content="6" Click="button_clicked" />
+                <Button Grid.Row="3" Grid.Column="0" Content="1" Click="button_clicked" />
+                <Button Grid.Row="3" Grid.Column="1" Content="2" Click="button_clicked" />
+                <Button Grid.Row="3" Grid.Column="2" Content="3" Click="button_clicked" />
+                <Button Grid.Row="4" Grid.Column="0" Content="0" Click="button_clicked" Width="auto"/>
+                <Button Grid.Row="4" Grid.Column="1" Content="." Click="button_clicked"/>
+
+                <Button Grid.Row="4" Grid.Column="2" Height="auto" x:Name="SIGN"
+                CommandParameter="+/-" 
+                Content="+/-" 
+                Click="button_clicked" 
+                />
+
+                <!-- command buttons ______________________________________________________-->
+                <Button Grid.Row="0" Grid.Column="2"
+                    CommandParameter="Back" 
+                    Click="button_clicked"
+                    >
+                    <iconPacks:PackIconMaterial Kind="Backspace" Width="40" Height="40"/>
+                </Button>
+
+                <Button Grid.Row="0" Grid.Column="3" 
+                CommandParameter="Escape"
+                Click="button_clicked"
+                >
+                    <iconPacks:PackIconMaterial Kind="Cancel" Width="40" Height="40"/>
+                </Button>
+
+                <Button Grid.Row="1" Grid.Column="3" 
+                CommandParameter="+=" 
+                Click="button_clicked"
+                >
+                    <iconPacks:PackIconMaterial Kind="PlusCircleOutline" Width="40" Height="40"/>
+                </Button>
+
+
+                <Button Grid.Row="2" Grid.Column="3"
+                    CommandParameter="-=" 
+                    Click="button_clicked" 
+                >
+                    <iconPacks:PackIconMaterial Kind="MinusCircleOutline" Width="40" Height="40"/>
+                </Button>
+
+                <Button Grid.Row="3" Grid.Column="3" Grid.RowSpan="3" 
+                    CommandParameter="Return"
+                    Click="button_clicked" 
+                    >
+                    <iconPacks:PackIconMaterial Kind="KeyboardReturn" Width="40" Height="40"/>
+                </Button>
+
+            </Grid>
+        </Canvas>
+    </Grid>
+</Window>

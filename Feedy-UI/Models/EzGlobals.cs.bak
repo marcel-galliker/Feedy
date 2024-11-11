@@ -1,0 +1,58 @@
+﻿using EZ_Editor.Models.Enums;
+using EZ_Editor.Services;
+using EZ_Editor.Views.FileView;
+using EZ_Editor.Views.JobView;
+using EZ_Editor.Views.LayoutView;
+using EZ_Editor.Views.Main;
+using EZ_Editor.Views.PrinterView;
+using EZ_Editor.Views.ProductionView;
+
+
+namespace EZ_Editor.Models
+{
+    public class EzGlobals
+    {
+        public static EzArgs            EzArgs      = new EzArgs();
+        public static string            EditorGT_name="gt.exe";
+        public static Language          Language    = new Language();
+        public static License           License     = new License();
+        public static Events            Events      = new Events();
+        public static ProdStat          ProdStat    = new ProdStat();
+        public static User              User        = new User();
+        public static CVersion          Version     = new CVersion();
+
+        //--- views ----------------------------------------------
+        public static MainWindow        MainWindow;
+        public static Menu              Menu;
+        public static PrinterView       PrinterView;
+        public static JobView           JobView;
+        public static LayoutView        LayoutView;
+        public static ProductionView    ProductionView;
+        public static FileView          FileView;
+
+        public static EzInterface       EzInterface = new EzInterface();
+
+        public static Settings          Settings    = new Settings();
+
+        //--- Data --------------------------------------
+        public static PrinterCfg        PrinterCfg= new PrinterCfg();
+        public static PrintHeadCfg[]    PrintheadConfig;
+        public static PrinterStatus     PrinterStatus   = new PrinterStatus();
+        public static PrintheadStatus[] PrintheadStatus;
+
+        public static CamCfg            CamCfg = new CamCfg();
+        public static MarqueeCfg        MarqueeCfg = new MarqueeCfg();
+
+        public static Job               Job      = new Job();
+        public static DataFile          DataFile = new DataFile();
+        public static Layout            Layout   = new Layout();
+
+        public static HyperCfg          HyperCfg   = new HyperCfg();
+        public static HyperBoard        HyperBoard = new HyperBoard();
+
+        public static PC22_InkData[]    PC22_InkData;
+        public static PC22_Pen[]        PC22_Pen;
+
+        public static BX_Status         BX_Status = new BX_Status();
+    }
+}

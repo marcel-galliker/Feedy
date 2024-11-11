@@ -1,0 +1,314 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using static EZ_Editor.Services.EzDef;
+
+namespace EZ_Editor.Services
+{
+    //--- constants --------------------------------------------------
+    public class EzGuiMsg
+    {
+        public const Int32 PORT_GUI = 10000; // TCP-IP Port
+
+
+        //--- message IDs ------------------------------------------
+        //		GUI_.... message sent from GUI to printer
+        //		EP_...   message sent drom printer to GUI
+
+    //    public const Int32 GUI_GET_EVT			= 0x01000001;
+    //    public const Int32 EP_EVENT_RESET		= 0x02000001;
+
+        public const Int32 GET_STATUS           = 0x01000001;
+        public const Int32 REP_PRINTER_STATUS   = 0x02000002;
+        public const Int32 REP_HEAD_STATUS      = 0x02000003;
+        public const Int32 SET_POWER			= 0x01000004;
+        public const Int32 GET_HYPER_STATUS	    = 0x01000005;
+        public const Int32 GET_HYPER_IO_STATUS	= 0x01000006;
+        public const Int32 GET_HYPER_TEMPS	    = 0x01000007;
+        public const Int32 GET_CAM_RESULT		= 0x01000008;
+        public const Int32 GET_HYPER_INKSYS_STATUS = 0x01000009;
+
+        public const Int32 REP_PC22_INK_DATA	= 0x02000008;
+
+        public const Int32 LIST_JOB_START		= 0x01001001;
+        public const Int32 LIST_JOB_FILE		= 0x01001002;
+        public const Int32 LIST_JOB_END			= 0x01001003;
+
+        public const Int32 LIST_DATAFILE_START	= 0x01001004;
+        public const Int32 LIST_DATAFILE_FILE	= 0x01001005;
+        public const Int32 LIST_DATAFILE_END	= 0x01001006;
+
+        public const Int32 LOAD_JOB				= 0x01001011;
+        public const Int32 LOAD_JOB_LABEL		= 0x01001012;
+        public const Int32 LOAD_JOB_TEXTBOX		= 0x01001013;
+
+        public const Int32 SAVE_JOB				= 0x01001014;
+        public const Int32 SAVE_JOB_LABEL		= 0x01001015;
+        public const Int32 SAVE_JOB_TEXTBOX		= 0x01001016;
+
+        public const Int32 RUN_JOB				= 0x01001021;
+        public const Int32 STOP_JOB				= 0x01001022;
+        public const Int32 ABORT_JOB			= 0x01001023;
+        public const Int32 CMD_PURGE            = 0x01001024;
+        public const Int32 CMD_SPIT             = 0x01001025;
+        public const Int32 CMD_PRINTGO          = 0x01001026;
+        public const Int32 CMD_OUT_TEST         = 0x01001027;
+        public const Int32 CMD_RESET_MENISCUS   = 0x01001028;
+
+        public const Int32 RECORD_STATUS		= 0x01001101;
+
+        public const Int32 GET_LICENSE			= 0x01002001;
+        public const Int32 REP_LICENSE			= 0x02002001;
+        public const Int32 REP_VERSION			= 0x03002001;
+        public const Int32 GET_COM_PORTS		= 0x01002002;
+        public const Int32 REP_COM_PORTS		= 0x02002002;
+
+        public const Int32 LOAD_PRINTER_CFG		= 0x01002011;
+        public const Int32 SAVE_PRINTER_CFG		= 0x01002012;
+        public const Int32 LOAD_PC22_PEN_CFG	= 0x01002013;
+        public const Int32 SAVE_PC22_PEN_CFG	= 0x01002014;
+
+        public const Int32 LOAD_DATAFILE		= 0x01003001;
+
+        public const Int32 DEL_LAYOUT_START		= 0x01004031;
+
+        public const Int32 ERROR_RESET			= 0x01005001;
+        public const Int32 ERROR_EVENT			= 0x01005002;
+        public const Int32 ERROR_MARQUEE		= 0x01005003;
+
+        public const Int32 PROD_STAT_EVENT		= 0x01006001;
+    }
+
+    //--- SGuiMsgHdr -----------------------------------------------
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public struct SMsgHdr
+    {
+        public Int32 msgLen;   // length of the entire message, inclusive header
+        public UInt32 msgId;	// message identifier
+    };
+
+    //--- SGuiMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public struct SGuiMsg
+    {
+	    public SMsgHdr hdr;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 4096)]
+	    public string	data;
+    }
+
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public struct SGuiDataMsg
+    {
+	    public SMsgHdr hdr;
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4096)]
+	    public byte[]	data;
+    }
+
+    //--- SPowerMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public struct SPowerMsg
+    {
+	    public SMsgHdr  hdr;
+	    public Int32    power;
+    };
+
+    //--- SPurgeMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack=1)]
+    public struct SPurgeMsg
+    {
+	    public SMsgHdr  hdr;
+	    public Int32    head;
+	    public Int32    time;
+    };
+
+
+    //--- SPrinterCfgMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPrinterCfgMsg
+    {
+        public SMsgHdr      hdr;
+        public SPrinterCfg  cfg;
+    }
+
+    //--- EnJobState ------------------
+    public enum EnJobState : Int32
+    {
+	    JS_undef,
+	    JS_off,
+	    JS_starting,
+	    JS_printing,
+	    JS_stopping,
+        JS_done,
+	    JS_aborted
+    };
+
+    //--- SPrinterStatusMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPrinterStatusMsg
+    {
+        public SMsgHdr hdr;
+        public Int32 connected;
+        public Int32 powerState;
+        public Int32 printerState;
+        public Int32 sentCnt;
+        public Int32 printGoCnt;
+        public Int32 printDoneCnt;
+        public Int32 jobState;
+        public Int32 machineSpeed;  // m/min
+    }
+
+    //--- SHyperStatusMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SHyperStatusMsg
+    {
+         public SMsgHdr hdr;
+ 	     public Int32 simulation;
+ 	     public Int32 running;
+	     public Int32 totalCnt;
+	     public Int32 printCnt;
+	     public Int32 upTime;
+	     public Int32 runTime;
+	     public Int32 pos;
+         public float speed;
+         public Int32 printGoCnt;
+	     public Int32 printDoneCnt;
+	     public float prod_hr;
+
+         [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+	     string  error;
+    }
+
+    //--- SPrinterStatusMsg ---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+    public struct SPrintHeadStatusMsg
+    {
+        public SMsgHdr hdr;
+        public Int32 headNo;
+        public Int32 temp;
+    }
+
+    //--- SPC22_InkData---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPC22_InkData
+    {
+	    public byte cartridgeNo; 
+	    public byte cartridgeState; 
+	    public Int32 status; 
+	    public Int32 ink_Consumed;	
+	    public Int32 usable_Volume;
+	    public byte percentInkRemaining;
+	    public Int32 insert_Count;		
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 21)]
+	    public string ink_Name;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 13)]
+	    public string ink_Part_Number;
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst =6)]
+        public string oemId;
+    };
+
+    //--- SPC22_InkDataMsg---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPC22_InkDataMsg
+    {
+        public SMsgHdr hdr;            // LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 2)]
+        public SPC22_InkData[] ink;
+    };
+
+    //--- SPC22_InkPen---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPC22_Pen
+    {
+        public bool  pulseWarming;
+        public Int32 warmingTimwout;
+        public Int32 temp;
+        public Int32 volt;
+        public Int32 energy;
+    };
+
+    //--- SPC22_PenMsg---------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SPC22_PenMsg
+    {
+        public SMsgHdr hdr;            // LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+        [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+        public SPC22_Pen[] pen;
+    };
+
+    //=== COMMON =================================
+    //--- SFileMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SFileMsg
+    {
+        public SMsgHdr hdr;            // LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+        public string filename;
+    }
+
+    //==== JOB ====================================================
+    //--- SJobMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SJobMsg
+    {
+	    public SMsgHdr  hdr;			// LOAD_JOB / SAVE_JOB
+	    public SJob	    job;
+    }
+
+    //--- SJobStartMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SJobStartMsg
+    {
+	    public SMsgHdr hdr;			// LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+        [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+	    public string	filename;
+	    public Int32	recordNo;		// of start record
+	    public Int32	filePos;		// of start brecord
+	    public Int32	endRecordNo;	// of start record
+    }
+
+    //--- EnRecordState -------------------------
+    public enum EnRecordState : Int32
+    {
+        RS_undef,		// 0
+	    RS_printing,	// 1
+	    RS_done,		// 2
+        RS_NextRecNo    // 3
+    };
+
+    //--- SRecordStatusMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SRecordStatusMsg
+    {
+	    public SMsgHdr          hdr;			// LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+	    public Int32	        recordNo;
+	    public EnRecordState	status;			// EnRecordState
+	    public Int32	        speed;          // p/h
+    };
+
+    //--- SProdStatMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SProdStatMsg
+    {
+	    public SMsgHdr hdr;			// PROD_STAT_EVENT
+	    public SStatItem stat;
+    };
+
+    //==== LAYOUT ====================================================
+    
+    //--- SLayoutMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SLayoutMsg
+    {
+	    public SMsgHdr hdr;			// LOAD_LAYOUT_START / SAVE_LAYOUT_START / DEL_LAYOUT_START
+        public SLabelDef label;
+    };
+
+    //--- SLoadBoxMsg -------------------------
+    [StructLayout(LayoutKind.Sequential, Pack = 1)]
+    public struct SLoadTxtBoxMsg
+    {
+        public SMsgHdr hdr;            // LOAD_LAYOUT_BOX_TXT / SAVE_LAYOUT_BOX_TXT
+        public SBoxDef box;
+    }
+
+}

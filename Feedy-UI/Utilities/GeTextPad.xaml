@@ -1,0 +1,105 @@
+﻿<Window x:Class="GE_Utilities.GeTextPad"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        ShowInTaskbar="False"
+        ResizeMode="NoResize"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        TouchUp="Window_TouchUp"
+        >
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="..\Resources\AllStyles.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            
+            <Style TargetType="{x:Type Button}" >
+                <Setter Property="Margin" Value="1"/>
+                <Setter Property="Background" Value="#FF373737"/>
+                <Setter Property="Foreground" Value="{StaticResource DataGrid.Brush.Selected.Background}"/>
+                <!--   <Setter Property="Foreground" Value="White"/> -->
+                <Setter Property="FontSize"   Value="{StaticResource FontSizeXL}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border CornerRadius="4"
+                                Background="{TemplateBinding Background}"
+                                BorderThickness="1">
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Margin="{TemplateBinding Padding}" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+
+    </Window.Resources>
+    
+    <Grid Background="Transparent">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" x:Name="_Left"/>
+                <ColumnDefinition Width="100" x:Name="_Width"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="100" x:Name="_Top"/>
+                <RowDefinition Height="10" x:Name="_Height"/>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+            <!-- darken screen -->
+            <Rectangle Grid.Row="0" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="0" Grid.Column="1" Fill="#66808080"/>
+            <Rectangle Grid.Row="0" Grid.Column="2" Fill="#66808080"/>
+            <Rectangle Grid.Row="1" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="1" Grid.Column="2" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="0" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="1" Fill="#66808080"/>
+            <Rectangle Grid.Row="2" Grid.Column="2" Fill="#66808080"/>
+        </Grid>
+        <Canvas>
+
+            <Grid x:Name="Pad" SizeChanged="Pad_SizeChanged">
+                <!--
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                    <RowDefinition Height="64"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                    <ColumnDefinition Width="64"/>
+                </Grid.ColumnDefinitions>
+                -->
+                <Button
+                    x:Name="Button"
+                    Grid.ColumnSpan="10"
+                    BorderBrush="#FF569DE5"
+                    HorizontalAlignment="Stretch"
+                    HorizontalContentAlignment="Stretch"
+                    Background="White"
+                    >
+                    <TextBox x:Name="Result" 
+                             BorderThickness="0"
+                             Foreground="{StaticResource DataGrid.Brush.Selected.Background}"
+                             Width="{Binding ElementName=Button, Path=ActualWidth}" 
+                             Margin="2" 
+                             IsVisibleChanged="TextBox_IsVisibleChanged"
+                             SelectionChanged="Result_SelectionChanged"
+                             />
+                </Button>
+
+            </Grid>
+        </Canvas>
+    </Grid>
+</Window>

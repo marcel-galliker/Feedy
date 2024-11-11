@@ -1,0 +1,464 @@
+﻿using EZ_Editor.Services;
+using GE_Utilities;
+using System;
+using System.Collections.ObjectModel;
+using System.Drawing;
+// using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Windows.Interop;
+using System.Windows.Media;
+
+namespace EZ_Editor.Models
+{
+    public class HyperBoard : GeBindable
+    {
+        private ObservableCollection<double> _Temp      = new ObservableCollection<double>();
+        private ObservableCollection<bool>   _Heater    = new ObservableCollection<bool>();
+        private ObservableCollection<double> _MenPump   = new ObservableCollection<double>();
+        private ObservableCollection<double> _InkBottle = new ObservableCollection<double>();
+
+        private ObservableCollection<System.Windows.Media.Brush>  _MessageColor = new ObservableCollection<System.Windows.Media.Brush>();
+        private ObservableCollection<string> _Message      = new ObservableCollection<string>();
+
+        private int _Timeout=0; 
+        
+        private ObservableCollection<HyperHead> _Head = new ObservableCollection<HyperHead>();
+
+        //--- Constructor ---------------------------------------------------------
+        public HyperBoard()
+        {
+            EzTrace.WriteLine("HyperBoard.Creator start");
+            for (int i=0; i<4; i++)
+            {
+                _Temp.Add(0);
+                _Heater.Add(false);
+                _MenPump.Add(0);
+                _InkBottle.Add(0);
+            }
+            for (int i=0; i<2; i++)
+            {
+                _MessageColor.Add(System.Windows.Media.Brushes.Black);
+                _Message.Add("");
+            }
+
+            _Head.Add(new HyperHead());
+            
+            System.Timers.Timer timer = new System.Timers.Timer(500); // ms
+            timer.Elapsed += Timer_Tick;
+            timer.Start();
+            EzTrace.WriteLine("HyperBoard.Creator end");
+        }
+                
+        //--- Timer_Tick ------------------------
+        private void Timer_Tick(object sender, System.Timers.ElapsedEventArgs e)
+        {
+            if (_Timeout>0)
+            {
+                if (--_Timeout==0) Connected=false;
+            }
+        }
+
+        //--- Property Connected ---------------------------------------
+        private bool _Connected=false;
+        public bool Connected
+        {
+            get { return _Connected; }
+            set { SetProperty(ref _Connected, value); }
+        }
+
+        //--- Property Simulation ---------------------------------------
+        private bool _Simulation;
+        public bool Simulation
+        {
+            get { return _Simulation; }
+            set { 
+                    if(SetProperty(ref _Simulation, value))
+                    {
+                        if (_Simulation) Connected = true;
+                    }
+                }
+        }
+
+        //--- Property Running ---------------------------------------
+        private int _Running;
+        public int Running
+        {
+            get { return _Running; }
+            set { SetProperty(ref _Running, value); }
+        }
+
+        //--- Update ----------------------------
+        public void Update(SHyperStatusMsg msg)
+        {
+            Simulation   = msg.simulation!=0;
+            Running      = msg.running;
+            MachineSpeed = msg.speed;
+        }
+
+        //--- UpdateIO -----------------------------
+        public void UpdateIO(string msg)
+        {
+            int input=0;
+            int output=0;
+            string line;
+            StringReader reader = new StringReader(msg);
+            //    Console.WriteLine("---------IO-STATUS ------------------");
+            try
+            {
+                while ((line = reader.ReadLine()) != null)
+                {
+                    string [] part = line.Split(',');
+             //       Console.WriteLine("{0}: parts={1}", line, part.Length);
+                    int head=Convert.ToInt32(part[3]);
+                    switch (part[0])
+                    {
+                        case "O":   if (part[1]=="1")
+                                    {
+                                        /*
+                                        if      (part[6].Contains("Heater 1")) Heater[0] = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Heater 2")) Heater[1] = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Heater 3")) Heater[2] = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Heater 4")) Heater[3] = Convert.ToDouble(part[5]);
+                                        else 
+                                        */
+                                        if (part[6].Contains("Purge Pump")) PurgePump = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Purge Sol"))  PurgeSol  = Convert.ToDouble(part[5])!=0;
+                                        else if (part[6].Contains("Men Pump 1"))  MenPump[0]  = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Men Pump 2"))  MenPump[1]  = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Men Pump 3"))  MenPump[2]  = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Men Pump 4"))  MenPump[3]  = Convert.ToDouble(part[5]);
+                                    }
+                                    else
+                                    {
+                                     //   if      (part[6].Contains("Heater 1")) Head[head].Heater[0] = Convert.ToDouble(part[5]);
+                                    //    else if (part[6].Contains("Heater 2")) Head[head].Heater[1] = Convert.ToDouble(part[5]);
+                                    //    else 
+                                        if (part[6].Contains("Rec Pump")) Head[head].RecPump   = Convert.ToDouble(part[5]);
+                                        else if (part[6].Contains("Rec Sol")) Head[head].RecSol     = Convert.ToDouble(part[5])!=0;
+                                        else if (part[6].Contains("Men Sol")) Head[head].MenSol     = Convert.ToDouble(part[5])!=0;
+                                    }
+                                    break;
+
+                        case "T":   if (part[1]=="1")
+                                    {
+                                    /*
+                                        if      (part[7].Contains("Heater 1")) Temp[0] = Convert.ToDouble(part[5]);                                
+                                        else if (part[7].Contains("Heater 2")) Temp[1] = Convert.ToDouble(part[5]);
+                                        else if (part[7].Contains("Heater 3")) Temp[2] = Convert.ToDouble(part[5]);
+                                        else if (part[7].Contains("Heater 4")) Temp[3] = Convert.ToDouble(part[5]);
+                                    */
+                                    }
+                                    else
+                                    {
+                                        /*
+                                        if      (part[7].Contains("Heater 1")) Head[head].SetTemp(0, Convert.ToDouble(part[5]));
+                                        else if (part[7].Contains("Heater 2")) Head[head].SetTemp(1, Convert.ToDouble(part[5]));
+                                        */
+                                    }
+                                    break;
+
+                        case "V":   if (part[6].Contains("Vac 1")) Head[head].MenPres = Convert.ToDouble(part[5]);
+                                    else if (part[6].Contains("Vac 2")) Head[head].RecPres = Convert.ToDouble(part[5]);
+                                  //  else if (part[6].Contains("Vac 3"));
+                                    break;
+
+                        case "L":   Head[head].InkLevel = Convert.ToDouble(part[5]);
+                                    break;
+
+                        case "D":   if      (part[6].Contains("Output 1") && (part[5]=="1")) output |= (1<<0);
+                                    else if (part[6].Contains("Output 2") && (part[5]=="1")) output |= (1<<1);
+                                    else if (part[6].Contains("Output 3") && (part[5]=="1")) output |= (1<<2);
+                                    else if (part[6].Contains("Output 4") && (part[5]=="1")) output |= (1<<3);
+                                    break;
+                                
+                        case "I":   if      (part[6].Contains("Input 1") && (part[5]=="1")) input |= (1<<0);
+                                    else if (part[6].Contains("Input 2") && (part[5]=="1")) input |= (1<<1);
+                                    else if (part[6].Contains("Input 3") && (part[5]=="1")) input |= (1<<2);
+                                    else if (part[6].Contains("Input 4") && (part[5]=="1")) input |= (1<<3);
+                                    break;
+
+                        default:    break;
+                    }
+                }
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            Input  = input;
+            Output = output;
+         //   Console.WriteLine("--------------------------------------");
+            Connected = true;
+            _Timeout = 10;
+        }
+
+        //--- Property MessageColor ---------------------------------------
+        public ObservableCollection<System.Windows.Media.Brush> MessageColor
+        {
+            get { return _MessageColor; }
+            set { SetProperty(ref _MessageColor, value); }
+        }
+
+        //--- Property Message ---------------------------------------
+        public ObservableCollection<string> Message
+        {
+            get { return _Message; }
+            set { SetProperty(ref _Message, value); }
+        }
+
+        //--- _SetMessage -------------------------------------------
+        private void _SetMessage(string msg)
+        {
+            // format: #rrggbb line1# #rrggbb line2#
+            string[] message = new string[2];
+            if (msg!="")
+            {
+            //  Console.WriteLine(msg);
+                try
+                {
+                    for(int i=0; i<2; i++)
+                    {
+                        MessageColor[i] = Ge.BrushFromRgb(msg.Remove(7));
+                        string str = msg.Remove(0, 8);
+                        int idx = str.IndexOf('#');
+                        if (idx>0)
+                        {
+                            message[i] = str.Substring(0, idx);
+                            if (i==0)
+                                msg = msg.Substring(idx+10);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+            }
+            Message[0] = message[0];
+            Message[1] = message[1];
+        }
+
+        //--- Property Version ---------------------------------------
+        private string _Version;
+        public string Version
+        {
+            get { return _Version; }
+            set { SetProperty(ref _Version, value); }
+        }
+
+        //--- UpdateInkSystem ---------------------------------
+
+        public void UpdateInkSystem(string msg)
+        {
+            string[] lines=msg.Split('\n');
+
+            foreach(string str in lines)
+            {
+                if (str.StartsWith("Msg,"))
+                {
+                    _SetMessage(str.Remove(0,4));
+                }
+                else if (str.StartsWith("B,"))
+                {
+                    string s=str.Remove(0,2);           
+                //  s = "1.1,2.2,3.3,4.4";
+                    string[] values=s.Split(',');
+                    for (int i=0; i<values.Length && i<_InkBottle.Count; i++)
+                    {
+                        _InkBottle[i] = Ge.StrToDouble(values[i]);
+                    }
+                }
+                else if (str.StartsWith("T,"))
+                {
+                    UpdateTemps(str.Remove(0,2));
+                }
+                else if (str.StartsWith("TS,"))
+                {
+                    string s=str.Remove(0,3);
+                }
+                else if (str.StartsWith("V,"))
+                {
+                    string s=str.Remove(0,2);           
+                //  s = "1.1,2.2,3.3";
+                    string[] values=s.Split(',');
+                    for (int head=0; head<values.Length && head<_Head.Count; head++)
+                    {   
+                        _Head[head].MenPres = _MenPump[head] = Ge.StrToDouble(values[head]); 
+                    }
+                }
+                else if (str.StartsWith("VS,"))
+                {
+                    ResetMeniscusEnabled = false;
+                    string s=str.Remove(0,3);
+                }
+                else if (str.StartsWith("VP,"))
+                {
+                    ResetMeniscusEnabled = true;
+                    string s=str.Remove(0,3);
+                }
+                else if (str.StartsWith("L,"))
+                {
+                    string s=str.Remove(0,2);
+                //  s = "1.1,2.2,3.3";
+                    string[] values=s.Split(',');
+                    for (int head=0; head<values.Length && head<_Head.Count; head++)
+                    {   
+                        _Head[head].InkLevel = Ge.StrToDouble(values[head]); 
+                    }
+                }
+                else if (str.StartsWith("I,"))
+                {
+                    string s=str.Remove(0,2);
+                    string[] values=s.Split(',');
+                    int input=0;
+                    for (int i=0; i<values.Length ; i++)
+                    {
+                        if (values[i]=="1") input|=(1<<i);
+                    }
+                    Input  = input;
+                }
+                else if (str.StartsWith("O,"))
+                {
+                    string s=str.Remove(0,2);
+                    string[] values=s.Split(',');
+                    int output=0;
+                    for (int i=0; i<values.Length ; i++)
+                    {
+                        if (values[i]=="1") output|=(1<<i);
+                    }
+                    Output  = output;
+                }
+                else if (str.StartsWith("Version "))
+                {
+                    Version = str.Remove(0, 8);
+                }
+            }
+            Connected = true;
+            _Timeout = 10;
+        }
+
+        //--- Property ResetMeniscusEnabled ---------------------------------------
+        private bool _ResetMeniscusEnabled=false;
+        public bool ResetMeniscusEnabled
+        {
+            get { return _ResetMeniscusEnabled; }
+            set { SetProperty(ref _ResetMeniscusEnabled, value); }
+        }
+
+
+        //--- UpdateTemps -----------------------------
+        public void UpdateTemps(string msg)
+        {
+        //    Console.WriteLine("--------- Temps {0} ------------------", msg);
+            string[] temp = msg.Split(',');
+            TempCnt = temp.Length;
+            for (int no=0; no<TempCnt && no<Temp.Count; no++)
+            {
+                Head[0].SetTemp(no, Ge.StrToDouble(temp[no]));
+                Head[0].Heater[no] = temp[no].Contains('^');
+            }
+        }
+
+        //--- Property TempCnt ---------------------------------------
+        private int _TempCnt;
+        public int TempCnt
+        {
+            get { return _TempCnt; }
+            set { SetProperty(ref _TempCnt, value); }
+        }
+
+        //--- Property OutputTest ---------------------------------------
+        public int OutputTest
+        {
+            set {
+                    SPowerMsg msg = new SPowerMsg() { power = value };
+                    EzGlobals.EzInterface.SendMsg(EzGuiMsg.CMD_OUT_TEST, ref msg);
+                }
+        }
+
+
+        //--- Property Test ---------------------------------------
+        private bool _Test;
+        public bool Test
+        {
+            get { return _Test; }
+            set { SetProperty(ref _Test, value); }
+        }
+
+        //--- Property Heater ---------------------------------------
+        public ObservableCollection<bool> Heater
+        {
+            get { return _Heater; }
+            set { SetProperty(ref _Heater, value); }
+        }
+
+        //--- Property Temp ---------------------------------------
+        public ObservableCollection<double> Temp
+        {
+            get { return _Temp; }
+            set { SetProperty(ref _Temp, value);}
+        }
+
+        //--- Property Input ---------------------------------------
+        private int _Input;
+        public int Input
+        {
+            get { return _Input; }
+            set { SetProperty(ref _Input, value);}
+        }
+
+        //--- Property InkBottle ---------------------------------------
+        public ObservableCollection<double> InkBottle
+        {
+            get { return _InkBottle; }
+        }
+
+        //--- Property Output ---------------------------------------
+        private int _Output;
+        public int Output
+        {
+            get { return _Output; }
+            set { SetProperty(ref _Output, value); }
+        }
+
+        //--- Property PurgePump ---------------------------------------
+        private double _PurgePump;
+        public double PurgePump
+        {
+            get { return _PurgePump; }
+            set { SetProperty(ref _PurgePump, value); }
+        }
+
+        //--- Property PurgeSol ---------------------------------------
+        private bool _PurgeSol;
+        public bool PurgeSol
+        {
+            get { return _PurgeSol; }
+            set { SetProperty(ref _PurgeSol, value); }
+        }
+        //--- Property MenPump ---------------------------------------
+        public ObservableCollection<double> MenPump
+        {
+            get { return _MenPump; }
+            set { SetProperty(ref _MenPump, value); }
+        }
+
+        //--- Property Head ---------------------------------------
+        public ObservableCollection<HyperHead> Head
+        {
+            get { return _Head; }
+            set { SetProperty(ref _Head, value); }
+        }
+
+        //--- Property MachineSpeed ---------------------------------------
+        private double _MachineSpeed;
+        public double MachineSpeed
+        {
+            get { return _MachineSpeed; }
+            set { SetProperty(ref _MachineSpeed, value); }
+        }
+
+    }
+}

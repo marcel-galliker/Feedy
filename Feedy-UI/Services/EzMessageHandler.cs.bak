@@ -1,0 +1,394 @@
+﻿using EZ_Editor.Models;
+using GE_Utilities;
+using System;
+using System.Runtime.InteropServices;
+using System.Windows.Interop;
+
+namespace EZ_Editor.Services
+{
+    public class GuiMsgHandler
+    {
+        //--- Reset --------------------------
+        public void Reset()
+        {
+
+        }
+
+        //-- handle_message ---------------------------------
+        public void handle_message(Byte[] msg)
+        {
+            SMsgHdr hdr;
+            GeStructConvert.ToStruct(out hdr, msg);
+
+            EzTrace.WriteLine(string.Format("handle_message id=0x{0:x}, {1:x}", hdr.msgId, EzGuiMsg.GET_BX_INKSYS_STATUS));
+            try
+            {
+                switch (hdr.msgId)
+                {
+                    case EzGuiMsg.REP_LICENSE:           handle_license(msg);            break;
+                    case EzGuiMsg.REP_VERSION:           handle_version(msg);            break;
+                    case EzGuiMsg.LOAD_PRINTER_CFG:      handle_printer_cfg(msg);        break;
+
+                    case EzGuiMsg.REP_PRINTER_STATUS:    handle_printer_status(msg);     break;
+                    case EzGuiMsg.REP_HEAD_STATUS:       handle_printhead_status(msg);   break;
+                    case EzGuiMsg.GET_HYPER_STATUS:      handle_hyper_status(msg);       break;
+                    case EzGuiMsg.GET_HYPER_IO_STATUS:   handle_hyper_io_status(msg);    break;
+                    case EzGuiMsg.GET_HYPER_INKSYS_STATUS:handle_hyper_is_status(msg);   break;
+                    case EzGuiMsg.GET_FERAG_STATUS:      handle_ferag_status(msg);       break;
+
+                    case EzGuiMsg.GET_BX_INKSYS_STATUS:  EzTrace.WriteLine("GET_BX_INKSYS_STATUS");
+                                                         handle_bx_is_status(msg);      break;
+                    case EzGuiMsg.GET_BX_HEAD_CONFIG:    handle_bx_head_cfg(msg);       break;
+
+                //    case EzGuiMsg.GET_HYPER_TEMPS:       handle_hyper_temps(msg);        break;
+                    case EzGuiMsg.GET_CAM_RESULT:        handle_cam_result(msg);         break;
+                    case EzGuiMsg.REP_PC22_INK_DATA:     handle_pc22_ink_data(msg);      break;
+                    case EzGuiMsg.LOAD_PC22_PEN_CFG:     handle_pc22_pen_cfg(msg);       break;   
+
+                    case EzGuiMsg.LIST_JOB_START:        EzGlobals.Job.Files.Clear();    break;
+                    case EzGuiMsg.LIST_JOB_FILE:         handle_job_file(msg);           break;
+                    case EzGuiMsg.LIST_JOB_END:          EzGlobals.Job.ListLoaded++;     break;
+
+                    case EzGuiMsg.LIST_DATAFILE_START:   EzGlobals.DataFile.Files.Clear();  break;
+                    case EzGuiMsg.LIST_DATAFILE_FILE:    handle_datafile_file(msg);         break;
+                    case EzGuiMsg.LIST_DATAFILE_END:     EzGlobals.DataFile.FilesLoaded();  break;
+
+                    case EzGuiMsg.RECORD_STATUS:         handle_record_status(msg);      break;
+
+                    case EzGuiMsg.LOAD_JOB:              handle_job_load(msg);           break;
+                    case EzGuiMsg.RUN_JOB:               handle_job_run(msg);            break;
+                    case EzGuiMsg.ABORT_JOB:             handle_job_abort(msg);          break;
+    
+                    case EzGuiMsg.LOAD_JOB_LABEL:        EzGlobals.Layout.IsLoading=true;
+                                                         handle_job_label(msg);             break;
+                    case EzGuiMsg.LOAD_JOB_TEXTBOX:      handle_job_textbox(msg);           break;
+                    case EzGuiMsg.LOAD_JOB_LOADED:       EzGlobals.Layout.IsLoading=false;  break;
+
+                    case EzGuiMsg.ERROR_RESET:           EzGlobals.Events.Confirm();    break;
+                    case EzGuiMsg.ERROR_EVENT:           handle_error_event(msg);       break;
+
+                    case EzGuiMsg.PROD_STAT_EVENT:       handle_prodstat_event(msg);       break;
+
+                    case EzGuiMsg.REP_COM_PORTS:         handle_com_ports(msg);         break;
+
+                    default:    EzGlobals.Events.AddError(0, string.Format("UnKnown ID: 0x{0:x}", hdr.msgId)); break;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+        //--- handle_license ---------------------------------------------
+        private void handle_license(byte[] buf)
+        {
+            SGuiDataMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            EzGlobals.License.Update(msg.data, msg.hdr.msgLen-Marshal.SizeOf(msg.hdr));
+        }
+
+        //--- handle_license ---------------------------------------------
+        private void handle_version(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            EzGlobals.Version.Update(msg.data);
+        }
+
+        //--- handle_printer_cfg ---------------------------------------------
+        private void handle_printer_cfg(byte[] buf)
+        {
+            SPrinterCfgMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.PrinterCfg.Update(msg.cfg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SPrinterCfgMsg");
+        }
+        
+
+        //--- handle_printer_status ---------------------------------------------
+        private void handle_printer_status(byte[] buf)
+        {
+            SPrinterStatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.PrinterStatus.Update(msg);
+            }
+            else Console.WriteLine("Received invalid message Length SPrinterStatusMsg");
+        }
+
+        //--- handle_printhead_status ---------------------------------------------
+        private void handle_printhead_status(byte[] buf)
+        {
+            SPrintHeadStatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                if (msg.headNo< EzGlobals.PrintheadStatus.Length)
+                    EzGlobals.PrintheadStatus[msg.headNo].Update(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SPrinterStatusMsg");
+        }
+
+        //--- handle_hyper_status ---------------------------------------------
+        private void handle_hyper_status(byte[] buf)
+        {
+            SHyperStatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.HyperBoard.Update(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_status");
+        }
+
+        //--- handle_hyper_io_status ---------------------------------------------
+        private void handle_hyper_io_status(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.HyperBoard.UpdateIO(msg.data);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_io_status");
+        }
+
+        //--- handle_hyper_is_status ---------------------------------------------
+        private void handle_hyper_is_status(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.HyperBoard.UpdateInkSystem(msg.data);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_is_status");
+        }
+
+        //--- handle_ferag_status ---------------------------------------------
+        private void handle_ferag_status(byte[] buf)
+        {
+            SEZFB_StatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.FeragStatus.Update(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_ferag_status");
+        }
+
+        //--- handle_bx_is_status ---------------------------------------------
+        private void handle_bx_is_status(byte[] buf)
+        {
+            SBxHeadStatusMsg msg;
+            EzTrace.WriteLine("handle_bx_is_status");
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.BX_Status.Update(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_bx_is_status");
+        }
+
+        //--- handle_bx_head_cfg ---------------------------------------------
+        private void handle_bx_head_cfg(byte[] buf)
+        {
+            SBxHeadCfgMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.BX_Config.Update(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_bx_head_cfg");
+        }
+
+        /*
+        //--- handle_hyper_temps ---------------------------------------------
+        private void handle_hyper_temps(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.HyperBoard.UpdateTemps(msg.data);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_temps");
+        }
+        */
+
+        //--- handle_cam_result ---------------------------------------------
+        private void handle_cam_result(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.CamCfg.Result = msg.data;
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_cam_result");
+        }
+        
+        //--- handle_com_ports ---------------------------------------------
+        private void handle_com_ports(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len >= msg.hdr.msgLen)
+            {
+                EzGlobals.CamCfg.SetComPorts(msg.data);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_com_ports");
+        }
+        
+        
+        //--- handle_pc22_ink_data ---------------------------------------------
+        private void handle_pc22_ink_data(byte[] buf)
+        {
+            SPC22_InkDataMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+
+            if (len >= msg.hdr.msgLen)
+            {
+                for (int i=0; i<2; i++) EzGlobals.PC22_InkData[i].Update(msg.ink[i]);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_temps");
+        }
+        
+        //--- handle_pc22_pen_cfg -------------------------------
+        private void handle_pc22_pen_cfg(byte[] buf)
+        {
+            SPC22_PenMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+
+            if (len >= msg.hdr.msgLen)
+            {
+                for (int i=0; i<msg.pen.Length; i++) EzGlobals.PC22_Pen[i].Update(msg.pen[i]);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_hyper_temps");
+        }
+
+        //--- handle_job_file ---------------------------------------------
+        private void handle_job_file(byte[] buf)
+        {
+            SFileMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.Job.Files.AddFile(msg.filename);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_job_file");
+        }
+
+        //--- handle_datafile_file ---------------------------------------------
+        private void handle_datafile_file(byte[] buf)
+        {
+            SFileMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.DataFile.Files.AddFile(msg.filename);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_datafile_file");
+        }
+
+        //--- handle_job_load ---------------------------------------------
+        private void handle_job_load(byte[] buf)
+        {
+            SJobMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.Job.Update(msg.job);
+            }
+            else  EzGlobals.Events.AddError(0, "Received invalid message Length SLoadFileMsg");
+        }
+
+        //--- handle_job_run ---------------------------------------------
+        private void handle_job_run(byte[] buf)
+        {
+            SMsgHdr msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.msgLen)
+            {
+                 EzGlobals.Job.IsRunning = true;
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SMsgHdr");
+        }
+
+        //--- handle_job_abort ---------------------------------------------
+        private void handle_job_abort(byte[] buf)
+        {
+            SMsgHdr msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.msgLen)
+            {
+                 EzGlobals.Job.IsRunning = false;
+                 EzGlobals.DataFile.ResetRecordStatus();
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SMsgHdr");
+        }
+
+        //--- handle_record_status ---------------------------------------------
+        private void handle_record_status(byte[] buf)
+        {
+            SRecordStatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.DataFile.UpdateRecordStatus(msg);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_job_file");
+        }
+
+        //--- handle_job_label ---------------------------------------------
+        private void handle_job_label(byte[] buf)
+        {
+            SLayoutMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                GeBindable.Invoke(()=>EzGlobals.Layout.Update(msg.label));
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SLoadFileMsg");
+        }
+
+        //--- handle_job_textbox ---------------------------------------------
+        private void handle_job_textbox(byte[] buf)
+        {
+            SLoadTxtBoxMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+//                GeBindable.Invoke(()=>EzGlobals.Layout.TextBox.Add(msg.box));
+                GeBindable.Invoke(()=>EzGlobals.Layout.AddBox(msg.box));
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length SLoadTxtBoxMsg");
+        }
+
+        //--- handle_error_event ---------------------------------------------
+        private void handle_error_event(byte[] buf)
+        {
+            SGuiMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            EzGlobals.Events.AddItem(msg.data);
+        }
+
+        //--- handle_prodstat_event ---------------------------------------------
+        private void handle_prodstat_event(byte[] buf)
+        {
+            SProdStatMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                EzGlobals.ProdStat.AddItem(msg.stat);
+            }
+            else EzGlobals.Events.AddError(0, "Received invalid message Length handle_job_file");
+        }
+
+    }
+}

@@ -1,0 +1,173 @@
+﻿using GE_Utilities;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TECIT.TBarCode;
+
+namespace EZ_Editor.Models.Enums
+{
+
+    public class EN_BarcodeTypes : IEnumerable
+    {
+        private static List<GeEnum<BarcodeType>> _List;
+
+        //--- _Add ----------------
+        private GeEnum<BarcodeType> _bc(BarcodeType bc, string name)
+        {
+            return new GeEnum<BarcodeType>(bc, name);
+        }
+
+        //--- Constructor ----------------------------------------------------
+        public EN_BarcodeTypes()
+        {
+            if (_List == null)
+            {
+                List<GeEnum<BarcodeType>> list = new List<GeEnum<BarcodeType>>();
+
+             // list.Add(_bc(BarcodeType.None,                 "None"));
+             // list.Add(_bc(BarcodeType.Code11, ""));
+                list.Add(_bc(BarcodeType.Code2Of5Standard,     "2of5"));
+                list.Add(_bc(BarcodeType.Code2Of5Interleaved,  "2of5 Interleaved"));
+             // list.Add(_bc(BarcodeType.Code2Of5Iata,         ""));
+             // list.Add(_bc(BarcodeType.Code2Of5Matrix,       ""));
+             // list.Add(_bc(BarcodeType.Code2Of5DataLogic,    ""));
+             // list.Add(_bc(BarcodeType.Code2Of5Industry,     ""));
+             // list.Add(_bc(BarcodeType.Code39,               ""));
+             // list.Add(_bc(BarcodeType.Code39Extended,       ""));
+                list.Add(_bc(BarcodeType.Ean8,                 "EAN 8"));
+                list.Add(_bc(BarcodeType.Ean8With2Addon,       "EAN 8+2"));
+                list.Add(_bc(BarcodeType.Ean8With5Addon,       "EAN 8+5"));
+                list.Add(_bc(BarcodeType.Ean13,                "EAN 13"));
+                list.Add(_bc(BarcodeType.Ean13With2Addon,      "EAN 13+2"));
+                list.Add(_bc(BarcodeType.Ean13With5Addon,      "EAN 13+5"));
+                list.Add(_bc(BarcodeType.EanUcc128,            "Ean 128"));
+             // list.Add(_bc(BarcodeType.Upc12,                ""));
+                list.Add(_bc(BarcodeType.Codabar2,             "Codabar"));
+             // list.Add(_bc(BarcodeType.Codabar18,            ""));
+                list.Add(_bc(BarcodeType.Code128,              "Code 128"));
+             // list.Add(_bc(BarcodeType.DeutschePostLeitcode, "DT Post Leitcode"));
+             // list.Add(_bc(BarcodeType.DeutschePostIdentcode,"DT Post Identcode"));
+             // list.Add(_bc(BarcodeType.Isbn13With5Addon,     ""));
+             // list.Add(_bc(BarcodeType.Ismn,                 ""));
+                list.Add(_bc(BarcodeType.Code93,               "Code 93"));
+             // list.Add(_bc(BarcodeType.Issn,                 ""));
+             // list.Add(_bc(BarcodeType.IssnWith2Addon,       ""));
+             // list.Add(_bc(BarcodeType.Flattermarken,        ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBar,           ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarLimited,    ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarExpanded,   ""));
+             // list.Add(_bc(BarcodeType.TelepenAlpha,         ""));
+             // list.Add(_bc(BarcodeType.Ucc128,               ""));
+                list.Add(_bc(BarcodeType.UpcA,                 "UPC-A"));
+                list.Add(_bc(BarcodeType.UpcAWith2Addon,       "UPC-A+2"));
+                list.Add(_bc(BarcodeType.UpcAWith5Addon,       "UPC-A+5"));
+                list.Add(_bc(BarcodeType.UpcE,                 "UPC-E"));
+                list.Add(_bc(BarcodeType.UpcEWith2Addon,       "UPC-E+2"));
+                list.Add(_bc(BarcodeType.UpcEWith5Addon,       "UPC-E+5"));
+             // list.Add(_bc(BarcodeType.UspsPostnet5,         "USPS Postnet 5"));
+             // list.Add(_bc(BarcodeType.UspsPostnet6,         "USPS Postnet 6"));
+             // list.Add(_bc(BarcodeType.UspsPostnet9,         "USPS Postnet 9"));
+             // list.Add(_bc(BarcodeType.UspsPostnet10,        "USPS Postnet 10"));
+             // list.Add(_bc(BarcodeType.UspsPostnet11,        "USPS Postnet 11"));
+             // list.Add(_bc(BarcodeType.UspsPostnet12,        "USPS Postnet 12"));
+             // list.Add(_bc(BarcodeType.Plessey,              ""));
+             // list.Add(_bc(BarcodeType.Msi,                  ""));
+             // list.Add(_bc(BarcodeType.Sscc18,               ""));
+             // list.Add(_bc(BarcodeType.Fim,                  ""));
+             // list.Add(_bc(BarcodeType.Logmars,              ""));
+             // list.Add(_bc(BarcodeType.PharmacodeOneTrack,   ""));
+             // list.Add(_bc(BarcodeType.PZN7,                 ""));
+             // list.Add(_bc(BarcodeType.PharmacodeTwoTrack,   ""));
+             // list.Add(_bc(BarcodeType.CEPNet,               ""));
+                list.Add(_bc(BarcodeType.Pdf417,               "PDF417"));
+                list.Add(_bc(BarcodeType.Pdf417Truncated,      "PDF417 trnuc"));
+             // list.Add(_bc(BarcodeType.Maxicode,             ""));
+                list.Add(_bc(BarcodeType.QRCode,               "QR Code"));
+                list.Add(_bc(BarcodeType.Code128SubsetA,       "Code 128-A"));
+                list.Add(_bc(BarcodeType.Code128SubsetB,       "Code 128-B"));
+                list.Add(_bc(BarcodeType.Code128SubsetC,       "Code 128-C"));
+             // list.Add(_bc(BarcodeType.Code93Extended,       ""));
+             // list.Add(_bc(BarcodeType.AustralianPostCustom, ""));
+             // list.Add(_bc(BarcodeType.AustralianPostCustom2, ""));
+             // list.Add(_bc(BarcodeType.AustralianPostCustom3, ""));
+             // list.Add(_bc(BarcodeType.AustralianPostReplyPaid, ""));
+             // list.Add(_bc(BarcodeType.AustralianPostRouting,    ""));
+             // list.Add(_bc(BarcodeType.AustralianPostRedirection, ""));
+             // list.Add(_bc(BarcodeType.Isbn13,               ""));
+             // list.Add(_bc(BarcodeType.RM4Scc,               ""));
+                list.Add(_bc(BarcodeType.DataMatrix,           "Datamatrix"));
+             // list.Add(_bc(BarcodeType.Ean14,                ""));
+             // list.Add(_bc(BarcodeType.VIN,                  ""));
+             // list.Add(_bc(BarcodeType.CodablockF,           ""));
+             // list.Add(_bc(BarcodeType.Nve18,                ""));
+             // list.Add(_bc(BarcodeType.JapanesePostal,       ""));
+             // list.Add(_bc(BarcodeType.KoreanPostalAuthority, ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarTruncated,   ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarStacked,    ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarStackedOmnidirectional, ""));
+             // list.Add(_bc(BarcodeType.Gs1DataBarExpandedStacked, ""));
+             // list.Add(_bc(BarcodeType.Planet12,             ""));
+             // list.Add(_bc(BarcodeType.Planet14,             ""));
+                list.Add(_bc(BarcodeType.MicroPdf417,          "Micro PDF417"));
+             // list.Add(_bc(BarcodeType.UspsIntelligentMail,  ""));
+             // list.Add(_bc(BarcodeType.PlesseyBidirectional, ""));
+             // list.Add(_bc(BarcodeType.Telepen,              ""));
+                list.Add(_bc(BarcodeType.GS1_128,              "GS1-128"));
+             // list.Add(_bc(BarcodeType.ITF14,                ""));
+             // list.Add(_bc(BarcodeType.KIX,                  ""));
+             // list.Add(_bc(BarcodeType.Code32,               ""));
+                list.Add(_bc(BarcodeType.Aztec,                "Aztec"));
+             // list.Add(_bc(BarcodeType.DAFT,                 ""));
+             // list.Add(_bc(BarcodeType.ItalianPostal2Of5,    ""));
+             // list.Add(_bc(BarcodeType.ItalianPostal3Of9,    ""));
+             // list.Add(_bc(BarcodeType.DPD,                  ""));
+                list.Add(_bc(BarcodeType.MicroQRCode,          "Micro QR"));
+             // list.Add(_bc(BarcodeType.HIBCLic128,           ""));
+             // list.Add(_bc(BarcodeType.HIBCLic3OF9,          ""));
+             // list.Add(_bc(BarcodeType.HIBCPas128,           ""));
+             // list.Add(_bc(BarcodeType.HIBCPas3OF9,          ""));
+             // list.Add(_bc(BarcodeType.HIBCLicDataMatrix,    ""));
+             // list.Add(_bc(BarcodeType.HIBCPasDataMatrix,    ""));
+             // list.Add(_bc(BarcodeType.HIBCLicQRCode,        ""));
+             // list.Add(_bc(BarcodeType.HIBCPasQRCode,        ""));
+             // list.Add(_bc(BarcodeType.HIBCLicPDF417,        ""));
+             // list.Add(_bc(BarcodeType.HIBCPasPDF417,        ""));
+             // list.Add(_bc(BarcodeType.HIBCLicMPDF417,       ""));
+             // list.Add(_bc(BarcodeType.HIBCPasMPDF417,       ""));
+             // list.Add(_bc(BarcodeType.HIBCLicCODABLOCK_F,   ""));
+             // list.Add(_bc(BarcodeType.HIBCPasCODABLOCK_F,   ""));
+             // list.Add(_bc(BarcodeType.QRCode2005,           ""));
+             // list.Add(_bc(BarcodeType.PZN8,                 ""));
+             // list.Add(_bc(BarcodeType.Reserved_1,           ""));
+             // list.Add(_bc(BarcodeType.DotCode,              ""));
+             // list.Add(_bc(BarcodeType.HanXin,               ""));
+             // list.Add(_bc(BarcodeType.USPSIMPackage,        ""));
+             // list.Add(_bc(BarcodeType.SwedishPostalShipmentId, ""));
+             // list.Add(_bc(BarcodeType.Mailmark_2D,          ""));
+             // list.Add(_bc(BarcodeType.UpuS10,               ""));
+             // list.Add(_bc(BarcodeType.Mailmark_4state,      ""));
+             // list.Add(_bc(BarcodeType.HIBCLicAztec,         ""));
+             // list.Add(_bc(BarcodeType.HIBCPasAztec,         ""));
+             // list.Add(_bc(BarcodeType.PPN,                  ""));
+             // list.Add(_bc(BarcodeType.NTIN,                 ""));
+             // list.Add(_bc(BarcodeType.SwissQrCode,          ""));
+             // list.Add(_bc(BarcodeType.GS1DataMatrix,        ""));
+             // list.Add(_bc(BarcodeType.GS1QrCode,            ""));
+             //  list = list.Sort((x,y) => x.Display.CompareTo(y.Display));
+
+
+                list.Sort((x,y) => x.Display.CompareTo(y.Display));
+
+                _List = list;
+            }
+
+
+        }
+
+        //--- enumerator --------------------------------------------------------
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)new GeListEnumerator<GeEnum<BarcodeType>>(_List);
+        }
+    }
+}

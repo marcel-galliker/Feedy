@@ -1,0 +1,349 @@
+﻿using System;
+using System.Runtime.InteropServices;
+using TECIT.TBarCode;
+using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
+
+namespace EZ_Editor.Services
+{
+    public class EzDef
+    {
+        public const string FieldStart= "«";
+        public const string FieldEnd = "»";
+
+        public const int MAX_PRINTHEADS=6;
+
+        //--- EPrintHeadType -------------------------------------
+        public enum EPrintHeadType : Int32
+        {
+            EZ_UNDEF=0,         // 
+            EZ_DEMO=1,          // (=EZ_54)
+            EZ_33=33,           //  (Epson I800:    Jets:  800, max Heads: 6, Color: K,         Dotsize: 3.5/6/12, Bit/Px: 1/2)
+            EZ_54=54,           // (Ricoh          Jets: 1280, max Heads: 1, Color: K,         Dotsize: 7/16/26,  Bit/Px: 1)
+            EZ_64=64,           // (Dimatix)
+            EZ_65=65,           // (Dimatix SG600: Jets: 1536, max Heads: 2, Color: K,         Dotsize: 12/24,    Bit/Px: 1)
+            EZ_66=66,           // (Epson I800:    Jets: 1536, max Heads: 2, Color: K,         Dotsize: 3.5/6/12, Bit/Px: 1)
+            EZ_72=72,           // (               Jets:  256, max Heads: ?, Color: ?,         Dotsize: ?,        Bit/Px: 1)
+            EZ_100=100,         // (Epson I3200:   Jets: 2840, max Heads: 3, Color: K,         Dotsize: 3.5/6/12, Bit/Px: 1)
+            EZ_108=108,         // (Ricoh          Jets: 1280, max Heads: 2, Color: K,         Dotsize: 7/16/26,  Bit/Px: 1)
+            EZ_120=120,         // (               Jets: 2840, max Heads: 1, Color: K,         Dotsize: 6/12/18,  Bit/Px: 1)
+            EZ_240=240,         // (               Jets: 2840, max Heads: 2, Color: K,         Dotsize: 6/12/18,  Bit/Px: 1)
+            EZ_360=360,         // (               Jets: 2840, max Heads: 3, Color: K,         Dotsize: 6/12/18,  Bit/Px: 1)
+            EZ_480=480,         // (               Jets: 2840, max Heads: 4, Color: K,         Dotsize: 6/12/18,  Bit/Px: 1)
+            EZ_Color_100=1100,  // (Epson I3200:   Jets: 2840, max Heads: 1x3, Color: CMYK,    Dotsize: 3.5/6/12, Bit/Px: 1)
+            EZ_Color_200=1200,  // (Epson I3200:   Jets: 2840, max Heads: 2x3, Color: CMYK,    Dotsize: 3.5/6/12, Bit/Px: 1)
+            EZ_Color_300=1300,  // (Epson I3200:   Jets: 2840, max Heads: 3x3, Color: CMYK,    Dotsize: 3.5/6/12, Bit/Px: 1)
+            Norwix_PC22 =3000,  // 
+            Zebra_ZE511 = 4000, //
+            Videojet_BX = 5000, //
+        };
+
+        //--- SHeadSpecs ------------------------------------------
+        public struct SHeadSpecs
+        {
+            public Int32 dpix;
+            public Int32 dpiy;
+            public Int32 jets;
+            public Int32 maxHeads;
+            public Int32 colors;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string dotSizes; 
+        };
+
+        //--- ECamType -------------------------------------
+        public enum ECamType : Int32
+        {
+            CAM_UNDEF,      // 0
+            CAM_SERIAL      // 1
+        };
+
+        //--- EMarqueeType -------------------------------------
+        public enum EMarqueeType : Int32
+        {
+            MARQUEE_UNDEF,  // 0
+            MARQUEE_1,      // 1
+        };
+
+
+        //--- license flags ----------------------------------
+        public const UInt32 LicFlag_cam      = (1<<0);
+        public const UInt32 LicFlag_inkRFID  = (1<<1);
+        public const UInt32 LicFlag_stepRep  = (1<<2);
+
+        //--- license ---------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SLicense
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string           computerName;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 40)]
+            public string           hardwareGUID;
+            public EPrintHeadType   headType;
+            public Int32            headCnt;
+            public Int32            expDay;
+            public Int32            expMonth;
+            public Int32            expYear;
+            public Int32            check;
+            public UInt32           flags;  // LicFlag_...
+            public UInt32           res;   
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string           pwd_supervisor;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string           pwd_service;
+        };
+
+        //--- SPrintHeadCfg -----------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SPrintHeadCfg
+        {
+            public Int32 xOffset;  // microns
+            public Int32 yOverlap; // dots
+        };
+
+        //--- SHyperCfg -----------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SHyperCfg
+        {
+            public Int32           inkTemp;     // °C
+            public Int32           purgeVacc;   // mBar
+            public Int32           meniscusVacc;// mBar
+        };
+
+        //--- SCamCfg -----------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SCamCfg
+        {
+            public ECamType        camType;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string           camInterface;
+            public Int32            baudrate;
+        };
+
+        //--- SMarqueeCfg -----------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SMarqueeCfg
+        {
+            public EMarqueeType     type;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 32)]
+            public string           comInterface;
+        };
+
+        //--- SPrinterCfg -------------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SPrinterCfg
+        {
+            public EPrintHeadType   headType;
+            public Int32            headCnt;
+            public Int32            encPulsesPerM;
+            public Int32            encReverse;
+            public Int32            printRightToLeft;
+            public Int32            orientation;
+            public Int32            createTestImages;
+            public Int32            maxSpeed; // m/min
+            public Int32            uvOnSpeed; // m/min
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string           ipAddress;
+
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 6)]
+            public SPrintHeadCfg[]  headCfg;
+            public SHyperCfg        hyperCfg;
+            public SCamCfg          camCfg;
+            public SMarqueeCfg      marqueeCfg;
+        };
+
+        //--- EFileType -------------------------------------
+        public enum EFileType
+        {
+            FT_COUNTER, // 0    
+            FT_CSV,     // 1 
+            FT_PDF,     // 2
+            FT_XPS,     // 3
+        };
+
+        //--- SJob ----------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SJob
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string name;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string description;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string dataFile;
+            public EFileType fileType;
+            public Int32 maxRecNo;
+            public Int32 nextRecNo;
+            public Int32 nextFilePos;
+            public Int32 printGoDistMM;     // microns
+            public Int32 sortDistMM;
+            public Int32 sortLength;
+            public Int32 sortFieldNo;
+            public Int32 sortSize;
+            public Int32 camTriggerDistMM;  // microns
+            public Int32 camTriggerLength;
+            public Int32 keyFieldNo;
+            public Int32 PDSensor;
+            public Int32 machineLength;     // microns
+        };
+        
+        //--- EStepRepOrder ---------------------------
+        public   enum EStepRepOrder
+        {
+            SR_ColRow,  // 0:first columns, then rows
+            SR_RowCol,  // 1
+        };
+
+        //--- SStepRepDef -----------------------------
+         [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SStepRepDef
+        {
+            public Int32   cnt;
+            public Int32   fixedBoxes;
+            public Int32   columns;
+            public Int32   rows;
+            public Int32   columnWidth;
+            public Int32   rowHeight;
+            public EStepRepOrder   order;
+        };
+
+            //--- SStepRepDef -----------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SProvePrintDef
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string  filename;
+            public Int32   orientation;     
+            public Int32   offsetX;    // microns
+            public Int32   offsetY;    // microns
+            public Int32   scrollOffsetX;    // microns
+            public Int32   scrollOffsetY;    // microns
+            public Int32   pageSort;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string pages;     
+        };
+
+        //--- SLabelDef ---------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+        public struct SLabelDef
+        {
+            public int      dotSize;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public double[] dotSizes_pl;
+            public Int32    bitsPerPixel;
+            public Int32    planes;
+            public bool     rotate180;
+            public Int32    zoom;
+            public Int32    dpiX;
+            public Int32    dpiY;
+            public Int32	widthMM;
+            public Int32	heightMM;
+            public Int32    boxCnt;
+            public SStepRepDef stepRep;
+            public SProvePrintDef provePrint;
+        };
+
+        //--- EBoxType -------------------------------------
+        public enum EBoxType
+        {
+            BOX_TEXT,       // 0    
+            BOX_BARCODE,    // 1 
+            BOX_BITMAP,     // 2
+        };
+
+        //--- ETextWrapping -----------------
+        public enum ETextWrapping : Int32
+        {
+            WRAP_undef,     // 0
+            WRAP_TRIM,      // 1
+            WRAP_NEWLINE,   // 2
+            WARP_FONTSIZE,  // 3
+        };
+
+        //--- EFontStyle -------------------------
+        public enum EFontStyle : Int32
+        {
+            FS_BOLD     =   0x0001,
+            FS_ITALIC   =   0x0002,
+            FS_INVERSE  =   0x0004,
+        };
+
+        //--- SBarcodeDef -----------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SBarcodeDef
+        {
+            public Int32   type;
+            public Int32   widthReduction;
+            public Int32   moduleWidth;
+            public Int32   printText;
+            public EncodingMode   encodingMode;
+            public DataMatrixSize   datamatrix_size;
+            public DataMatrixFormat datamatrix_format;
+            public QRCodeVersion qr_size;
+            public QRCodeFormat qr_format;
+            public QRCodeErrorCorrectionLevel qr_eclevel;
+        };
+
+        //--- SBoxDef ---------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SBoxDef
+        {
+            public EBoxType boxType;
+            public Int32 posX;
+            public Int32 posY;
+            public Int32 width;
+            public Int32 height;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)]
+            public Int32[] padding;
+            public Int32 bmpScale;
+            public Int32 orientation;
+            public Int32 planes;
+            public ETextWrapping wrapping;
+            public System.Windows.HorizontalAlignment alignH;
+            public SBarcodeDef barcode;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string font;     // foreground
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string fontBG;   // background
+            public Int32 fontSize;
+            public Int32 fontStyle; // bitset of EFontStyle
+            public Int32 lineSpacePercent;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 256)]
+            public string text;
+        };
+
+        //--- SLayout -----------------------------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+        public struct SLayout
+        {
+            public SLabelDef	label;
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 32)]
+            public SBoxDef[]	textBox;
+        };
+
+        //--- EStatType -------------------------------------
+        public enum EStatType : Int32
+        {
+            ST_UNDEF,   // 0
+            ST_START,   // 1    
+            ST_STOP,    // 2 
+            ST_SPEED,   // 3
+        };
+
+        //--- SStatItem -------------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)]
+
+        public struct SStatItem
+        {
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 12)]
+            public string      date;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 9)]
+            public string      time;
+            public EStatType   type;
+            public Int32       recordNo;
+            public Int32       speed;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 64)]
+            public string      jobname;
+        };
+
+    }
+}

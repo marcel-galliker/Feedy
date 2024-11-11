@@ -1,0 +1,91 @@
+﻿using System;
+using static EZ_Editor.Services.EzDef;
+
+namespace EZ_Editor.Models
+{
+    public class EzArgs
+    {
+        public EzArgs()
+        {
+            _parse_command_line();
+        }
+
+        //--- _parse_command_line ------------------------------
+        private void _parse_command_line()
+        {
+            int i;
+            string[] args = Environment.GetCommandLineArgs();
+            for (i=1; i<args.Length; i++) 
+            {
+                if (args[i].ToLower().Equals("-ipaddr"))
+                {
+                    i++;
+                    if (i<args.Length) IpAddr = args[i];
+                }
+                else if (args[i].ToLower().Equals("-prep"))
+                {
+                    if (i+1<args.Length)
+                    {
+                        HeadType = _parse_headtype(args[i+1]);
+                        if (HeadType!=EPrintHeadType.EZ_UNDEF) i++;
+                    }
+                    Prep=true;
+                }
+                else if (args[i].ToLower().Equals("-editorgt"))
+                {
+                    EditorGT=true;
+                }
+            }
+        }
+
+        //--- _parse_headtype ----------------------
+        private EPrintHeadType _parse_headtype(string name)
+        {
+            name = name.ToLower();
+            name = name.Replace('-', '_');
+
+            var headTypes =Enum.GetValues(typeof(EPrintHeadType));
+            for(int i=0; i<headTypes.Length; i++)
+            {
+                EPrintHeadType? headType = headTypes.GetValue(i) as EPrintHeadType?;
+                if (name.Equals(headType.ToString().ToLower()))
+                {
+                    return headType.Value;
+                }
+            }
+            return EPrintHeadType.EZ_UNDEF;
+        }
+
+        //--- Property Prep ---------------------------------------
+        private bool _Prep=false;
+        public bool Prep
+        {
+            get { return _Prep; }
+            set { _Prep = value; }
+        }
+
+        //--- Property MIC ---------------------------------------
+        private bool _MIC;
+        public bool MIC
+        {
+            get { return _MIC; }
+            set { _MIC = value; }
+        }
+
+        //--- Property HeadType ---------------------------------------
+        private EPrintHeadType _HeadType;
+        public EPrintHeadType HeadType
+        {
+            get { return _HeadType; }
+            set { _HeadType = value;}
+        }
+
+        //--- Property IpAddr ---------------------------------------
+        private string _IpAddr;
+        public string IpAddr
+        {
+            get { return _IpAddr; }
+            set { _IpAddr = value; }
+        }
+    }
+}

@@ -1,0 +1,73 @@
+﻿<Popup x:Class="Feedy.Views.UserControls.FileOpen"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:utilities="clr-namespace:GE_Utilities"
+        xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:local="clr-namespace:Feedy.Views.UserControls"
+        AllowsTransparency="True"
+        mc:Ignorable="d"
+        d:DesignHeight="100" d:DesignWidth="300"
+        Height="auto" Width="300"
+        Closed="Popup_Closed"
+        >
+    
+    <Grid Background="White">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0" Grid.ColumnSpan="2" Background="{StaticResource DataGrid.Brush.Selected.Background}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock x:Name="TB_Title" FontSize="{StaticResource FontSizeLarge}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+            
+            <utilities:GeButton x:Name="BTN_Import" Grid.Column="2" Click="Import_Clicked">
+                <iconPacks:PackIconMaterial Kind="Import" />
+            </utilities:GeButton>
+            
+            <utilities:GeButton x:Name="BTN_Save" Grid.Column="2" Click="Save_Clicked">
+                <iconPacks:PackIconMaterial Kind="ContentSaveOutline" />
+            </utilities:GeButton>
+
+            <utilities:GeButton x:Name="BTN_Delete" Grid.Column="2" Confirm="Delete_Clicked">
+                <iconPacks:PackIconMaterial Kind="DeleteOutline" />
+            </utilities:GeButton>
+
+            <utilities:GeButton Grid.Column="3" Click="Cancel_Clicked">
+                <iconPacks:PackIconMaterial Kind="Cancel" />
+            </utilities:GeButton>
+
+        </Grid>
+
+        <Grid Grid.Row="1" Margin="5,2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto" x:Name="SaveRow"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!--  <ListBox x:Name="List" /> -->
+            <TextBlock Grid.Row="0" Grid.Column="0" FontSize="{StaticResource FontSizeStd}" Text="Save as: " VerticalAlignment="Center" Margin="0,10"/>
+            <TextBox   Grid.Row="0" Grid.Column="1" FontSize="{StaticResource FontSizeStd}" x:Name="TB_Name" HorizontalAlignment="Stretch" VerticalAlignment="Center"/>
+
+            <GroupBox Grid.Row="1" Grid.ColumnSpan="2" Header="Existing">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ListBox x:Name="FileList" SelectionMode="Single" SelectionChanged="List_SelectionChanged"/>
+                </ScrollViewer>
+            </GroupBox>
+
+            <TextBox Grid.Row="1" Grid.ColumnSpan="2" x:Name="TX_Help" Visibility="Collapsed"/>
+
+        </Grid>
+    </Grid>
+</Popup>

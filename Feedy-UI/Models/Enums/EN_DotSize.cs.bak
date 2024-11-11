@@ -1,0 +1,33 @@
+﻿using GE_Utilities;
+using System.Collections;
+using System.Collections.Generic;
+
+namespace EZ_Editor.Models.Enums
+{
+    public class EN_DotSize: IEnumerable
+    {
+        private static List<GeEnum<double>> _List;
+
+        //--- constructor --------------------------------
+        public EN_DotSize(double[] sizes)
+        {
+            List<GeEnum<double>> list = new List<GeEnum<double>>();
+            if (sizes!=null)
+            {
+                for (int i = 0; i < sizes.Length; i++)
+                {
+                    if (sizes[i]<0) list.Add(new GeEnum<double>(sizes[i], "var"));
+                    else list.Add(new GeEnum<double>(sizes[i], sizes[i].ToString()));
+                }
+            }
+            _List = list;
+        }
+
+        //--- enumerator -----------------------------------
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return (IEnumerator)new GeListEnumerator<GeEnum<double>>(_List);
+        }
+
+    }
+}

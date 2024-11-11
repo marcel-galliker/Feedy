@@ -1,0 +1,724 @@
+﻿using EZ_Editor.DLL;
+using EZ_Editor.Services;
+using GE_Utilities;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Net.NetworkInformation;
+using System.Text;
+using System.Threading;
+using System.Windows;
+using static EZ_Editor.Services.EzDef;
+
+namespace EZ_Editor.Models
+{
+    public class Job : GeBindable
+    {
+        public FileList Files = new FileList();
+
+        private Thread _SimuPrintThread = null;
+        private bool   _SimuPrintRunning;
+        private int    _SimuPrintSleep;
+
+        //--- Constructor --------------------------------------
+        public Job()
+        {
+        }
+
+        /*
+        private void SimuProdStat()
+        {
+            int[] StartPos = {0, 10, 12, 20, 90, 98 };
+            if (ProdStat==null) ProdStat = new ObservableCollection<ProdStatItem>();
+            if (ProdStart==null) ProdStart = new ObservableCollection<ProdStatItem>();
+            DateTime dateTime = DateTime.Now;
+            Random rd = new Random();
+            dateTime=dateTime.Subtract(new TimeSpan(0,100,0));
+            for (int i=0; i<100; i++)
+            {
+                ProdStatItem item = new ProdStatItem()
+                {
+                    TimeStamp = dateTime,
+                    RecordNo = i*100,
+                };
+                if (i<18) item.Speed = (int)(i*1000*(1+rd.NextDouble()/20.0));
+                else item.Speed=(int)(18000*(1+rd.NextDouble()/20.0));
+                ProdStat.Add(item);
+                for(int n=0; n<StartPos.Length; n++)
+                {
+                    if (i == StartPos[n])
+                        ProdStart.Add(item);
+                }
+                if (i == 99)
+                {
+                    ProdStatItem start = new ProdStatItem()
+                    {
+                        TimeStamp = item.TimeStamp,
+                        RecordNo = item.RecordNo,
+                        Speed=-1000
+                    };
+                    ProdStart.Add(start);
+                }
+                dateTime=dateTime.AddMinutes(1);
+            }
+        }
+        */
+
+        //--- LoadLastJob ------------------------------------
+        public void LoadLastJob()
+        {
+        //  if (EzGlobals.EzInterface.Connected) return;
+            if (EzGlobals.License.Type==License.LicenseType.LIC_Printer)
+            {
+                Load("");
+            }
+            else
+            {
+                StringBuilder jobname = new StringBuilder(128);
+                try
+                {
+                    EZ_Xml.xml_last_job(EzGlobals.License.SettingsDir+"AppData.xml", jobname, jobname.Capacity, EZ_Xml.EN_Xml_Action.READ);
+                }
+                catch(Exception ex)
+                {
+                    Console.WriteLine(ex.Message);
+                }
+
+                {
+                    string cfgpath= EzGlobals.License.SettingsDir+"Printer.xml";
+                    SPrinterCfg printerCfg = EzGlobals.PrinterCfg.GetPrinterCfg();
+                    EZ_Xml.xml_printer_cfg(cfgpath, ref printerCfg, EZ_Xml.EN_Xml_Action.READ);
+                    if (EzGlobals.EzArgs.Prep) printerCfg.headType = EzGlobals.EzArgs.HeadType;
+                    EzGlobals.PrinterCfg.Update(printerCfg);
+                }
+
+                Load(jobname.ToString());
+            }
+        }
+
+        //--- Update ----------------------------------------
+        public void Update(SJob job)
+        {
+            IsLoading       = true;
+
+            FileName        = job.name;   
+            Description     = job.description;
+            FileType        = job.fileType;
+            if (FileType==EFileType.FT_COUNTER) DataFile = "CountersOnly";
+            else DataFile = job.dataFile;
+            MaxRecNo        = job.maxRecNo;
+            NextRecNo       = job.nextRecNo;
+            PrintGoDistance = (double)job.printGoDistMM;
+            SortDistMM      = (double)job.sortDistMM;
+            SortLength      = job.sortLength;
+            SortFieldNo     = job.sortFieldNo;
+            SortSize        = job.sortSize;
+            CamTriggerDistMM= (double)job.camTriggerDistMM;
+            CamTriggerLength= job.camTriggerLength;
+            MachineLength   = (double)job.machineLength;
+            KeyFieldNo      = job.keyFieldNo;
+            AutoPD          = job.autoPD>0;
+
+            IsLoading        = false;
+        }
+
+        //--- Property IsLoading ---------------------------------------
+        private static int _IsLoadingCnt=0;
+        public bool IsLoading
+        {
+            get { return _IsLoadingCnt>0; }
+            set { 
+                    if (value) _IsLoadingCnt++;
+                    else       _IsLoadingCnt--;
+                }
+        }
+
+        //--- Property IsChanged ---------------------------------------
+        private bool _IsChanged=false;
+        public bool IsChanged
+        {
+            get { return _IsChanged; }
+            set { 
+                    if(IsLoading) SetProperty(ref _IsChanged, false);
+                    else 
+                    {
+                        SetProperty(ref _IsChanged, value);
+                    }
+                }
+        }
+
+        //--- LoadList -----------------------------------------------
+        public void LoadList()
+        {
+            EzGlobals.EzInterface.SendCommand(EzGuiMsg.LIST_JOB_START);
+        //    SFileMsg msg = new SFileMsg() { filename = "" };
+        //   EzGlobals.EzInterface.SendMsg(EzGuiMsg.LOAD_JOB, ref msg);
+        }
+
+        //--- Property ListLoaded ---------------------------------------
+        private int _ListLoaded;
+        public int ListLoaded
+        {
+            get { return _ListLoaded; }
+            set { SetProperty(ref _ListLoaded, value); }
+        }
+
+        //--- Load -----------------------------------------------
+        public void Load(string filename=null)
+        {
+            IsLoading = true;
+
+            if (filename!=null && filename!="") FileName = filename;
+            SFileMsg msg = new SFileMsg() { filename = FileName };
+            if(EzGlobals.License.Type==License.LicenseType.LIC_Printer)
+            {            	
+            	EzGlobals.EzInterface.SendMsg(EzGuiMsg.LOAD_JOB, ref msg);
+			}
+            else
+            {
+                SJob    job     = new SJob();
+                SLayout layout  = new SLayout();
+                string path= EzGlobals.Job.Dir + Path.DirectorySeparatorChar + FileName;
+                EZ_Xml.xml_job_file(path, ref job, ref layout, EZ_Xml.EN_Xml_Action.READ);
+                EzGlobals.Job.Update(job);
+                EzGlobals.Layout.Update(layout.label);
+                for(int i=0; i<layout.label.boxCnt; i++)
+                {
+                    EzGlobals.Layout.LoadBox(i, layout.textBox[i]);
+                }
+            }
+            IsLoading = false;
+        }
+
+        //--- GetJob -----------------------------------
+        public SJob GetJob()
+        {
+            SJob job = new SJob();
+            job.name        = FileName; 
+            job.description = Description;
+            job.fileType    = FileType;
+            job.maxRecNo    = MaxRecNo;
+            job.dataFile    = DataFile;
+            if (NextRecNo>0 && NextRecNo<EzGlobals.DataFile.RecordCnt)
+            {
+                job.nextRecNo   = NextRecNo;
+                if (FileType!=EFileType.FT_COUNTER)
+                    job.nextFilePos = EzGlobals.DataFile.Records[NextRecNo-1].FilePos;
+            }
+            job.printGoDistMM = (int)(PrintGoDistance+0.5);
+            job.sortDistMM    = (int)(SortDistMM+0.5);
+            job.sortLength    = SortLength;
+            job.sortFieldNo   = SortFieldNo;
+            job.sortSize      = SortSize;
+            job.camTriggerDistMM = (int)(CamTriggerDistMM+0.5);
+            job.camTriggerLength = CamTriggerLength;
+            job.machineLength    = (int)(MachineLength+0.5);
+            job.keyFieldNo    = KeyFieldNo;
+            job.autoPD        = AutoPD? 1:0;
+            return job;
+        }
+
+        //--- Save --------------------------------------------
+        public void Save(string filename = null)
+        {
+            if (filename != null) FileName = filename;
+
+            EzGlobals.PC22_Pen[0].Save();
+
+            if (EzGlobals.License.Type!=License.LicenseType.LIC_Printer)
+            {
+                SJob job        = GetJob();
+                SLayout layout  = EzGlobals.Layout.GetLayout();
+                string path = Path.Combine(EzGlobals.Job.Dir, FileName);
+                EZ_Xml.xml_job_file(path, ref job, ref layout, EZ_Xml.EN_Xml_Action.WRITE);
+                EZ_Xml.xml_last_job(EzGlobals.License.SettingsDir+"AppData.xml", new StringBuilder(FileName), 200, EZ_Xml.EN_Xml_Action.WRITE);
+
+                SPrinterCfg printerCfg = EzGlobals.PrinterCfg.GetPrinterCfg();
+                EZ_Xml.xml_printer_cfg(EzGlobals.License.SettingsDir+"Printer.xml", ref printerCfg, EZ_Xml.EN_Xml_Action.WRITE);
+            }
+            else if(EzGlobals.PrinterCfg.Save())
+            {                 
+                SJobMsg msg = new SJobMsg();
+                msg.job= GetJob();
+
+                EzGlobals.EzInterface.SendMsg(EzGuiMsg.SAVE_JOB, ref msg);
+
+                EzGlobals.Layout.Save();
+            }
+            IsChanged = false;
+        }
+
+        //--- SaveNew ---------------------------------------
+        public void SaveNew(string filename)
+        {
+            string dir=Path.GetDirectoryName(EzGlobals.Job.Dir)+Path.DirectorySeparatorChar+filename;
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            FileName = filename;
+
+            SJob    job     = GetJob();
+            SLayout layout  = EzGlobals.Layout.GetLayout();
+            job.name= filename;
+            job.dataFile=null;
+            layout.textBox.Clone();
+            EzGlobals.Job.Update(job);
+            EzGlobals.Layout.Update(layout.label);
+        }
+
+        //--- SaveAs --------------------------------------
+        public void SaveAs(string filename)
+        {
+            string dir=Path.GetDirectoryName(EzGlobals.Job.Dir)+Path.DirectorySeparatorChar+filename;
+            if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+            try
+            {
+                string srcDir = EzGlobals.Job.Dir;
+                string[] files=Directory.GetFiles(srcDir);
+                foreach (string file in files)
+                {
+                    if (Path.GetExtension(file)!=".xml")
+                    {
+                        string dest=dir+Path.DirectorySeparatorChar+Path.GetFileName(file);
+                        File.Copy(file, dest, true);
+                    }
+                }
+            }
+            catch(Exception)
+            { }
+
+            Save(filename);
+        }
+
+        //--- Delete --------------------------------------
+        public bool Delete(string filename)
+        {
+            if (filename==FileName)
+            {
+                string msg = EzGlobals.Language.GetError("EzEditor.Jobs.cs", "10", "Delete");
+                MessageBox.Show(msg, "Error");
+                return false;
+            }
+            else
+            {
+                string dir=EzGlobals.Settings.EzEditorDir+"Jobs"+Path.DirectorySeparatorChar+filename;
+                Directory.Delete(dir, true);
+                return true;
+            }
+        }
+
+        //--- Clean -------------------------------------
+        public void Clean(string filename)
+        {
+            // indipendend of actual job! 
+            string dir=Path.GetDirectoryName(EzGlobals.Job.Dir)+Path.DirectorySeparatorChar+filename+Path.DirectorySeparatorChar;
+            List<string> files = new List<string>(Directory.GetFiles(dir));
+
+            SJob    job     = new SJob();
+            SLayout layout  = new SLayout();
+            EZ_Xml.xml_job_file(dir+filename, ref job, ref layout, EZ_Xml.EN_Xml_Action.READ);
+
+            //--- remove used files from list ---
+            files.Remove(dir+filename+".xml");
+            string datafile = dir+Path.GetFileNameWithoutExtension(job.dataFile);
+            files.Remove(datafile+".csv");
+            files.Remove(datafile+".done.csv");
+
+            files.Remove(dir+job.dataFile); // in case of pdf
+            files.Remove(dir+layout.label.provePrint.filename);
+
+           //--- remove bitmaps from used files ------------
+            bool varBmp=false;
+            foreach(SBoxDef box in layout.textBox)
+            {
+                if (box.boxType==EBoxType.BOX_BITMAP && box.text.Contains(FieldStart))
+                {
+                    varBmp = true;
+                    break;
+                }
+            }
+            if (varBmp)
+            {
+                // keep all *.tif and *.bmp files
+                for(int i=0; i<files.Count; )
+                {
+                    string ext = Path.GetExtension(files[i]).ToLower();
+                    if (ext==".tif" || ext==".bmp") 
+                        files.RemoveAt(i);
+                    else i++;
+                }
+            }
+            else
+            {
+                foreach(SBoxDef box in layout.textBox)
+                {
+                    if (box.boxType==EBoxType.BOX_BITMAP)
+                    {
+                        files.Remove(dir+box.text);
+                    }
+                }
+            }
+
+            //--- delete unused files ----------
+            foreach(string file in files)
+            {
+                try
+                {
+                    File.Delete(file);
+                }
+                catch(Exception e) 
+                {
+                    Console.WriteLine(e.ToString());
+                }
+            }
+        }
+
+        //--- Property FileType ---------------------------------------
+        private EFileType _FileType;
+        public EFileType FileType
+        {
+            get { return _FileType; }
+            set {   
+                    SetProperty(ref _FileType, value); 
+                }
+        }
+
+        //--- Property FileName ---------------------------------------
+        private string _FileName;
+        public string FileName
+        {
+            get { return _FileName; }
+            set { IsChanged |= SetProperty(ref _FileName, value);}
+        }
+
+        //--- Property Description ---------------------------------------
+        private string _Description;
+        public string Description
+        {
+            get { return _Description; }
+            set { IsChanged |= SetProperty(ref _Description, value); }
+        }
+
+        //--- Property Dir ---------------------------------------
+        private string _Dir;
+        public string Dir
+        {
+            get { 
+//                    if (EzGlobals.License.Type==EZ_Editor.Models.License.LicenseType.LIC_Prep || EzGlobals.EzArgs.EditorGT)
+                    if (EzGlobals.EzArgs.Prep || EzGlobals.EzArgs.MIC)
+                    {
+                        string dir=EzGlobals.License.JobsDir+FileName;
+                        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                        return dir;
+                    }
+
+                    PingReply pr = new Ping().Send(EzGlobals.Settings.IpAddress, 100);
+                    if (pr.Status==IPStatus.Success)
+                    { 
+                        string dir=EzGlobals.License.JobsDir+FileName;
+                        if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                        return dir; 
+                    }
+                    return null;
+                }
+            set { SetProperty(ref _Dir, value); }
+        }
+
+        //--- Property DataFile  ---------------------------------------
+        private string _DataFile;
+        public string DataFile
+        {
+            get { return _DataFile; }
+            set 
+            { 
+                if (SetProperty(ref _DataFile, value))
+                {
+                    IsChanged = true;
+                    EzGlobals.DataFile.Load(_DataFile);
+                }; 
+            }
+        }
+
+        //--- Property PrintGoDistance ---------------------------------------
+        private double _PrintGoDistance;
+        public double PrintGoDistance
+        {
+            get { return _PrintGoDistance; }
+            set { IsChanged |= SetProperty(ref _PrintGoDistance, value); }
+        }
+
+        //--- Property SortDistMM ---------------------------------------
+        private double _SortDistMM;
+        public double SortDistMM
+        {
+            get { return _SortDistMM; }
+            set { IsChanged |= SetProperty(ref _SortDistMM, value); }
+        }
+
+        //--- Property SortLength ---------------------------------------
+        private int _SortLength;
+        public int SortLength
+        {
+            get { return _SortLength; }
+            set { IsChanged |= SetProperty(ref _SortLength, value); }
+        }
+
+        //--- Property SortFieldNo ---------------------------------------
+        private int _SortFieldNo;
+        public int SortFieldNo
+        {
+            get { return _SortFieldNo; }
+            set { IsChanged |= SetProperty(ref _SortFieldNo, value); }
+        }
+
+        //--- Property CamTriggerDistMM ---------------------------------------
+        private double _CamTriggerDistMM;
+        public double CamTriggerDistMM
+        {
+            get { return _CamTriggerDistMM; }
+            set { IsChanged |= SetProperty(ref _CamTriggerDistMM, value); }
+        }
+
+        //--- Property CamTriggerLength ---------------------------------------
+        private int _CamTriggerLength;
+        public int CamTriggerLength
+        {
+            get { return _CamTriggerLength; }
+            set { IsChanged |= SetProperty(ref _CamTriggerLength, value); }
+        }
+
+        //--- Property MachineLength ---------------------------------------
+        private double _MachineLength;
+        public double MachineLength       
+        {
+            get { return _MachineLength; }
+            set { IsChanged |= SetProperty(ref _MachineLength, value); }
+        }
+
+        //--- Property KeyFieldNo ---------------------------------------
+        private int _KeyFieldNo;
+        public int KeyFieldNo
+        {
+            get { return _KeyFieldNo; }
+            set { SetProperty(ref _KeyFieldNo, value); }
+        }
+
+        //--- Property SortSize ---------------------------------------
+        private int _SortSize;
+        public int SortSize
+        {
+            get { return _SortSize; }
+            set { IsChanged |= SetProperty(ref _SortSize, value); }
+        }
+
+        //--- Property AutoPD ---------------------------------------
+        private bool _AutoPD;
+        public bool AutoPD
+        {
+            get { return _AutoPD; }
+            set { IsChanged |= SetProperty(ref _AutoPD, value); }
+        }
+
+        //--- Start -----------------------------------------------
+        public void Start()
+        {
+            if (EzGlobals.License.Type==License.LicenseType.LIC_Prep)
+            {
+                if (EzGlobals.Job.FileName!="")
+                {
+                //  _ChecksDone = new Semaphore(initialCount: 0, maximumCount: 1);
+
+                    EzGlobals.MainWindow.LayoutView.Visibility = Visibility.Visible;
+                    LayoutTest = true;
+                    _SimuPrintSleep  = 10;
+                    _SimuPrintThread = new Thread(()=>_SimuPrint());
+                    _SimuPrintThread.Start();
+                }
+            }
+            else if (EzGlobals.Job.FileType==EFileType.FT_XPS)
+            {
+                EzGlobals.Job.RecordCnt = 100000;
+                SJobStartMsg msg = new SJobStartMsg() 
+                {
+                    filename    = EzGlobals.Job.FileName,
+                    recordNo    = 1,
+                    endRecordNo = EzGlobals.DataFile.RecordCnt
+                };
+                EzGlobals.EzInterface.SendMsg(EzGuiMsg.RUN_JOB, ref msg);
+            }
+            else
+            {
+                int no = EzGlobals.Job.NextRecNo-1;
+                if (no<0) no=0;
+                if (no<EzGlobals.DataFile.RecordCnt)
+                {
+                    SJobStartMsg msg = new SJobStartMsg() 
+                    {
+                        filename = EzGlobals.Job.FileName,
+                        recordNo = EzGlobals.Job.NextRecNo,
+                        endRecordNo = EzGlobals.DataFile.RecordCnt,
+                    };
+                    if (FileType != EFileType.FT_COUNTER) msg.filePos  = EzGlobals.DataFile.Records[no].FilePos;
+                    EzGlobals.EzInterface.SendMsg(EzGuiMsg.RUN_JOB, ref msg);
+                }
+                else EzGlobals.Events.AddError(0, "Next Record="+EzGlobals.Job.NextRecNo+", out of file");
+            }
+        }
+
+        //--- Property LayoutTest ---------------------------------------
+        private bool _LayoutTest;
+        public bool LayoutTest
+        {
+            get { return _LayoutTest; }
+            set { SetProperty(ref _LayoutTest, value); }
+        }
+
+        //--- Stop ----------------------------------
+        public void Stop()
+        {
+            PrintingSpeed = 0;
+            if (EzGlobals.License.Type==License.LicenseType.LIC_Prep)
+            {
+            //  if (_SimuPrintThread!=null) 
+                    _SimuPrintRunning=false;
+            }
+            else
+            {
+                EzGlobals.EzInterface.SendCommand(EzGuiMsg.STOP_JOB);
+            }
+        }
+
+        //--- _SimuPrint ---------------------------
+    //  private Semaphore _ChecksDone;
+    //  private int _CheckedRecordNo;
+
+        private void _SimuPrint()
+        {
+            int recno;
+            int recCnt=EzGlobals.DataFile.RecordCnt;
+            EzGlobals.Events.Confirm();
+            recno=EZ_Diskread.diskread_get_recNo();
+            SRecordStatusMsg msg = new SRecordStatusMsg();
+            EzGlobals.Events.AddLog("printer.c", 21, "Job {0} Started at #{1}"+';'+EzGlobals.Job.FileName+';'+recno.ToString());
+            EzGlobals.PrinterStatus.JobState = EnJobState.JS_printing;
+            EzGlobals.DataFile.InitTest();
+            _SimuPrintRunning =true;
+            while(_SimuPrintRunning)
+            {
+                Thread.Sleep(_SimuPrintSleep);
+                msg.recordNo = EzGlobals.Job.NextRecNo;
+                msg.status   = EnRecordState.RS_done;
+                EzGlobals.DataFile.UpdateRecordStatus(msg);
+                EzGlobals.DataFile.ActualRecord = new DataRecord() { recordNo=msg.recordNo };
+
+                /*                
+                Console.WriteLine("_ChecksDone.Wait recNo={0}", msg.recordNo);
+                while(_CheckedRecordNo!=msg.recordNo)
+                    Thread.Sleep(10);
+//                _ChecksDone.WaitOne();
+                Console.WriteLine("_ChecksDone.OK");
+                */
+                
+                if (msg.recordNo==recCnt) _SimuPrintRunning=false;
+            }
+            //  _ChecksDone.Close();
+            EzGlobals.PrinterStatus.JobState = EnJobState.JS_off;
+            EzGlobals.HyperBoard.MachineSpeed    = 0;
+            recno=EZ_Diskread.diskread_get_recNo()-1;
+            if (recno>0) 
+            {
+                if (msg.recordNo==recCnt) EzGlobals.Events.AddError("printer.c", 24, "Job done");
+                else                      EzGlobals.Events.AddError("printer.c", 27, "Job aborted at #{0}"+';'+recno.ToString());
+            }
+            _SimuPrintThread = null;
+            LayoutTest = false;
+        }
+
+        /*
+        //--- LayoutCheckDone ---------------------------------------------------
+        public void LayoutCheckDone(int recordNo)
+        {
+            _CheckedRecordNo = recordNo;
+            Console.WriteLine("LayoutCheckDone recordNo={0}, _ChecksDone={1}", recordNo, _ChecksDone);
+            if (_ChecksDone!=null)
+            {                
+                _ChecksDone.Release();
+            }
+        }
+        */
+
+        //--- Property IsRunning ---------------------------------------
+        private bool _IsRunning=false;
+        public bool IsRunning
+        {
+            get { return _IsRunning; }
+            set { SetProperty(ref _IsRunning, value); }
+        }
+
+        //--- Property NextRecNo ---------------------------------------
+        private int _NextRecNo;
+        public int NextRecNo
+        {
+            get { return _NextRecNo; }
+            set 
+            {
+                if (value!=_NextRecNo || IsLoading)
+                {                    
+                    int next=value;
+                    int stepRepCnt=EzGlobals.Layout.StepRep.Rows * EzGlobals.Layout.StepRep.Columns;
+                    if (stepRepCnt>0) 
+                        next = 1+((next-1) / stepRepCnt) * stepRepCnt;
+                    if (SetProperty(ref _NextRecNo, next) || IsLoading)
+                    {
+                        IsChanged = true;
+
+                        EZ_Diskread.diskread_set_recNo(_NextRecNo);
+                        EZ_Diskread.diskread_set_speed((int)EzGlobals.HyperBoard.MachineSpeed, (int)EzGlobals.Job.PrintingSpeed);
+                        EzGlobals.DataFile.NextRecNo = next;
+                        if (EzGlobals.FileView!=null)
+                            GeBindable.Invoke(()=>EzGlobals.FileView.NextRecNo = _NextRecNo);                          
+                    }
+                }
+            }
+        }
+
+        //--- Property PrintingSpeed ---------------------------------------
+        private double _PrintingSpeed;
+        public double PrintingSpeed
+        {
+            get { return _PrintingSpeed; }
+            set { 
+                    SetProperty(ref _PrintingSpeed, value);
+                    double cnt=RecordCnt-_NextRecNo-1;
+                    if (cnt>0 && _PrintingSpeed>0)
+                        RemainingSec = (int) (3600.0*cnt / _PrintingSpeed);
+                    else RemainingSec=0;
+                }
+        }
+
+        //--- Property RemainingSec ---------------------------------------
+        private int _RemainingSec;
+        public int RemainingSec
+        {
+            get { return _RemainingSec; }
+            set { SetProperty(ref _RemainingSec, value); }
+        }
+
+        //--- Property MaxRecNo ---------------------------------------
+        private int _MaxRecNo;
+        public int MaxRecNo
+        {
+            get { return _MaxRecNo; }
+            set {   
+                    if (IsChanged |= SetProperty(ref _MaxRecNo, value) && FileType==EFileType.FT_COUNTER) RecordCnt=_MaxRecNo;
+                }
+        }
+
+        //--- Property RecordCnt ---------------------------------------
+        private int _RecordCnt;
+        public int RecordCnt
+        {
+            get { return _RecordCnt; }
+            set { IsChanged |= SetProperty(ref _RecordCnt, value); }
+        }
+
+    }
+}

@@ -1,0 +1,44 @@
+﻿<UserControl x:Class="Feedy.Views.UserControls.Progress"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:Feedy.Views.Main"
+             mc:Ignorable="d" 
+             d:DesignHeight="50" d:DesignWidth="250">
+
+    <Grid Height="30">
+
+        <ProgressBar Style="{DynamicResource EZ_ProgressBarStyle}"
+            Background="White"
+            Minimum="1"
+            Value="{Binding NextRecNo}"
+            Maximum="{Binding RecordCnt}"
+            HorizontalAlignment="Stretch" Height="20" Margin="0,0,10,0"
+            />
+        <!-- Value="{Binding NextRecNo}" -->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center"  HorizontalAlignment="Center">
+
+            <TextBlock Text="#" FontSize="{StaticResource FontSizeLarge}"                   
+                 Padding="10,0,0,0" />
+            <TextBlock Text="{Binding NextRecNo}" 
+                 Background="Transparent"
+                 FontSize="{StaticResource FontSizeLarge}"                   
+                 Padding="0,0,10,0" 
+                />
+
+            <TextBlock Text="{Binding NextRecNo, Converter={StaticResource Progress_Converter}}" 
+                 Background="Transparent"
+                 FontSize="{StaticResource FontSizeSmall}" 
+                 VerticalAlignment="Center" 
+                 HorizontalAlignment="Center"/>
+        </StackPanel>
+
+        <!-- ="{Binding RecordCnt, Converter={StaticResource Number_Converter}}" -->
+        <TextBlock Text="{Binding RecordCnt, Converter={StaticResource Number_Converter}}" 
+                   VerticalAlignment="Center" 
+                   FontSize="{StaticResource FontSizeSmall}" 
+                   HorizontalAlignment="Right"
+                   Margin="0,0,12,0"/>
+    </Grid>
+</UserControl>

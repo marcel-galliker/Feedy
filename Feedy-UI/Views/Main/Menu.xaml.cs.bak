@@ -1,0 +1,459 @@
+﻿using EZ_Editor.Models;
+using EZ_Editor.Models.Enums;
+using EZ_Editor.Services;
+using EZ_Editor.Utilities;
+using GE_Utilities;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+
+namespace EZ_Editor.Views.Main
+{
+    /// <summary>
+    /// Interaction logic for Menu.xaml
+    /// </summary>
+    public partial class Menu : UserControl
+    {
+        private EN_ScreenSize                   _ScreenSizeList = new EN_ScreenSize();
+        private Dictionary<string, MenuItem>    _MenuItem = new Dictionary<string, MenuItem>();
+        
+        private MenuItem                        _MenuMIC;
+        private IntPtr                          _hWndMIC;            
+
+        public Menu()
+        {
+            InitializeComponent();
+
+            EzGlobals.Menu = this;
+            EzGlobals.Events.PropertyChanged     += _Events_PropertyChanged;
+            EzGlobals.HyperBoard.PropertyChanged += HyperBoard_PropertyChanged;
+            EzGlobals.PrinterCfg.PropertyChanged += PrinterCfg_PropertyChanged;
+            EzGlobals.User.UserChanged           += _UserChanged;
+            EzGlobals.Language.LanguageChanged   += _Language;
+            EzGlobals.License.PropertyChanged    += _License_PropertyChanged;
+
+            POP_Power.Visibility = Visibility.Collapsed;
+            if (GeScreen.IsTouch)
+            {
+                BN_Power.Visibility      = Visibility.Visible;
+                TB_ScreenSize.Visibility = Visibility.Collapsed;
+                CB_ScreenSize.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                BN_Power.Visibility      = Visibility.Collapsed;
+                TB_ScreenSize.Visibility = Visibility.Visible;
+                CB_ScreenSize.Visibility = Visibility.Visible;
+            }
+        }
+
+        //--- _Language ----------------------------------------------
+        private void _Language()
+        {
+            foreach(var item in _MenuItem)
+            {
+                if (item.Value.Id=="User")
+                        item.Value.Text = EzGlobals.User.Name;
+                else item.Value.Text = EzGlobals.Language.GetText(item.Value.Id);
+            }
+        }
+
+        //--- PrinterCfg_PropertyChanged ------------------------------
+        private void PrinterCfg_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="HeadType")
+            {
+                switch(EzGlobals.PrinterCfg.HeadType)
+                {
+                    case EzDef.EPrintHeadType.Norwix_PC22: 
+                        _MenuItem["Ink System"].View = EzGlobals.MainWindow.PC22_InkSystemView;
+                        _MenuItem["Ink System"].Visibility= Visibility.Visible;
+                        break;
+
+                    case EzDef.EPrintHeadType.Videojet_BX: 
+                        _MenuItem["Ink System"].View = EzGlobals.MainWindow.BX_InkSystemView;
+                        _MenuItem["Ink System"].Visibility= Visibility.Visible;
+                        break;
+
+                    case EzDef.EPrintHeadType.Zebra_ZE511:
+                        _MenuItem["Ink System"].Visibility= Visibility.Collapsed;
+                        break;
+
+                    default: 
+                        _MenuItem["Ink System"].View = EzGlobals.MainWindow.InkSystemView;
+                        _MenuItem["Ink System"].Visibility= Visibility.Visible;
+                        break;
+
+                }
+            }
+        }
+
+        //--- _License_PropertyChanged -----------------------------------------
+        private void _License_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="Cam")
+            {
+                MenuItem test = _MenuItem["Camera"];
+                test.Visibility = EzGlobals.License.Cam? Visibility.Visible:Visibility.Collapsed;
+            }
+        }
+
+        //--- _PrinterConnectedChanged -----------------------------
+        private void _PrinterConnectedChanged()
+        {
+            bool connected = EzGlobals.EzInterface.Connected;
+            if (EzGlobals.License.Type!=License.LicenseType.LIC_Printer) connected=true;
+
+            _MenuItem["Job"].Off        = !connected;
+            _MenuItem["Layout"].Off     = !connected;
+            _MenuItem["File"].Off       = !connected;
+            _MenuItem["Events"].Off     = !connected;
+            _MenuItem["Log"].Off        = !connected;
+        //    _MenuItem["Production"].Off = !connected;
+            _MenuItem["Printer"].Off    = !connected;
+            _setInkSystemIcon();
+        }
+        
+        //--- _setInkSystemIcon ----------------------------------------
+        private void _setInkSystemIcon()
+        {
+            /*
+            if (EzGlobals.Settings.Demo)
+                _MenuItem["Ink System"].Off = false;
+            else
+            */
+            _MenuItem["Ink System"].Off = !EzGlobals.HyperBoard.Connected || !EzGlobals.EzInterface.Connected;
+        }
+
+        //--- Events_PropertyChanged ------------------------------
+        private void _Events_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="Type") 
+                _EventTypeChanged();
+        }
+
+        //--- EzInterface_PropertyChanged ---------------------------------------------
+        private void EzInterface_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Connected") _PrinterConnectedChanged();
+        }
+
+        //--- HyperBoard_PropertyChanged ------------------------------------------------------------
+        private void HyperBoard_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Connected") _setInkSystemIcon();
+        }
+
+        //--- MenuBar_Loaded --------------------------
+        private void MenuBar_Loaded(object sender, RoutedEventArgs e)
+        {
+            _MenuItem.Add("Job",        new MenuItem()
+                                        {
+                                            Group=0,
+                                            Id="Job",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.TicketOutline, 
+                                            View=EzGlobals.MainWindow.JobView,
+                                            OnClick=_CheckMenu 
+                                        });
+            _MenuItem.Add("Ink System",  new MenuItem()
+                                        { 
+                                            Group= 0,
+                                            Id="Ink System",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.BottleTonic, 
+                                            View=EzGlobals.MainWindow.InkSystemView,
+                                            Visibility=Visibility.Collapsed,
+                                            OnClick=_CheckMenu 
+                                        });
+            _MenuItem.Add("Layout",     new MenuItem()
+                                        {
+                                            Group=0,
+                                            Id="Layout",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileDocumentEditOutline, 
+                                            View=EzGlobals.MainWindow.LayoutView,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("File",       new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="File",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileDocumentOutline, 
+                                            View=EzGlobals.MainWindow.FileView,
+                                            OnClick=_CheckMenu 
+                                        });
+            _MenuItem.Add("Transfer",   new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Transfer",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.ArrowLeftRightBoldOutline, 
+                                            View=EzGlobals.MainWindow.FileTransferView,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("Events",     new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Events",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FormatListBulleted, 
+                                            View=EzGlobals.MainWindow.EventsView,
+                                            OnClick=_CheckMenu 
+                                        });
+            _MenuItem.Add("Log",     new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Log",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileEyeOutline, 
+                                            View=EzGlobals.MainWindow.LogView,
+                                            OnClick=_CheckMenu 
+                                        });
+            /*
+            _MenuItem.Add("Production", new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Production",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.ChartLine, 
+                                            View=EzGlobals.MainWindow.ProductionView,
+                                            OnClick=_CheckMenu 
+                                        });
+            */
+            _MenuItem.Add("Printer",    new MenuItem()
+                                        { 
+                                            Group= 1,
+                                            Id="Printer",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.Printer, 
+                                            View=EzGlobals.MainWindow.PrinterView,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("Camera",     new MenuItem()                                        
+                                        { 
+                                            Group= 1,
+                                            Id="Camera",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.VideoOutline, 
+                                            View=EzGlobals.MainWindow.CamView,
+                                            Visibility=Visibility.Collapsed,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("Settings",   new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Settings",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.CogOutline, 
+                                            View=EzGlobals.MainWindow.SettingsView,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("User",       new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="User",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.CogOutline, 
+                                            Control = new UserType(),
+                                            OnClick=User_Clicked 
+                                        });
+
+            _hWndMIC=GeWin.FindWindow(EzGlobals.EditorGT_name);
+
+            if (((int)_hWndMIC)!=0)
+            {
+                _MenuMIC = new MenuItem     {
+                                                Group=2,
+                                                Id="MIC",
+                                                Text="GT MIC",
+                                                Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.None,
+                                                Image=new BitmapImage(new Uri("..\\..\\Resources\\Images\\GT.ico", UriKind.Relative)),
+                                                Control = new UserType(),
+                                                OnClick=_GotoMic 
+                                            };
+
+                Grid.SetRow(_MenuMIC, 2);
+                Grid.SetColumnSpan(_MenuMIC, 2);
+                MenuGrid.Children.Add(_MenuMIC);
+            }
+            else if (_MenuMIC!=null) _MenuMIC.Visibility = Visibility.Collapsed;
+
+            _Language();
+
+            //--- group 0 -----------------------------
+            foreach(var item in _MenuItem)
+            {
+                if ((item.Value as MenuItem).Group==0)
+                    MenuBar.Children.Add(item.Value);
+            }
+
+            //--- group 1 ---------------------
+            System.Windows.Shapes.Rectangle rect=new System.Windows.Shapes.Rectangle() { Width=200, Height=1, Fill=Brushes.Gray };
+
+            MenuBar.Children.Add(rect);
+            
+            foreach(var item in _MenuItem)
+            {
+                if ((item.Value as MenuItem).Group==1)
+                    MenuBar.Children.Add(item.Value);
+            }
+
+            CB_ScreenSize.SelectedIndex = 0;
+            CB_ScreenSize.DataContext   = this;
+            CB_ScreenSize.ItemsSource   = _ScreenSizeList;
+
+          //  CB_UserType.DataContext     = EzGlobals.User;
+          //  CB_UserType.ItemsSource     = new EN_UserTypeList();
+
+            EzGlobals.EzInterface.PropertyChanged += EzInterface_PropertyChanged;
+            _PrinterConnectedChanged();
+            _setInkSystemIcon();
+            _UserChanged();
+            _CheckMenu("Job");
+            _CheckMenu("File");
+
+            if (EzGlobals.License.Type==License.LicenseType.LIC_Prep)
+            {
+                _MenuItem["Ink System"].Visibility = Visibility.Collapsed;
+                _MenuItem["Events"    ].Visibility = Visibility.Collapsed;
+                _MenuItem["Log"       ].Visibility = Visibility.Collapsed;
+                if (EzGlobals.EzArgs.MIC) _MenuItem["Transfer"  ].Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                _MenuItem["Transfer"  ].Visibility = Visibility.Collapsed;                
+            }
+        }
+
+        //--- _CheckMenu ------------------
+        private void _CheckMenu(string name)
+        {
+            int group=_MenuItem[name].Group;
+            foreach(var item in _MenuItem)
+            {
+                if (item.Value.View!=null)
+                {
+                    if (item.Value.Group==group)
+                    {
+                        if (item.Key.Equals(name))
+                        {
+                            item.Value.IsChecked = true;
+                            item.Value.View.Visibility = Visibility.Visible;
+                        }
+                        else
+                        {
+                            item.Value.IsChecked = false;
+                            item.Value.View.Visibility = Visibility.Collapsed;
+                        }
+                    }
+                }
+            }
+            _setInkSystemIcon();
+        }
+
+        //--- _GotoMic ----------------------
+        private void _GotoMic(string name)
+        {
+            GeWin.SetForegroundWindow(_hWndMIC);
+        }
+
+        //--- Property IsExpanded ---------------------------------------
+        private bool _IsExpanded=false;
+        public bool IsExpanded
+        {
+            get { return _IsExpanded; }
+            set {
+                    if (value!=_IsExpanded)
+                    {
+                        var col = ColDef;
+                        _IsExpanded = value;
+                        if (_IsExpanded) col.Width = new GridLength(0);
+                        else col.Width = GridLength.Auto;
+                }
+            }
+        }
+
+        //--- _EventTypeChanged ------------------------------------
+        private void _EventTypeChanged()
+        {
+            switch(EzGlobals.Events.Type)
+            {
+                case ENEventType.warn: _MenuItem["Events"].SetIconColor(Brushes.Orange); break;
+                case ENEventType.err:  _MenuItem["Events"].SetIconColor(Brushes.Red); break;
+                default: _MenuItem["Events"].UpdateIconColor(); break;
+            }
+        }
+
+        //--- CB_ScreenSize_SelectionChanged -----------------------------------
+        private void CB_UserType_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+         //   EzGlobals.User.Type = (EN_UserType)CB_UserType.SelectedValue;
+        }
+
+        //--- _UserChanged ---------------------------------------------------
+        private void _UserChanged()
+        {
+            _MenuItem["User"].Text = EzGlobals.User.Name;
+            _MenuItem["User"].Kind = EzGlobals.User.Icon;
+        }
+
+        //--- CB_ScreenSize_SelectionChanged -----------------------------------
+        private bool _first=true;
+        private void CB_ScreenSize_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!_first)
+            {
+                if (CB_ScreenSize.SelectedIndex==0)
+                {
+                    EzGlobals.MainWindow.WindowState = WindowState.Maximized;
+                }
+                else
+                {
+                    var item = (CB_ScreenSize.SelectedItem) as GeEnum<int>;
+                    EzGlobals.MainWindow.WindowState = WindowState.Normal;
+                    EzGlobals.MainWindow.Width = item.Value >> 16;
+                    EzGlobals.MainWindow.Height = item.Value & 0xffff;
+                }
+            }
+            _first =false;
+        }
+
+        //--- User_Clicked ---------------------------------------
+        private void User_Clicked(string name)
+        {
+            _MenuItem["User"].Control.IsOpen = true;
+        }
+
+        //--- Power_Clicked ---------------------------------------
+        private bool _Power_MouseOver = false;
+        private void Power_Clicked(object sender, RoutedEventArgs e)
+        {
+            POP_Power.Visibility = Visibility.Visible;
+            _Power_MouseOver = false;
+            GeBindable.InvokeDelayed(1000, () => { if (!_Power_MouseOver) POP_Power.Visibility = Visibility.Collapsed;});
+        }
+
+        //--- Power_MouseEnter ----
+        private void Power_MouseEnter(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            _Power_MouseOver = true;
+        }
+
+        // Power_MouseLeave
+        private void Power_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            POP_Power.Visibility = Visibility.Collapsed;
+        }
+
+        //--- ShutDown_Clicked ----------------------------------
+        private void ShutDown_Clicked(object sender, RoutedEventArgs e)
+        {
+            Process.Start("shutdown", "/s /t 0");
+        }
+
+        //--- Restart_Clicked ----------------------------------
+        private void Restart_Clicked(object sender, RoutedEventArgs e)
+        {
+            Process.Start("shutdown", "/r /t 0");
+        }
+    }
+}

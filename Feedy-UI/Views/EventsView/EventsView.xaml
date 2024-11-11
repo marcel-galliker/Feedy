@@ -1,0 +1,71 @@
+﻿<UserControl x:Class="Feedy.Views.EventsView.EventsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:Feedy.Views.EventsView"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+   
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="{StaticResource HeaderHeight}"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- header _______________________________________________________________________-->
+        <Grid Grid.Row="0"  Background="{StaticResource View.Header.Background.Brush}">
+            <Grid Margin="0,5">
+                <StackPanel Orientation="Horizontal">
+                    <iconPacks:PackIconMaterial Kind="FormatListBulleted" 
+                                                VerticalAlignment="Center" 
+                                                Margin="10,0"
+                                                Height="30" Width="30"/>
+                    <TextBlock x:Name="TB_Events"  Text="Events" FontSize="{StaticResource FontSizeLarge}" VerticalAlignment="Center"/>
+
+                    <Button Style="{DynamicResource RoundButton}" Click="Confirm_Clicked">
+                        <iconPacks:PackIconMaterial Kind="Check" />
+                    </Button>                
+                </StackPanel>
+            <!--    <TextBlock x:Name="TB_Count" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Count}" Margin="10"/> -->
+            </Grid>
+        </Grid>
+
+        <!-- file __________________________________________________________________________-->
+        <DataGrid x:Name="EventsGrid" 
+                  Grid.Row="1"
+                  ColumnHeaderStyle="{DynamicResource DataGridColumnHeaderStyle1}" 
+                  CellStyle="{DynamicResource DataGridCellStyle0}"
+                  GridLinesVisibility="Vertical"
+                  VerticalGridLinesBrush="LightGray"
+                  AutoGenerateColumns="False"
+                  AlternationCount="2"
+                  AlternatingRowBackground="{StaticResource DataGrid.Brush.AlternateRow}"
+                  CanUserAddRows="False"
+                  CanUserDeleteRows="False"
+                  CanUserSortColumns="False"
+                  HorizontalAlignment="Left"
+                  FrozenColumnCount="2"
+                  SelectionMode="Single"
+                  MinWidth="200"
+                  BorderThickness="0"
+                  >
+            <DataGrid.Columns>
+                <DataGridTemplateColumn Header="">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <iconPacks:PackIconMaterial 
+                                    Kind="{Binding Type, Converter={StaticResource EventIconType_Converter}}"
+                                    Foreground="{Binding Type, Converter={StaticResource EventIconColor_Converter}}"/>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+                <DataGridTextColumn x:Name="Col_Time"    Header="Time" Binding="{ Binding Time}" IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="Col_Error"   Header="Error" Binding="{ Binding ErrNo}" IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="Col_Message" Header="Message" Binding="{ Binding Msg}" IsReadOnly="True"/>
+                <DataGridTextColumn x:Name="Col_Info"    Header="Info" Binding="{ Binding FileLine}" IsReadOnly="True"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>

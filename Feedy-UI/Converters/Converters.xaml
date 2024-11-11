@@ -1,0 +1,23 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:converters="clr-namespace:Feedy.Converters" >
+
+    <converters:bool2Visibility_Converter   x:Key="bool2Visibility_Converter"/>
+    <converters:bool2Invisibility_Converter x:Key="bool2Invisibility_Converter"/>
+    <converters:bool2Hide_Converter         x:Key="bool2Hide_Converter"/>
+    <converters:bool2YesNo_Converter        x:Key="bool2YesNo_Converter"/>
+    <converters:Dist_Converter              x:Key="Dist_Converter"/>
+    <converters:EventIconType_Converter     x:Key="EventIconType_Converter"/>
+    <converters:EventIconColor_Converter    x:Key="EventIconColor_Converter"/>
+    <converters:Filetime2String_Converter   x:Key="Filetime2String_Converter"/>
+    <converters:HeaterColor_Converter       x:Key="HeaterColor_Converter"/>
+    <converters:JobState_Converter          x:Key="JobState_Converter"/>
+    <converters:JobStateBusy_Converter      x:Key="JobStateBusy_Converter"/>
+    <converters:MachineSpeed_Converter      x:Key="MachineSpeed_Converter"/>
+    <converters:Number_Converter            x:Key="Number_Converter"/>
+    <converters:PrintingSpeed_Converter     x:Key="PrintingSpeed_Converter"/>
+    <converters:Progress_Converter          x:Key="Progress_Converter"/>
+    <converters:RemainingTime_Converter     x:Key="RemainingTime_Converter"/>
+    <converters:ValveStatus_Converter       x:Key="ValveStatus_Converter"/>
+
+</ResourceDictionary>

@@ -1,0 +1,240 @@
+﻿using EZ_Editor.DLL;
+using EZ_Editor.Services;
+using EZ_Lic.DLL;
+using GE_Utilities;
+using System;
+using System.IO;
+using static EZ_Editor.Services.EzDef;
+
+namespace EZ_Editor.Models
+{
+
+    public class License : GeBindable
+    {
+        private string _PWD_Supervisor_Default = "user";
+        private string _PWD_Service_Default = "all";
+
+        public enum LicenseType
+        {
+            LIC_undef,
+            LIC_DEMO,
+            LIC_Prep,
+            LIC_Printer,
+        }
+
+        //--- Constructor -----------------
+        public License()
+        {
+            _PWD_Service = "SuperSecret";
+            if (EzGlobals.EzArgs.Prep) Type = LicenseType.LIC_Prep;
+        //    else if (EzGlobals.EzArgs.Demo) Type = LicenseType.LIC_DEMO;
+        }
+
+        //--- Update ------------------------------------
+        public void Update(byte[] crypt, int len)
+        {
+        	EzTrace.WriteLine("License.update");
+
+            byte[] buffer    = new byte[256];
+            int buflen = EzCrypt.decrypt(crypt, len, buffer, buffer.Length);
+            SLicense lic;
+            len = GeStructConvert.ToStruct(out lic, buffer);
+            if (lic.check==111353)
+            {
+                Type = LicenseType.LIC_Printer;
+                Cam            = (lic.flags & LicFlag_cam) !=0;
+            //  InkRFID        = (lic.flags & LicFlag_inkRFID)!=0;
+                StepRep         = (lic.flags & LicFlag_stepRep)!=0;
+                FeragBox        = (lic.flags & LicFlag_feragBox)!=0;
+                PWD_Supervisor  = lic.pwd_supervisor;
+				PWD_Service     = lic.pwd_service;
+                HeadType        = lic.headType;
+                HeadCnt         = lic.headCnt;
+
+                DateTime thisDate = new DateTime(lic.expYear, lic.expMonth, lic.expDay);
+                
+                Expires  = thisDate.ToString("d"); 
+                // CultureInfo culture = new CultureInfo("pt-BR");
+                // Expires = thisDate.ToString("d", culture);
+            }
+            else
+            {
+            	EzTrace.WriteLine("Got License with invalid check");
+                EzGlobals.Events.AddError(0, string.Format("Got License with invalid check"));
+            }
+        }
+
+        //--- Property HeadType ---------------------------------------
+        private EPrintHeadType _HeadType;
+        public EPrintHeadType HeadType
+        {
+            get { return _HeadType; }
+            set { SetProperty(ref _HeadType, value); }
+        }
+
+        //--- Property HeadCnt ---------------------------------------
+        private int _HeadCnt;
+        public int HeadCnt
+        {
+            get { return _HeadCnt; }
+            set { SetProperty(ref _HeadCnt, value); }
+        }
+
+        //--- Property Cam ---------------------------------------
+        private bool _Cam;
+        public bool Cam
+        {
+            get { return _Cam; }
+            set { SetProperty(ref _Cam, value); }
+        }
+
+        //--- Property StepRep ---------------------------------------
+        private bool _StepRep;
+        public bool StepRep
+        {
+            get { return _StepRep; }
+            set { SetProperty(ref _StepRep, value); }
+        }
+
+        //--- Property FeragBox ---------------------------------------
+        private bool _FeragBox;
+        public bool FeragBox
+        {
+            get { return _FeragBox; }
+            set { SetProperty(ref _FeragBox, value); }
+        }
+
+        /*
+        //--- Property TCP_Protocol ---------------------------------------
+        private ETcpProtocol _TCP_Protocol;
+        public ETcpProtocol TCP_Protocol
+        {
+            get { return _TCP_Protocol; }
+            set { SetProperty(ref _TCP_Protocol, value); }
+        }
+        */
+
+        //--- Property PWD_Supervisor ---------------------------------------
+        private string _PWD_Supervisor;
+        public string PWD_Supervisor
+        {
+            get { return _PWD_Supervisor; }
+            set {   if (value==null || value=="")  SetProperty(ref _PWD_Supervisor, _PWD_Supervisor_Default);
+                    else                           SetProperty(ref _PWD_Supervisor, value); 
+                }
+        }
+
+        //--- Property PWD_Service ---------------------------------------
+        private string _PWD_Service;
+        public string PWD_Service
+        {
+            get { return _PWD_Service; }
+            set {   if (value==null || value=="")  SetProperty(ref _PWD_Service, _PWD_Service_Default);
+                    else                           SetProperty(ref _PWD_Service, value); 
+                }
+        }
+
+        //--- Property Expires ---------------------------------------
+        private string _Expires;
+        public string Expires
+        {
+            get { return _Expires; }
+            set { SetProperty(ref _Expires, value); }
+        }
+
+        //--- Property Type ---------------------------------------
+        private LicenseType _Type;
+        public LicenseType Type
+        {
+            get { return _Type; }
+            set { 
+                    if(SetProperty(ref _Type, value))
+                    {
+                        switch (_Type)
+                        {
+                            case LicenseType.LIC_DEMO:  
+                                                        string cfgpath= EzGlobals.License.SettingsDir+"Printer.xml";
+                                                        SPrinterCfg printerCfg = EzGlobals.PrinterCfg.GetPrinterCfg();
+                                                        EZ_Xml.xml_printer_cfg(cfgpath, ref printerCfg, EZ_Xml.EN_Xml_Action.READ);
+                                                        EzGlobals.PrinterCfg.Update(printerCfg);
+                                                        
+                                                        HeadType      = EzGlobals.PrinterCfg.HeadType;
+                                                        HeadCnt       = EzGlobals.PrinterCfg.HeadCnt;
+                                                        Expires="never";
+                                                        break;
+
+                            case LicenseType.LIC_Prep:  try
+                                                        {
+                                                            HeadType = EzGlobals.EzArgs.HeadType;
+                                                            PrintHead ph=new PrintHead();
+                                                            ph.HeadType= EzGlobals.EzArgs.HeadType;
+                                                            HeadCnt  = ph.MaxHeads;
+                                                            PWD_Supervisor = "user";
+                                                            PWD_Service    = "all";
+                                                        }
+                                                        catch(Exception) 
+                                                        {
+                                                            HeadType = EPrintHeadType.EZ_54;
+                                                            HeadCnt  = 1;        
+                                                        }       
+                                                        break;
+
+                            default: EzGlobals.EzInterface.SendCommand(EzGuiMsg.LOAD_PRINTER_CFG);
+                            break;
+                        }
+                    }                    
+                }
+        }
+
+        //--- RootDir ------------------
+        public string RootDir
+        {
+            get 
+            { 
+                string dir;
+                string ipAddr = "";
+                if (EzGlobals.EzArgs.EditorGT || EzGlobals.EzArgs.Prep)
+                {
+                    if (EzGlobals.EzArgs.EditorGT) dir = "D:\\EditorGT\\user";
+                    else dir = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                    if (EzGlobals.EzArgs.IpAddr!=null && !EzGlobals.EzArgs.IpAddr.ToLower().Contains("localhost")) 
+                        ipAddr = " - "+EzGlobals.EzArgs.IpAddr;
+                    dir = dir + Path.DirectorySeparatorChar 
+                                + "EZ-Editor"
+                                + ipAddr
+                                + Path.DirectorySeparatorChar;
+                }
+                else
+                {
+                    dir=EzGlobals.Settings.EzEditorDir;
+                }
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                return dir;
+            }
+        }
+
+        //--- Property SettingsDir ---------------------------------------
+        public string SettingsDir
+        {
+            get 
+            { 
+                string dir = RootDir + "Settings";
+                if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
+                return dir + Path.DirectorySeparatorChar;
+            }
+        }
+
+       //--- Property JobsDir ---------------------------------------
+        public string JobsDir
+        {
+            get 
+            { 
+                string dir = RootDir + "Jobs" + Path.DirectorySeparatorChar;
+                if (!Directory.Exists(dir)) 
+                    Directory.CreateDirectory(dir);
+                return dir;
+            }
+        }
+
+    }
+}

@@ -1,0 +1,122 @@
+﻿using EZ_Editor.Models;
+using GE_Utilities;
+using System.Windows;
+using System.Windows.Controls;
+
+namespace EZ_Editor
+{
+    /// <summary>
+    /// Interaktionslogik für MainWindow.xaml
+    /// </summary>
+    public partial class MainWindow : Window
+    {
+        public MainWindow()
+        {
+            InitializeComponent();
+            GeTrace.WriteLine("TEST");
+            if (GeScreen.IsTouch) this.WindowStyle = WindowStyle.None;
+            EzGlobals.MainWindow  = this;
+            GeBindable.Dispatcher = Dispatcher;
+            EzGlobals.EzInterface.PropertyChanged += EzInterface_PropertyChanged;
+            EzGlobals.License.PropertyChanged     += License_PropertyChanged;
+            _show_connected();
+      //      EzGlobals.Job.LoadLastJob();
+            if (EzGlobals.EzArgs.IpAddr!=null) Title = "EZ-Editor " + EzGlobals.EzArgs.IpAddr;
+            else Title = "EZ-Editor";
+        }
+
+        //--- License_PropertyChanged -------------------------------------
+        private void License_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+        //  if (EzGlobals.Settings.Demo) _show_connected();
+        }
+
+        //--- EzInterface_PropertyChanged --------------------------------------
+        private void EzInterface_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Connected") _show_connected();
+        }
+
+        //--- _show_connected -------------------------------------
+        private void _show_connected()
+        {
+            if (EzGlobals.License.Type==License.LicenseType.LIC_Printer && !EzGlobals.EzInterface.Connected)
+                TX_NotConnected.Visibility = System.Windows.Visibility.Visible;
+            else 
+                TX_NotConnected.Visibility = System.Windows.Visibility.Collapsed;
+        }
+        //--- Property MainView ---------------------------------------
+        public UserControl MainView
+        {
+            get { return _MainView.Child as UserControl;}
+            set { _MainView.Child = value;}
+        }
+
+        //--- Property ShowBottomRow ---------------------------------------
+        private bool _ShowBottomRow=true;
+        private GridLength _Row1Height, _Row2Height;
+        public bool ShowBottomRow
+        {
+            get { return _ShowBottomRow; }
+            set { 
+                    if (_ShowBottomRow!=value)
+                    {
+                        _ShowBottomRow = value;
+                        if (_ShowBottomRow)
+                        {
+                            Row1.Height = _Row1Height;
+                            Row2.Height = _Row2Height;
+                        }
+                        else
+                        {
+                            _Row1Height = Row1.Height;
+                            _Row2Height = Row2.Height;
+                            Row1.Height = Row2.Height = new GridLength(0);
+                        }
+                    }
+                }
+        }
+
+        //--- RowExpander_Expanded ------------------------------
+        private void RowExpander_Expanded(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.MainWindow.ShowBottomRow=false;
+        }
+
+        //--- RowExpander_Collapsed ---------------------------------------
+        private void RowExpander_Collapsed(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.MainWindow.ShowBottomRow = true;
+        }
+
+        //--- Window_Closing ---------------------
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            /*
+            if (EzGlobals.Settings.Demo)
+            {
+                EzGlobals.Job.Stop();
+            }
+            */
+        }
+
+        //--- Window_Loaded ---------------------
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            GeScreen.RemoveSysMenu(this);
+        }
+
+        private void Window_IsVisibleChanged(object sender, DependencyPropertyChangedEventArgs e)
+        {
+        //    if ((bool)e.NewValue) EzGlobals.GeTrace.Write("MainWindow Visible");
+        }
+
+        //--- Window_Closed -------------------------------------
+        private void Window_Closed(object sender, System.EventArgs e)
+        {
+            EzGlobals.EzInterface.ShutDown();
+            ProductionView.ShutDown();
+        //    EzGlobals.GeTrace.EndTrace();
+        }
+    }
+}

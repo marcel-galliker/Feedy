@@ -1,0 +1,262 @@
+﻿using EZ_Editor.Converters;
+using EZ_Editor.Models;
+using EZ_Editor.Models.Enums;
+using GE_Utilities;
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Security.Cryptography;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+
+namespace EZ_Editor.Views.JobView
+{
+
+    //--- Filename_Converter --------------------------------------
+    public class Filename_Converter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return Path.GetFileName(value as String);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    //--- Folder_Converter ----------------------------------------
+    public class Folder_Converter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return Path.GetDirectoryName(value as String);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    /// <summary>
+    /// Interaction logic for JobView.xaml
+    /// </summary>
+    public partial class JobView : UserControl
+    {
+        //--- JobView ------------------------------------------------------------
+        public JobView()
+        {
+            InitializeComponent();
+
+            DataContext                     = EzGlobals.Job;
+            OC_PrintGoDistance.DataContext  = EzGlobals.PrinterStatus;
+            OC_SortDistMM.DataContext       = EzGlobals.PrinterStatus;
+            OC_CamTriggerDistMM.DataContext = EzGlobals.PrinterStatus;
+            BC_SortField.ItemsSource        = EzGlobals.DataFile.GetFieldsList(-1);
+            BC_KeyField.ItemsSource         = EzGlobals.DataFile.GetFieldsList(-1);
+            CB_AutoPD.ItemsSource           = new EN_AutoPD();
+            CB_SortLength.ItemsSource       = new EN_SortLength();
+            CB_CamTriggerLength.ItemsSource = new EN_SortLength();
+            EzGlobals.Job.PropertyChanged        += _Job_PropertyChanged;
+            EzGlobals.DataFile.PropertyChanged   += _DataFile_PropertyChanged;
+            EzGlobals.PrinterCfg.PropertyChanged += _PrinterCfg_PropertyChanged;
+            EzGlobals.License.PropertyChanged    += _License_PropertyChanged;
+            EzGlobals.Layout.PropertyChanged     += _Layout_PropertyChanged;
+            EzGlobals.Language.LanguageChanged   += _Language;
+            EzGlobals.User.UserChanged           += _UserChanged;
+            _SetVisibility();
+            _Language();
+            _UserChanged();
+            _FileTypeChanged();
+            _Rotate180Changed();
+            RowCamera.Height                = new GridLength(0);
+
+            TB_PrintGoDistance. Bind(EzGlobals.Job, "PrintGoDistance");
+            TB_SortDistMM.      Bind(EzGlobals.Job, "SortDistMM");
+            TB_CamTriggerDistMM.Bind(EzGlobals.Job, "CamTriggerDistMM");
+            NB_MACHINE_END.     Bind(EzGlobals.Job, "MachineLength");
+            TB_LabelWidth.      Bind(EzGlobals.Layout,  "WidthMM");
+        }
+        
+        //--- _Layout_PropertyChanged ----------------------------------
+        private void _Layout_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName =="Rotate180") _Rotate180Changed();
+        }
+
+        //--- _Job_PropertyChanged --------------------------------
+        private void _Job_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="FileType") _FileTypeChanged();
+        }
+
+        //--- _Language ----------------------------------------------
+        private void _Language()
+        {
+            TB_Job.Text         = EzGlobals.Language.GetText("TB_Job");
+            TB_Description.Text = EzGlobals.Language.GetText("TB_Description");
+            TB_DataType.Text    = EzGlobals.Language.GetText("TB_DataType");
+            TB_DataFile.Text    = EzGlobals.Language.GetText("TB_DataFile");
+            TB_CounterMax.Text  = EzGlobals.Language.GetText("TB_CounterMax");
+            TB_NextRecord.Text  = EzGlobals.Language.GetText("TB_NextRecord");
+            TB_KeyField.Text    = TB_SortField.Text = EzGlobals.Language.GetText("TB_KeyField");
+            TB_ProductDt.Text   = EzGlobals.Language.GetText("TB_ProductDt");
+            TB_SortDist.Text    = EzGlobals.Language.GetText("TB_SortDist");
+            TB_PG_PG_Dist.Text  = EzGlobals.Language.GetText("TB_PG_PG_Dist");
+            TB_PD_PG_Dist.Text  = EzGlobals.Language.GetText("TB_PD_PG_Dist");
+            TB_CamTriggerDist.Text= EzGlobals.Language.GetText("TB_CamTriggerDist");
+
+            int idx = CB_AutoPD.SelectedIndex;
+            CB_AutoPD.ItemsSource = new EN_AutoPD();
+            CB_AutoPD.SelectedIndex=idx;
+        }
+
+        //--- _UserChanged ------------------------------------
+        private void _UserChanged()
+        {
+            TB_Description.IsEnabled = EzGlobals.User.Enabled;
+            GRID_DataType.IsEnabled  = EzGlobals.User.Enabled;
+            BC_KeyField.IsEnabled    = EzGlobals.User.Enabled;
+            CB_AutoPD.IsEnabled      = EzGlobals.User.Enabled;
+            CB_SortLength.IsEnabled  = EzGlobals.User.Enabled;
+            SP_SortSize.IsEnabled    = EzGlobals.User.Enabled;
+            CB_CamTriggerLength.IsEnabled  = EzGlobals.User.Enabled;
+        }
+
+        //--- UserControl_Loaded -----------------------------------------
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            GeBindable.InvokeDelayed(2000, ()=>EzGlobals.Job.LoadLastJob());
+        }
+
+        //--- _DataFile_PropertyChanged ------------------------
+        private void _DataFile_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="FieldNames")
+            {
+                BC_SortField.ItemsSource    = EzGlobals.DataFile.GetFieldsList(-1);
+                BC_KeyField.ItemsSource     = EzGlobals.DataFile.GetFieldsList(-1);
+            }
+        }
+
+        //--- _PrinterCfg_PropertyChanged ------------------------------------------------
+        private void _PrinterCfg_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="HeadType") _SetVisibility();
+        }
+
+        //--- _License_PropertyChanged ---------------------------------------------------
+        private void _License_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName=="Cam") _SetVisibility();
+            {
+            //    RowCamera.Height = EzGlobals.License.Cam? GridLength.Auto : new GridLength(0);
+            }
+        }
+
+        //--- _SetVisibility -------------------------------------------------
+        private void _SetVisibility()
+        {
+            GridLength height=GridLength.Auto;
+            /*
+            if (EzGlobals.PrinterCfg.HeadType==Services.EzDef.EPrintHeadType.Norwix_PC22)
+            {
+                height=new GridLength(0);
+            }
+            */
+            for (int row=Grid.GetRow(DISTANCE_SEP); row<JobGrid.RowDefinitions.Count; row++)
+            {
+                if (JobGrid.RowDefinitions[row].Name!="RowCamera")
+                    JobGrid.RowDefinitions[row].Height = height;
+            }
+            RowCamera.Height = EzGlobals.License.Cam? GridLength.Auto : new GridLength(0);
+        }
+
+        //--- _FileTypeChanged ------------------------------------
+        private void _FileTypeChanged()
+        {
+            JobState_Converter converter = new JobState_Converter();
+            bool printing=(bool)converter.Convert(EzGlobals.PrinterStatus.JobState, typeof(bool), null, null);
+            if (EzGlobals.Job.FileType==Services.EzDef.EFileType.FT_COUNTER)
+            {
+                RB_Counter.IsChecked    = true;
+                RowCounter.Height       = GridLength.Auto;
+                RowDataFolder.Height    = new GridLength(0);
+                RowDataFile.Height      = new GridLength(0);
+                SP_SortField.Visibility = Visibility.Collapsed;
+                SP_SortSize.Visibility  = Visibility.Visible;
+            }
+            else
+            {
+                RB_DataFile.IsChecked   = true;   
+                RowCounter.Height       = new GridLength(0);
+                RowDataFile.Height      = GridLength.Auto;
+                SP_SortSize.Visibility  = Visibility.Collapsed;
+                SP_SortField.Visibility = Visibility.Visible; 
+            }
+            SP_ReadPrintField.Visibility    = EzGlobals.License.Cam? Visibility.Visible: Visibility.Collapsed;
+        }
+
+        //--- Datafile_PreviewMouseDown ---------------------------------------
+        private void Datafile_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            EzGlobals.DataFile.LoadFiles(DataFilesLoaded);
+        }
+
+        //--- FilesLoaded ---------------------------------
+        private void DataFilesLoaded()
+        {
+            FileOpenPopup.IsSaveAs = false;
+            FileOpenPopup.Filter   = "Data files (*.csv,*.pdf)|*.csv;*.pdf";
+            FileOpenPopup.Title    = "Open Data File";
+            FileOpenPopup.Files    = EzGlobals.DataFile.Files;
+            FileOpenPopup.IsOpen   = true;
+            FileOpenPopup.OnImport   = _Import;
+            FileOpenPopup.OnSelected = (name)=>EzGlobals.Job.DataFile = Path.GetFileName(name);
+        }
+
+        //--- _Import ------------------
+        private void _Import(string filepath)
+        {
+            string filename=Path.GetFileName(filepath);
+            string dst = EzGlobals.Job.Dir+Path.DirectorySeparatorChar+filename;
+            File.Copy(filepath, dst, true);
+            EzGlobals.Job.DataFile = filename;
+        }
+
+        //--- RB_Counter_Checked ----------------------------------------
+        private void RB_Counter_Checked(object sender, RoutedEventArgs e)
+        {
+            EzGlobals.Job.FileType = Services.EzDef.EFileType.FT_COUNTER;
+        }
+
+        //--- RB_DataFile_Checked ---------------------------------------
+        private void RB_DataFile_Checked(object sender, RoutedEventArgs e)
+        {
+            if (EzGlobals.Job.FileType==Services.EzDef.EFileType.FT_COUNTER)
+                EzGlobals.Job.FileType = Services.EzDef.EFileType.FT_CSV;
+        }
+
+        //--- CB_AutoPD_SelectionChanged -------------------------------
+        private void CB_AutoPD_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ComboBox cb=sender as ComboBox;
+            if (cb!=null && cb.SelectedValue!=null)
+            {
+                if ((bool)cb.SelectedValue) 
+                {
+                    TB_PG_PG_Dist.Visibility=Visibility.Visible;
+                    TB_PD_PG_Dist.Visibility=Visibility.Collapsed;
+                }
+                else 
+                {
+                    TB_PG_PG_Dist.Visibility=Visibility.Collapsed;
+                    TB_PD_PG_Dist.Visibility=Visibility.Visible;
+                }
+            }
+        }
+    }
+}
