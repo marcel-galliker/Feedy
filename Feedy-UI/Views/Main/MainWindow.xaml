@@ -6,6 +6,7 @@
         xmlns:JobView="clr-namespace:Feedy.Views.JobView"
         xmlns:EventsView="clr-namespace:Feedy.Views.EventsView"
         xmlns:LogView="clr-namespace:Feedy.Views.LogView"
+        xmlns:ConfigView="clr-namespace:Feedy.Views.ConfigView"
         xmlns:SettingsView="clr-namespace:Feedy.Views.SettingsView"
         xmlns:local="clr-namespace:Feedy.Views.Main"
         mc:Ignorable="d"
@@ -44,6 +45,7 @@
 
                 <EventsView:EventsView          Grid.Row="2" x:Name="EventsView"     Visibility="Collapsed"/>
                 <LogView:LogView                Grid.Row="2" x:Name="LogView"        Visibility="Collapsed"/>
+                <ConfigView:ConfigView          Grid.Row="2" x:Name="ConfigView"     Visibility="Collapsed"/>
                 <SettingsView:SettingsView      Grid.Row="2" x:Name="SettingsView"   Visibility="Collapsed"/>
 
                 <!-- NOT CONNECTED ______________________________________________-->

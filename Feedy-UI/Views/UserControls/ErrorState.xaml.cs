@@ -4,6 +4,7 @@ using MahApps.Metro.IconPacks;
 using System;
 using System.Windows.Controls;
 using System.Windows.Media;
+using static Feedy.Services.FdDef;
 
 namespace Feedy.Views.UserControls
 {
@@ -53,7 +54,7 @@ namespace Feedy.Views.UserControls
             if (FdGolbals.Events.Type<ENEventType.warn)
             {
                 Icon.Kind = PackIconMaterialKind.None;
-                if (FdGolbals.FeedyStatus.JobState>=Services.EnJobState.JS_printing)
+                if (FdGolbals.FeedyStatus.JobState>=EnJobState.JS_printing)
                     Image.Visibility = System.Windows.Visibility.Visible;
             }
             else

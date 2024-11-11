@@ -6,6 +6,7 @@ using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
 using static Feedy.Models.FeedyStatus;
+using static Feedy.Services.FdDef;
 
 namespace Feedy.Converters
 {

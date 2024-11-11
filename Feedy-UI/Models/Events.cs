@@ -52,7 +52,6 @@ namespace Feedy.Models
                 Type= item.Type;
                 Message= item.Msg;
                 _TopItem = item;
-                if (item.Type==ENEventType.err) FdGolbals.FdInterface.SendMsgBuf(EzGuiMsg.ERROR_MARQUEE, item.Msg);
             }
             else if (Type==ENEventType.log && item.Type==ENEventType.log) 
             {

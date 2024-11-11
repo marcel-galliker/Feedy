@@ -7,6 +7,12 @@ namespace Feedy.Services
 {
     public class FdDef
     {
+        //--- SConfig ----------------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SConfig
+        {
+            public UInt32   cfg; 
+        };        
 
         //--- SJob ----------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)] 
@@ -18,13 +24,24 @@ namespace Feedy.Services
             public string description;
         };        
 
-        //--- EStatType -------------------------------------
-        public enum EStatType : Int32
+        //--- EnJobState ------------------
+        public enum EnJobState : Int32
         {
-            ST_UNDEF,   // 0
-            ST_START,   // 1    
-            ST_STOP,    // 2 
-            ST_SPEED,   // 3
+	        JS_undef,
+	        JS_off,
+	        JS_starting,
+	        JS_printing,
+	        JS_stopping,
+            JS_done,
+	        JS_aborted
+        }
+
+        //--- SStatusMsg ---------------------------
+        [StructLayout(LayoutKind.Sequential, Pack = 1)] 
+        public struct SStatus
+        {
+	        public Int32		connected;
+	        public EnJobState	jobState;	
         };
 
     }

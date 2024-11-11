@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{4a8bb42f-c595-49a0-8870-ed5bcd30923d}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Feedy-Ctrl.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui_msg.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="gui_server.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="rt_sok_api.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_xml_file.cpp">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_utilities.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_file.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_trace.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="job.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="feedy.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EzGlobals.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="AppData.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Error.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="config.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_time.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="args.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_threads.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="rt_sok_api.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_server.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FdTcpIp.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_msg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_xml_file.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_utilities.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_file.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_trace.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_common.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="feedy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FdGlobals.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AppData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="error.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_time.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="args.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_threads.h">
+      <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="job.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

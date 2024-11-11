@@ -268,9 +268,6 @@ namespace Feedy.Services
                     }
                     msgHandler.Reset();
 
-                    SendCommand(EzGuiMsg.GET_LICENSE);
-                    SendCommand(EzGuiMsg.GET_COM_PORTS);
-
                     FdGolbals.Job.LoadList();
 
                     /*

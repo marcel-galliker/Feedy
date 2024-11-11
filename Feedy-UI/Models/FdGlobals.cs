@@ -1,4 +1,5 @@
 ﻿using Feedy.Services;
+using Feedy.Views.ConfigView;
 using Feedy.Views.JobView;
 using Feedy.Views.Main;
 
@@ -23,6 +24,7 @@ namespace Feedy.Models
         //--- Data --------------------------------------
         public static Settings          Settings    = new Settings();
         public static FeedyStatus       FeedyStatus = new FeedyStatus();
+        public static FdConfig          Cfg         = new FdConfig();
         public static Job               Job         = new Job();
     }
 }

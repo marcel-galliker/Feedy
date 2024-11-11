@@ -27,14 +27,15 @@ namespace Feedy.Services
                 {
                     case EzGuiMsg.REP_VERSION:           handle_version(msg);            break;
 
-
                     case EzGuiMsg.LIST_JOB_START:        FdGolbals.Job.Files.Clear();    break;
                     case EzGuiMsg.LIST_JOB_FILE:         handle_job_file(msg);           break;
                     case EzGuiMsg.LIST_JOB_END:          FdGolbals.Job.ListLoaded++;     break;
 
+                    case EzGuiMsg.LOAD_CFG:              handle_cfg_loaded (msg);          break;
+
                     case EzGuiMsg.LOAD_JOB:              handle_job_load(msg);           break;
-                //    case EzGuiMsg.RUN_JOB:               handle_job_run(msg);            break;
-                //    case EzGuiMsg.ABORT_JOB:             handle_job_abort(msg);          break;
+                //    case EzGuiMsg.RUN_JOB:             handle_job_run(msg);            break;
+                //    case EzGuiMsg.ABORT_JOB:           handle_job_abort(msg);          break;
     
                     case EzGuiMsg.ERROR_RESET:           FdGolbals.Events.Confirm();    break;
                     case EzGuiMsg.ERROR_EVENT:           handle_error_event(msg);       break;
@@ -78,6 +79,18 @@ namespace Feedy.Services
                 FdGolbals.Job.Update(msg.job);
             }
             else  FdGolbals.Events.AddError(0, "Received invalid message Length SLoadFileMsg");
+        }
+
+        //--- handle_cfg_loaded ---------------------------------------------
+        private void handle_cfg_loaded(byte[] buf)
+        {
+            SCfgMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            if (len == msg.hdr.msgLen)
+            {
+                FdGolbals.Cfg.Update(msg.cfg);
+            }
+            else  FdGolbals.Events.AddError(0, "Received invalid message Length SCfgMsg");
         }
 
         //--- handle_error_event ---------------------------------------------

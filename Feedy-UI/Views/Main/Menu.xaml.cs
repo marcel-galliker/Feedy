@@ -1,6 +1,7 @@
 ﻿using Feedy.Models;
 using Feedy.Models.Enums;
 using GE_Utilities;
+using MahApps.Metro.IconPacks;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
@@ -97,12 +98,22 @@ namespace Feedy.Views.Main
                                             View=FdGolbals.MainWindow.EventsView,
                                             OnClick=_CheckMenu 
                                         });
+
             _MenuItem.Add("Log",     new MenuItem()
                                         {
                                             Group=1,
                                             Id="Log",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileEyeOutline, 
                                             View=FdGolbals.MainWindow.LogView,
+                                            OnClick=_CheckMenu 
+                                        });
+
+            _MenuItem.Add("Config",     new MenuItem()
+                                        {
+                                            Group=1,
+                                            Id="Config",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.RobotIndustrial, 
+                                            View=FdGolbals.MainWindow.ConfigView,
                                             OnClick=_CheckMenu 
                                         });
 
