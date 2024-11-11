@@ -57,43 +57,6 @@ namespace Feedy
             set { _MainView.Child = value;}
         }
 
-        //--- Property ShowBottomRow ---------------------------------------
-        private bool _ShowBottomRow=true;
-        private GridLength _Row1Height, _Row2Height;
-        public bool ShowBottomRow
-        {
-            get { return _ShowBottomRow; }
-            set { 
-                    if (_ShowBottomRow!=value)
-                    {
-                        _ShowBottomRow = value;
-                        if (_ShowBottomRow)
-                        {
-                            Row1.Height = _Row1Height;
-                            Row2.Height = _Row2Height;
-                        }
-                        else
-                        {
-                            _Row1Height = Row1.Height;
-                            _Row2Height = Row2.Height;
-                            Row1.Height = Row2.Height = new GridLength(0);
-                        }
-                    }
-                }
-        }
-
-        //--- RowExpander_Expanded ------------------------------
-        private void RowExpander_Expanded(object sender, RoutedEventArgs e)
-        {
-            FdGolbals.MainWindow.ShowBottomRow=false;
-        }
-
-        //--- RowExpander_Collapsed ---------------------------------------
-        private void RowExpander_Collapsed(object sender, RoutedEventArgs e)
-        {
-            FdGolbals.MainWindow.ShowBottomRow = true;
-        }
-
         //--- Window_Closing ---------------------
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {

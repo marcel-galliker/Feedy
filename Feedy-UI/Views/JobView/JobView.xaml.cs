@@ -53,6 +53,12 @@ namespace Feedy.Views.JobView
             DataContext                     = FdGolbals.Job;
             FdGolbals.Job.PropertyChanged   += _Job_PropertyChanged;
             FdGolbals.User.UserChanged      += _UserChanged;
+
+            CB_Position.ItemsSource         = new EN_Int(1,4);
+            CB_Turns.ItemsSource            = new EN_Int(1,4);
+            CB_MaxTurns.ItemsSource         = new EN_Int(1,20);
+            CB_GripperType.ItemsSource      = new EN_Int(0,2);
+
             _SetVisibility();
             _Language();
             _UserChanged();

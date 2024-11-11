@@ -392,7 +392,8 @@ void ge_mkdir_path(const char *dirname)
 		{
 			old = *ch;
 			*ch=0;
-			ge_mkdir(dir);
+			if (!ge_dir_exists(dir)) 
+				ge_mkdir(dir);
 			*ch=old;
 		}
 	}

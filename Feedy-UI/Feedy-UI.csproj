@@ -189,6 +189,7 @@
     <Compile Include="DLL\EZ-Lib.cs" />
     <Compile Include="DLL\EZ-Xml.cs" />
     <Compile Include="DLL\EZ-Crypt.cs" />
+    <Compile Include="Models\Enums\EN_BunkerModes.cs" />
     <Compile Include="Models\Enums\EN_Int.cs" />
     <Compile Include="Models\Enums\EN_ScreenSize.cs" />
     <Compile Include="Models\Enums\EN_Units.cs" />

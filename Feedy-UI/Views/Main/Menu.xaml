@@ -34,6 +34,7 @@
       <!--  <MenuItem Grid.Row="2" Grid.ColumnSpan="2" Background="red" x:Name="MenuMIC" Visibility="Collapsed"/> -->
 
         <!-- ROW 3 ___________________________________________________________________________-->
+        
         <Grid Grid.Row="3" Grid.ColumnSpan="2">
             <iconPacks:PackIconMaterial x:Name="TB_ScreenSize" Kind="Resize" VerticalAlignment="Bottom" Foreground="LightGray" Width="50"/>
             <ComboBox  Margin="50,0,0,0" x:Name="CB_ScreenSize" VerticalAlignment="Bottom" HorizontalAlignment="Stretch" SelectionChanged="CB_ScreenSize_SelectionChanged" Visibility="Visible"/>

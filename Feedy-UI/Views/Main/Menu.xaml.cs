@@ -92,7 +92,7 @@ namespace Feedy.Views.Main
 
             _MenuItem.Add("Events",     new MenuItem()
                                         {
-                                            Group=1,
+                                            Group=0,
                                             Id="Events",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FormatListBulleted, 
                                             View=FdGolbals.MainWindow.EventsView,
@@ -101,7 +101,7 @@ namespace Feedy.Views.Main
 
             _MenuItem.Add("Log",     new MenuItem()
                                         {
-                                            Group=1,
+                                            Group=0,
                                             Id="Log",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileEyeOutline, 
                                             View=FdGolbals.MainWindow.LogView,
@@ -110,7 +110,7 @@ namespace Feedy.Views.Main
 
             _MenuItem.Add("Config",     new MenuItem()
                                         {
-                                            Group=1,
+                                            Group=0,
                                             Id="Config",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.RobotIndustrial, 
                                             View=FdGolbals.MainWindow.ConfigView,
@@ -119,7 +119,7 @@ namespace Feedy.Views.Main
 
             _MenuItem.Add("Settings",   new MenuItem()
                                         {
-                                            Group=1,
+                                            Group=0,
                                             Id="Settings",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.CogOutline, 
                                             View=FdGolbals.MainWindow.SettingsView,
@@ -127,7 +127,7 @@ namespace Feedy.Views.Main
                                         });
             _MenuItem.Add("User",       new MenuItem()
                                         {
-                                            Group=1,
+                                            Group=0,
                                             Id="User",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.CogOutline, 
                                             Control = new UserType(),
@@ -144,9 +144,9 @@ namespace Feedy.Views.Main
             }
 
             //--- group 1 ---------------------
-            System.Windows.Shapes.Rectangle rect=new System.Windows.Shapes.Rectangle() { Width=200, Height=1, Fill=Brushes.Gray };
+        //    System.Windows.Shapes.Rectangle rect=new System.Windows.Shapes.Rectangle() { Width=200, Height=1, Fill=Brushes.Gray };
 
-            MenuBar.Children.Add(rect);
+        //    MenuBar.Children.Add(rect);
             
             foreach(var item in _MenuItem)
             {

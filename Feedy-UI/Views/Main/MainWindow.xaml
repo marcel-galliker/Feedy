@@ -10,12 +10,11 @@
         xmlns:SettingsView="clr-namespace:Feedy.Views.SettingsView"
         xmlns:local="clr-namespace:Feedy.Views.Main"
         mc:Ignorable="d"
-        WindowState="Maximized"
         Closed="Window_Closed"
         Closing="Window_Closing"
         IsVisibleChanged="Window_IsVisibleChanged"
         Title="Feedy" 
-        Height="450" Width="800">
+        Height="800" Width="1280">
     
     <Grid>
         <Grid.RowDefinitions>
@@ -33,20 +32,11 @@
 
         <Border x:Name="_MainView" Grid.Row="1" Grid.Column="1" Background="LightGray">
             <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="*"/>
-                    <RowDefinition Height="15" x:Name="Row1"/>
-                    <RowDefinition Height="*"  x:Name="Row2"/>
-                </Grid.RowDefinitions>
-
-                <JobView:JobView                    Grid.Row="0" x:Name="JobView" />
-                
-                <GridSplitter                   Grid.Row="1" Style="{DynamicResource GridSplitterVerticalStyle}"/>
-
-                <EventsView:EventsView          Grid.Row="2" x:Name="EventsView"     Visibility="Collapsed"/>
-                <LogView:LogView                Grid.Row="2" x:Name="LogView"        Visibility="Collapsed"/>
-                <ConfigView:ConfigView          Grid.Row="2" x:Name="ConfigView"     Visibility="Collapsed"/>
-                <SettingsView:SettingsView      Grid.Row="2" x:Name="SettingsView"   Visibility="Collapsed"/>
+                <JobView:JobView           x:Name="JobView" />
+                <EventsView:EventsView     x:Name="EventsView"     Visibility="Collapsed"/>
+                <LogView:LogView           x:Name="LogView"        Visibility="Collapsed"/>
+                <ConfigView:ConfigView     x:Name="ConfigView"     Visibility="Collapsed"/>
+                <SettingsView:SettingsView x:Name="SettingsView"   Visibility="Collapsed"/>
 
                 <!-- NOT CONNECTED ______________________________________________-->
                 <TextBlock x:Name="TX_NotConnected"
@@ -66,13 +56,6 @@
                     </TextBlock.RenderTransform>
                 </TextBlock>
 
-                <Expander Style="{DynamicResource EZ_ExpanderStyle}" 
-                  ExpandDirection="Down" 
-                  VerticalAlignment="Bottom" 
-                  HorizontalAlignment="Left" 
-                  IsExpanded="False"
-                  Expanded="RowExpander_Expanded"
-                  Collapsed="RowExpander_Collapsed" Margin="0,-20,0,0"/>
             </Grid>
         </Border>
 

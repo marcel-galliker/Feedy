@@ -28,7 +28,7 @@ char PATH_ROOT[4];
 char PATH_TEMP[MAX_PATH];
 
 // #define PATH_TEMP		PATH_ROOT "temp\\"
-#define PATH_APP		"EZ-Editor\\"
+#define PATH_APP		"Feedy\\"
 #define PATH_SETTINGS	PATH_APP "Settings\\"
 #define PATH_JOBS		PATH_APP "Jobs\\"
 #define PATH_LOGS		PATH_APP "Logs\\"
@@ -52,6 +52,13 @@ void FdGlobals_init(void)
 		strncpy(PATH_ROOT, dir, 3);
 	}
 	sprintf(PATH_TEMP, "%sTemp\\", PATH_ROOT);
+
+	sprintf(dir, "%s"PATH_JOBS, PATH_ROOT);
+	ge_mkdir_path(dir);
+	sprintf(dir, "%s"PATH_LOGS, PATH_ROOT);
+	ge_mkdir_path(dir);
+	sprintf(dir, "%s"PATH_SETTINGS, PATH_ROOT);
+	ge_mkdir_path(dir);
 }
 
 //--- EzUserFilePath --------------------------------------------------------
