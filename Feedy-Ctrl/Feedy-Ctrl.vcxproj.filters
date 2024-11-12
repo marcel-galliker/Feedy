@@ -44,9 +44,6 @@
     <ClCompile Include="feedy.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="EzGlobals.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="AppData.c">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,6 +63,9 @@
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="version.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FdGlobals.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

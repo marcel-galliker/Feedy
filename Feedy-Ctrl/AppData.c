@@ -54,7 +54,7 @@ static int _xml_appdata(char *jobName, EN_Xml_Action action)
 
 	if (xml_chapter(file, "AppData", -1, action)==REPLY_OK)
 	{
-		xml_str		(file,	"jobName", action, jobName, sizeof(EzAppData.jobName), "");
+		xml_str		(file,	"jobName", action, jobName, sizeof(FeedyAppData.jobName), "");
 		xml_chapter	(file, "..", -1, action);
 	}
 	xml_chapter(file, "..", -1, action);

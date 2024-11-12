@@ -189,7 +189,11 @@
     <Compile Include="DLL\EZ-Lib.cs" />
     <Compile Include="DLL\EZ-Xml.cs" />
     <Compile Include="DLL\EZ-Crypt.cs" />
+    <Compile Include="Models\Enums\EN_GripperType.cs" />
+    <Compile Include="Models\FeederSettings.cs" />
+    <Compile Include="Models\CamSettings.cs" />
     <Compile Include="Models\Enums\EN_BunkerModes.cs" />
+    <Compile Include="Models\Enums\EN_CamTrigger.cs" />
     <Compile Include="Models\Enums\EN_Int.cs" />
     <Compile Include="Models\Enums\EN_ScreenSize.cs" />
     <Compile Include="Models\Enums\EN_Units.cs" />
@@ -199,11 +203,14 @@
     <Compile Include="Models\FdConfig.cs" />
     <Compile Include="Models\FdGlobals.cs" />
     <Compile Include="Models\FileList.cs" />
+    <Compile Include="Models\GripperSettings.cs" />
     <Compile Include="Models\Job.cs" />
+    <Compile Include="Models\JobSettings.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\Dir.cs" />
     <Compile Include="Models\FeedyStatus.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\TraySettings.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Version.cs" />
     <Compile Include="Services\FdInterface.cs" />
@@ -240,6 +247,21 @@
     </Compile>
     <Compile Include="Views\EventsView\EventsView.xaml.cs">
       <DependentUpon>EventsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobView\FeederSetView.xaml.cs">
+      <DependentUpon>FeederSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobView\CamSetView.xaml.cs">
+      <DependentUpon>CamSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobView\GripperSetView.xaml.cs">
+      <DependentUpon>GripperSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobView\JobSetView.xaml.cs">
+      <DependentUpon>JobSetView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\JobView\TraySetView.xaml.cs">
+      <DependentUpon>TraySetView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\LogView\LogView.xaml.cs">
       <DependentUpon>LogView.xaml</DependentUpon>
@@ -383,6 +405,26 @@
     <Page Include="Views\EventsView\EventsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\JobView\FeederSetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\JobView\CamSetView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\JobView\GripperSetView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\JobView\JobSetView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\JobView\TraySetView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\LogView\LogView.xaml">
       <Generator>MSBuild:Compile</Generator>

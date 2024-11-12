@@ -26,43 +26,6 @@ namespace Feedy.Models
             Load("");
         }
 
-        //--- Update ----------------------------------------
-        public void Update(SJob job)
-        {
-            IsLoading       = true;
-
-            FileName        = job.name;   
-            Description     = job.description;
-
-            IsLoading        = false;
-            _Loaded          = true;    
-        }
-
-        //--- Property IsLoading ---------------------------------------
-        private static int _IsLoadingCnt=0;
-        public bool IsLoading
-        {
-            get { return _IsLoadingCnt>0; }
-            set { 
-                    if (value) _IsLoadingCnt++;
-                    else       _IsLoadingCnt--;
-                }
-        }
-
-        //--- Property IsChanged ---------------------------------------
-        private bool _IsChanged=false;
-        public bool IsChanged
-        {
-            get { return _IsChanged; }
-            set { 
-                    if(IsLoading) SetProperty(ref _IsChanged, false);
-                    else 
-                    {
-                        SetProperty(ref _IsChanged, value);
-                    }
-                }
-        }
-
         //--- LoadList -----------------------------------------------
         public void LoadList()
         {
@@ -82,23 +45,10 @@ namespace Feedy.Models
         //--- Load -----------------------------------------------
         public void Load(string filename=null)
         {
-            IsLoading = true;
-
-            if (filename!=null && filename!="") FileName = filename;
-            SFileMsg msg = new SFileMsg() { filename = FileName };
-        //  if(FdGolbals.License.Type==License.LicenseType.LIC_Printer)
+            if (filename!=null && filename!="") FdGolbals.JobSettings.Name = filename;
+            SFileMsg msg = new SFileMsg() { filename = FdGolbals.JobSettings.Name };
             FdGolbals.FdInterface.SendMsg(EzGuiMsg.LOAD_JOB, ref msg);
-
-            IsLoading = false;
-        }
-
-        //--- GetJob -----------------------------------
-        public SJob GetJob()
-        {
-            SJob job = new SJob();
-            job.name        = FileName; 
-            job.description = Description;
-            return job;
+            _Loaded=true;
         }
 
         //--- Save --------------------------------------------
@@ -106,24 +56,11 @@ namespace Feedy.Models
         {
             if (!_Loaded) return;
 
-            if (filename != null) FileName = filename;
+            if (filename != null) FdGolbals.JobSettings.Name = filename;
 
-            if (FdGolbals.User.Type < EN_UserType.USER_supervisor)
-            {   // save changed distances ...
-                SJobMsg msg = new SJobMsg();
-                msg.job= GetJob();  
-                FdGolbals.FdInterface.SendMsg(EzGuiMsg.SAVE_JOB, ref msg);
-            }
-            else
-            {
-            //    FdGolbals.PrinterCfg.Save();
-                SJobMsg msg = new SJobMsg();
-                msg.job= GetJob();
-                FdGolbals.FdInterface.SendMsg(EzGuiMsg.SAVE_JOB, ref msg);
-
-            //    FdGolbals.Layout.Save();
-            }
-            IsChanged = false;
+            SJobMsg msg = new SJobMsg();
+            msg.job= FdGolbals.JobSettings.Get();  
+            FdGolbals.FdInterface.SendMsg(EzGuiMsg.SAVE_JOB, ref msg);
         }
 
         //--- SaveNew ---------------------------------------
@@ -131,9 +68,9 @@ namespace Feedy.Models
         {
             string dir=Path.GetDirectoryName(FdGolbals.Job.Dir)+Path.DirectorySeparatorChar+filename;
             if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
-            FileName = filename;
+            FdGolbals.JobSettings.Name = filename;
 
-            SJob    job     = GetJob();
+            SJob    job = FdGolbals.JobSettings.Get();
         }
 
         //--- SaveAs --------------------------------------
@@ -163,7 +100,7 @@ namespace Feedy.Models
         //--- Delete --------------------------------------
         public bool Delete(string filename)
         {
-            if (filename==FileName)
+            if (filename==FdGolbals.JobSettings.Name)
             {
                 string msg = FdGolbals.Language.GetError("EzEditor.Jobs.cs", "10", "Delete");
                 MessageBox.Show(msg, "Error");
@@ -177,23 +114,6 @@ namespace Feedy.Models
             }
         }
 
-
-        //--- Property FileName ---------------------------------------
-        private string _FileName;
-        public string FileName
-        {
-            get { return _FileName; }
-            set { IsChanged |= SetProperty(ref _FileName, value);}
-        }
-
-        //--- Property Description ---------------------------------------
-        private string _Description;
-        public string Description
-        {
-            get { return _Description; }
-            set { IsChanged |= SetProperty(ref _Description, value); }
-        }
-
         //--- Property Dir ---------------------------------------
         private string _Dir;
         public string Dir
@@ -202,7 +122,7 @@ namespace Feedy.Models
                     PingReply pr = new Ping().Send(FdGolbals.Settings.IpAddress, 100);
                     if (pr.Status==IPStatus.Success)
                     { 
-                        string dir=FdGolbals.Dir.Jobs+FileName;
+                        string dir=FdGolbals.Dir.Jobs+FdGolbals.JobSettings.Name;
                         if (!Directory.Exists(dir)) Directory.CreateDirectory(dir);
                         return dir; 
                     }
@@ -214,7 +134,7 @@ namespace Feedy.Models
         //--- Start -----------------------------------------------
         public void Start()
         {
-            if (FdGolbals.Job.FileName==null)
+            if (FdGolbals.JobSettings.Name==null)
             {
                 FdGolbals.Events.AddError(0, "No job loaded!");
                 return;
@@ -246,14 +166,5 @@ namespace Feedy.Models
                     SetProperty(ref _PrintingSpeed, value);
                 }
         }
-
-        //--- Property MaxRecNo ---------------------------------------
-        private int _MaxRecNo;
-        public int MaxRecNo
-        {
-            get { return _MaxRecNo; }
-            set { SetProperty(ref _MaxRecNo, value); }
-        }
-
     }
 }

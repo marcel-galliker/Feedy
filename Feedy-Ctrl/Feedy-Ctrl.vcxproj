@@ -52,7 +52,7 @@
     <ClCompile Include="AppData.c" />
     <ClCompile Include="args.c" />
     <ClCompile Include="Error.c" />
-    <ClCompile Include="EzGlobals.c" />
+    <ClCompile Include="FdGlobals.c" />
     <ClCompile Include="Feedy-Ctrl.c" />
     <ClCompile Include="gui_msg.c" />
     <ClCompile Include="gui_server.c" />
@@ -416,12 +416,12 @@ exit 0</Command>
       <DisableSpecificWarnings>4996; 4477</DisableSpecificWarnings>
       <LanguageStandard>
       </LanguageStandard>
-      <AdditionalIncludeDirectories>..\Externals\GeUtilities;..\Externals\TinyXML;..\Externals\libtiff;..\Externals\TecIt\Include;..\Externals\ge_tif_lib;..\EZ-Lib;..\Externals\CryptLib;"..\Externals\GhostScript\include";%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Externals\GeUtilities;..\Externals\TinyXML;..\Feedy-Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;kernel32.lib;TinyXML.lib;EZ-Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;kernel32.lib;TinyXML.lib;Feedy-Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);..\Externals\TecIt\Lib;..\Externals\GhostScript\Lib</AdditionalLibraryDirectories>
     </Link>
     <PostBuildEvent>
@@ -487,7 +487,7 @@ exit 0</Command>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Ws2_32.lib;kernel32.lib;TinyXML.lib;EZ-Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;kernel32.lib;TinyXML.lib;Feedy-Lib.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);..\Externals\TecIt\Lib</AdditionalLibraryDirectories>
     </Link>
     <PreBuildEvent>

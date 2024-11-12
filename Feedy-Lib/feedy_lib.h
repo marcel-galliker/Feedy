@@ -1,6 +1,6 @@
 // *************************************************************************************************
 //																				
-//	xml_lib.h: 
+//	ez_lib.h: 
 //																				
 // *************************************************************************************************
 //
@@ -18,19 +18,16 @@
 
 #pragma once
 
+#include "ge_common.h"
+#include "FeedyDef.h"
+
 #define EXPORT EXTERN_C _declspec(dllexport) 
 
 #ifdef __cplusplus
 extern "C"{
 #endif
 
-#include "ge_common.h"
-#include "ge_xml_file.h"
-#include "EzDef.h"
-
-EXPORT int xml_last_job   (char *filepath, char *jobname, int strlen, EN_Xml_Action action);
-EXPORT int xml_job_file   (char *filepath, SJob *pJob, EN_Xml_Action action);
-EXPORT int xml_cfg_file	  (char *filepath, SConfig *pcfg, EN_Xml_Action action);
+EXPORT int ez_hex2byte   (char *str, byte *bytes, int len);
 
 #ifdef __cplusplus
 }

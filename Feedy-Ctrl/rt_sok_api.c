@@ -285,7 +285,7 @@ int sok_ping(const char *ipAddr)
 
 
 	int ret= WSAStartup (MAKEWORD(2, 0), &data);
-	int s = socket(PF_INET, SOCK_RAW, 1);
+	int s = (int)socket(PF_INET, SOCK_RAW, 1);
 	if (s <= 0) reply=WSAGetLastError();
 	else
 	{

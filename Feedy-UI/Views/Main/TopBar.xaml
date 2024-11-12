@@ -108,7 +108,7 @@
                                                 VerticalAlignment="Center" 
                                                 Margin="10,0"
                                                 Height="30" Width="30"/>
-                            <TextBlock MinWidth="150" Text="{Binding FileName}" FontSize="{StaticResource FontSizeLarge}" VerticalAlignment="Center" FontWeight="Bold"/>
+                            <TextBlock x:Name="TEST" MinWidth="150" Text="{Binding Name}" FontSize="{StaticResource FontSizeLarge}" VerticalAlignment="Center" FontWeight="Bold"/>
                             <iconPacks:PackIconMaterial Kind="ContentSaveOutline" Foreground="{StaticResource DataGrid.Brush.Selected.Background}" VerticalAlignment="Center" Margin="5" 
                                                     Visibility="{Binding IsChanged, Converter={StaticResource bool2Hide_Converter}}"/>
                         </StackPanel>

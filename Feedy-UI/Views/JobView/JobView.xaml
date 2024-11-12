@@ -12,13 +12,11 @@
              Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
-        <local:Filename_Converter   x:Key="Filename_Converter"/>
-        <local:Folder_Converter     x:Key="Folder_Converter"/>
-
         <Style TargetType="{x:Type TextBlock}">
             <Setter Property="Margin" Value="0,5,0,5"/>
         </Style>
     </UserControl.Resources>
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="{StaticResource HeaderHeight}"/>
@@ -40,139 +38,20 @@
         <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
             <Grid x:Name="JobGrid" Margin="5">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" MinWidth="100"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="70"/>
-                    <ColumnDefinition Width="70"/>
-                    <ColumnDefinition Width="10"/>
-
-                    <ColumnDefinition Width="auto" MinWidth="100"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="70"/>
-                    <ColumnDefinition Width="80"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto"/>                      <!-- 0 -->
-                    <RowDefinition Height="auto"/>                      <!-- 1 -->
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                    <RowDefinition Height="auto"/>
-                </Grid.RowDefinitions>
 
-                <!-- -->
-                <utilities:GeSeparator Grid.Row="0" Grid.ColumnSpan="4" Icon="Earth" Text="Job"/>
-                <TextBlock Grid.Row="1" Text="Description"/>
-                <utilities:GeTextBox   Grid.Row="1" Grid.Column="2" Grid.ColumnSpan="2" 
-                    VerticalContentAlignment="Center"
-                    x:Name="TB_Description"
-                    Text="{Binding Description}" AcceptsReturn="True" />
-                
-                <!-- Kamera ______________________________-->
-                <TextBlock Grid.Row="2" Text="Camera"/>
-                <utilities:GeNumBox Grid.Row="2" Grid.Column="2" />
+                <StackPanel Grid.Column="0">
+                    <local:JobSetView />
+                    <local:FeederSetView />
+                    <local:CamSetView />
+                </StackPanel>
 
-                <!-- Anzahl ______________________________-->
-                <TextBlock Grid.Row="3" Text="Count"/>
-                <utilities:GeNumBox Grid.Row="3" Grid.Column="2" />
-
-                <!-- Speed ______________________________-->
-                <TextBlock Grid.Row="4" Text="Speed"/>
-                <utilities:GeNumBox Grid.Row="4" Grid.Column="2" />
-                <TextBlock Grid.Row="4" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
-
-                <!-- ___________________________________________________-->
-                <utilities:GeSeparator Grid.Row="5" Grid.ColumnSpan="4" Icon="InboxArrowDownOutline" Text="Bunker"/>
-                <TextBlock Grid.Row="6" Text="Used"/>
-                <CheckBox  Grid.Row="6" Grid.Column="2" IsChecked="{Binding Used}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
-
-                <TextBlock Grid.Row="7" Text="Speed"/>
-                <utilities:GeNumBox Grid.Row="7" Grid.Column="2" />
-                <TextBlock Grid.Row="7" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="8" Text="Neigung"/>
-                <ComboBox  Grid.Row="8" Grid.Column="2" x:Name="CB_Position" SelectedValue="{Binding Units}"/>
-
-                <TextBlock Grid.Row="9" Text="Turns"/>
-                <ComboBox  Grid.Row="9" Grid.Column="2" x:Name="CB_Turns" SelectedValue="{Binding Units}"/>
-
-                <TextBlock Grid.Row="10" Text="Max Turns"/>
-                <ComboBox  Grid.Row="10" Grid.Column="2" x:Name="CB_MaxTurns" SelectedValue="{Binding Units}"/>
-
-                <!-- CAM _________________________________________-->
-                <utilities:GeSeparator Grid.Row="11" Grid.ColumnSpan="4" Icon="Camera" Text="Camera"/>
-
-                <TextBlock Grid.Row="12" Text="Intensity"/>
-                <utilities:GeNumBox Grid.Row="12" Grid.Column="2" />
-                <TextBlock Grid.Row="12" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="13" Text="Side Light"/>
-                <CheckBox  Grid.Row="13" Grid.Column="2"  IsChecked="{Binding SideLight}"/>
-
-                <!-- _________________________________________________-->
-                <utilities:GeSeparator Grid.Row="0" Grid.Column="5" Grid.ColumnSpan="4" Icon="Tray" Text="Tray"/>
-                <TextBlock Grid.Row="1" Grid.Column="5" Text="Nr"/>
-                <utilities:GeNumBox Grid.Row="1" Grid.Column="7" />
-
-                <TextBlock Grid.Row="2" Grid.Column="5" Text="Time 1st push"/>
-                <utilities:GeNumBox Grid.Row="2" Grid.Column="7" />
-                <TextBlock Grid.Row="2" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="3" Grid.Column="5" Text="Pause"/>
-                <utilities:GeNumBox Grid.Row="3" Grid.Column="7" />
-                <TextBlock Grid.Row="3" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="4" Grid.Column="5" Text="Time 2nd push"/>
-                <utilities:GeNumBox Grid.Row="4" Grid.Column="7" />
-                <TextBlock Grid.Row="4" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="5" Grid.Column="5" Text="Repeats"/>
-                <utilities:GeNumBox Grid.Row="5" Grid.Column="7" />
-
-                <TextBlock Grid.Row="6" Grid.Column="5" Text="Wait after shake"/>
-                <utilities:GeNumBox Grid.Row="6" Grid.Column="7" />
-                <TextBlock Grid.Row="6" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="7" Grid.Column="5" Text="Wait after fill"/>
-                <utilities:GeNumBox Grid.Row="7" Grid.Column="7" />
-                <TextBlock Grid.Row="7" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="8" Grid.Column="5" Text="Max tries"/>
-                <utilities:GeNumBox Grid.Row="8" Grid.Column="7" />
-
-                <TextBlock Grid.Row="9" Grid.Column="5" Text="Feed when less"/>
-                <utilities:GeNumBox Grid.Row="9" Grid.Column="7" />
-                <TextBlock Grid.Row="9" Grid.Column="8" Text=" parts" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="10" Grid.Column="5" Text="Stop feeding"/>
-                <utilities:GeNumBox Grid.Row="10" Grid.Column="7" />
-                <TextBlock Grid.Row="10" Grid.Column="8" Text=" brightness" FontSize="{StaticResource FontSizeXS}"/>
-
-                <!-- _________________________________________________-->
-                <utilities:GeSeparator Grid.Row="11" Grid.Column="5" Grid.ColumnSpan="4" Icon="CircleDouble" Text="Gripper"/>
-                <TextBlock Grid.Row="12" Grid.Column="5" Text="Nr"/>
-                <utilities:GeNumBox Grid.Row="12" Grid.Column="7" />
-
-                <TextBlock Grid.Row="13" Grid.Column="5" Text="Type"/>
-                <ComboBox  Grid.Row="13" Grid.Column="7" x:Name="CB_GripperType" SelectedValue="{Binding Units}"/>
-
-                <TextBlock Grid.Row="14" Grid.Column="5" Text="Time open"/>
-                <utilities:GeNumBox Grid.Row="14" Grid.Column="7" />
-                <TextBlock Grid.Row="14" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-                <TextBlock Grid.Row="15" Grid.Column="5" Text="Time close"/>
-                <utilities:GeNumBox Grid.Row="15" Grid.Column="7" />
-                <TextBlock Grid.Row="15" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <StackPanel Grid.Column="1">
+                    <local:TraySetView />
+                    <local:GripperSetView />
+                </StackPanel>
 
             </Grid>
         </ScrollViewer>

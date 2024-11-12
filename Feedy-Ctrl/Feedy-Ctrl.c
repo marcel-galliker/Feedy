@@ -76,8 +76,8 @@ int		main(int argc, char *argv[])
 
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
-	appdata_load(EzAppData.jobName);
-	feedy_load_job(EzAppData.jobName);
+	appdata_load(FeedyAppData.jobName);
+	feedy_load_job(FeedyAppData.jobName);
 
 	gui_server();
 

@@ -50,47 +50,41 @@ namespace Feedy.Views.JobView
         {
             InitializeComponent();
 
-            DataContext                     = FdGolbals.Job;
-            FdGolbals.Job.PropertyChanged   += _Job_PropertyChanged;
+            DataContext                     = FdGolbals.JobSettings;
+            FdGolbals.Language.LanguageChanged += _Language;
             FdGolbals.User.UserChanged      += _UserChanged;
-
-            CB_Position.ItemsSource         = new EN_Int(1,4);
-            CB_Turns.ItemsSource            = new EN_Int(1,4);
-            CB_MaxTurns.ItemsSource         = new EN_Int(1,20);
-            CB_GripperType.ItemsSource      = new EN_Int(0,2);
 
             _SetVisibility();
             _Language();
             _UserChanged();
         }
         
-        //--- _Job_PropertyChanged --------------------------------
-        private void _Job_PropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-        }
-
         //--- _Language ----------------------------------------------
         private void _Language()
         {
             TB_Job.Text         = FdGolbals.Language.GetText("TB_Job");
-            TB_Description.Text = FdGolbals.Language.GetText("TB_Description");
         }
 
         //--- _UserChanged ------------------------------------
         private void _UserChanged()
         {
-            TB_Description.IsEnabled = FdGolbals.User.Enabled;
+            this.IsEnabled = FdGolbals.User.Enabled;
         }
 
         //--- UserControl_Loaded -----------------------------------------
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            GeBindable.InvokeDelayed(2000, ()=>FdGolbals.Job.LoadLastJob());
+            GeBindable.InvokeDelayed(1000, ()=>FdGolbals.Job.LoadLastJob());
         }
 
         //--- _SetVisibility -------------------------------------------------
         private void _SetVisibility()
         {
+        }
+
+        private void GeSeparator_Loaded(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

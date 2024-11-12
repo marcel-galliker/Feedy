@@ -1,6 +1,6 @@
 // *************************************************************************************************
 //																				
-//	key.h: 
+//	xml_lib.h: 
 //																				
 // *************************************************************************************************
 //
@@ -14,12 +14,24 @@
 //    Written by Marcel Galliker.												
 //																				
 //
-// *************************************************************************************************
+// *************************************************************************************************#pragma once
 
 #pragma once
 
-void key_clear(void);
-void key_trace(void);
-int  key_add  (int recNo, int filePos, char *key);
-int  key_find (char *key, int *recNo, int *filepos);
+#define EXPORT EXTERN_C _declspec(dllexport) 
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
+#include "ge_common.h"
+#include "ge_xml_file.h"
+#include "FeedyDef.h"
+
+EXPORT int xml_last_job   (char *filepath, char *jobname, int strlen, EN_Xml_Action action);
+EXPORT int xml_job_file   (char *filepath, SJob *pJob, EN_Xml_Action action);
+EXPORT int xml_cfg_file	  (char *filepath, SConfig *pcfg, EN_Xml_Action action);
+
+#ifdef __cplusplus
+}
+#endif

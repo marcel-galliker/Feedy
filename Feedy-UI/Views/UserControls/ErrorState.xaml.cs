@@ -54,7 +54,7 @@ namespace Feedy.Views.UserControls
             if (FdGolbals.Events.Type<ENEventType.warn)
             {
                 Icon.Kind = PackIconMaterialKind.None;
-                if (FdGolbals.FeedyStatus.JobState>=EnJobState.JS_printing)
+                if (FdGolbals.FeedyStatus.JobState>=EnJobState.JS_running)
                     Image.Visibility = System.Windows.Visibility.Visible;
             }
             else

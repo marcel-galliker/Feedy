@@ -27,16 +27,11 @@ static void no_abort(void){return;}
 char PATH_ROOT[4];
 char PATH_TEMP[MAX_PATH];
 
-// #define PATH_TEMP		PATH_ROOT "temp\\"
-#define PATH_APP		"Feedy\\"
-#define PATH_SETTINGS	PATH_APP "Settings\\"
-#define PATH_JOBS		PATH_APP "Jobs\\"
-#define PATH_LOGS		PATH_APP "Logs\\"
 
-SConfig	FeedyCfg;
-SAppData	EzAppData;
-SJob		EzJob;
-SStatusMsg FeedyStatusMsg;
+SConfig		FeedyCfg;
+SAppData	FeedyAppData;
+SJob		FeedyJob;
+SStatusMsg	FeedyStatusMsg;
 
 //--- FdGlobals_init ---------------------------------
 void FdGlobals_init(void)
@@ -78,8 +73,8 @@ char * EzUserFilePath(const char* directory, const char* filename, const char *e
 	return path;
 }
 
-//--- EzJobFilePath --------------------------------------------------------
-char * EzJobFilePath(const char* jobname, const char* filename, const char *ext, char path[MAX_PATH])
+//--- FeedyJobFilePath --------------------------------------------------------
+char * FeedyJobFilePath(const char* jobname, const char* filename, const char *ext, char path[MAX_PATH])
 {
 	//	ge_user_path(path);
 	strcpy(path, PATH_ROOT);

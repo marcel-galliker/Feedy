@@ -1,0 +1,43 @@
+﻿<UserControl x:Class="Feedy.Views.JobView.GripperSetView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
+             xmlns:local="clr-namespace:Feedy.Views.JobView"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <GroupBox Header="Gripper">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" MinWidth="100"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="70"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Nr"/>
+            <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding No}"/>
+
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Type"/>
+            <ComboBox  Grid.Row="1" Grid.Column="2" x:Name="CB_GripperType" SelectedValue="{Binding Type}"/>
+
+            <TextBlock Grid.Row="2" Grid.Column="0" Text="Time open"/>
+            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Time1}"/>
+            <TextBlock Grid.Row="2" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Time close"/>
+            <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding Time2}"/>
+            <TextBlock Grid.Row="3" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+
+        </Grid>
+    </GroupBox>
+</UserControl>

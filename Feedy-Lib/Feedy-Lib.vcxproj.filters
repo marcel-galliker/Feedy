@@ -36,16 +36,16 @@
     <ClInclude Include="xml_lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="EzDef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ez_lib.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Externals\GeUtilities\ge_threads.h">
       <Filter>Utilities</Filter>
     </ClInclude>
     <ClInclude Include="..\Feedy-Ctrl\crypt_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="feedy_lib.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FeedyDef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,9 +68,6 @@
     <ClCompile Include="xml_lib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ez_lib.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Externals\GeUtilities\ge_threads.c">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -82,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="..\Externals\GeUtilities\ge_xml_file.cpp">
       <Filter>Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="feedy_lib.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

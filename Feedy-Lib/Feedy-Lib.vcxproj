@@ -37,10 +37,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{b17da360-d1df-4ac5-964a-77a11030d68f}</ProjectGuid>
-    <RootNamespace>EZ-Lib</RootNamespace>
+    <ProjectGuid>{DEBF3C54-924F-4A3C-9CD7-32F973F65F95}</ProjectGuid>
+    <RootNamespace>Feedy-Lib</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
-    <ProjectName>EZ-Lib</ProjectName>
+    <ProjectName>Feedy-Lib</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -408,8 +408,8 @@
     <ClInclude Include="..\Externals\GeUtilities\ge_trace.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_utilities.h" />
     <ClInclude Include="..\Feedy-Ctrl\crypt_lib.h" />
-    <ClInclude Include="EzDef.h" />
-    <ClInclude Include="ez_lib.h" />
+    <ClInclude Include="FeedyDef.h" />
+    <ClInclude Include="feedy_lib.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="xml_lib.h" />
   </ItemGroup>
@@ -423,7 +423,7 @@
     <ClCompile Include="..\Externals\GeUtilities\ge_xml_file.cpp" />
     <ClCompile Include="..\Feedy-Ctrl\crypt_lib.cpp" />
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="ez_lib.c" />
+    <ClCompile Include="feedy_lib.c" />
     <ClCompile Include="xml_lib.c" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

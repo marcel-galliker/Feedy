@@ -24,7 +24,8 @@ namespace Feedy.Views.Main
         {
             InitializeComponent();
 
-        //    DataContext = FdGolbals.FeedyStatus;
+            DataContext = FdGolbals.JobSettings;
+            TEST.DataContext = FdGolbals.JobSettings;
             FileCommands.DataContext = FdGolbals.Job;
             TX_Remaining.DataContext = FdGolbals.Job;
             Grid_Speed.DataContext   = FdGolbals.Job;

@@ -76,7 +76,7 @@ namespace Feedy.Services
             int len = GeStructConvert.ToStruct(out msg, buf);
             if (len == msg.hdr.msgLen)
             {
-                FdGolbals.Job.Update(msg.job);
+                FdGolbals.JobSettings.Set(msg.job);
             }
             else  FdGolbals.Events.AddError(0, "Received invalid message Length SLoadFileMsg");
         }
@@ -88,7 +88,7 @@ namespace Feedy.Services
             int len = GeStructConvert.ToStruct(out msg, buf);
             if (len == msg.hdr.msgLen)
             {
-                FdGolbals.Cfg.Update(msg.cfg);
+                FdGolbals.Cfg.Set(msg.cfg);
             }
             else  FdGolbals.Events.AddError(0, "Received invalid message Length SCfgMsg");
         }

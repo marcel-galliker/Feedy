@@ -19,14 +19,14 @@
 #pragma once
 
 //--- includes -----------------------------------------------------------
-#include "EzDef.h"
+#include "FeedyDef.h"
 #include "feedy.h"
 
 //--- defines -------------------------------------------------------------
 // #define PATH_ROOT		"D:\\"
 extern  char PATH_ROOT[4];
 extern  char PATH_TEMP[MAX_PATH];
-#define PATH_APP		"EZ-Editor\\"
+#define PATH_APP		"Feedy\\"
 #define PATH_SETTINGS	PATH_APP "Settings\\"
 #define PATH_JOBS		PATH_APP "Jobs\\"
 #define PATH_LOGS		PATH_APP "Logs\\"
@@ -50,11 +50,11 @@ typedef struct SAppData
 
 //--- global variables ---------------------------------------------------
 extern  SConfig	FeedyCfg;
-extern  SAppData	EzAppData;
-extern	SJob		EzJob;
+extern  SAppData	FeedyAppData;
+extern	SJob		FeedyJob;
 extern  SStatusMsg FeedyStatusMsg;
 
 //--- functions --------------------------------------------------------
 void FdGlobals_init(void); 
 char * EzUserFilePath(const char* directory, const char* filename, const char *ext, char path[MAX_PATH]);
-char * EzJobFilePath(const char* jobname, const char* filename, const char *ext, char path[MAX_PATH]);
+char * FeedyJobFilePath(const char* jobname, const char* filename, const char *ext, char path[MAX_PATH]);

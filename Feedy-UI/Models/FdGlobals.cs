@@ -26,5 +26,6 @@ namespace Feedy.Models
         public static FeedyStatus       FeedyStatus = new FeedyStatus();
         public static FdConfig          Cfg         = new FdConfig();
         public static Job               Job         = new Job();
+        public static JobSettings       JobSettings = new JobSettings();
     }
 }

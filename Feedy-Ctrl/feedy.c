@@ -55,9 +55,9 @@ void feedy_reset_error()
 //--- feedy_load_job ---------------------------------------
 void feedy_load_job(char *jobName)
 {
-	strcpy(EzAppData.jobName, jobName);
-	appdata_save(EzAppData.jobName);
-	job_load_file(EzAppData.jobName);
+	strcpy(FeedyAppData.jobName, jobName);
+	appdata_save(FeedyAppData.jobName);
+	job_load_file(FeedyAppData.jobName);
 	TrPrintf(-1, "feedy_load_job(%s)", jobName);
 	cfg_load(INVALID_SOCKET);
 }

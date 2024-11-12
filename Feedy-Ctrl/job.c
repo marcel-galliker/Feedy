@@ -42,7 +42,7 @@ void job_list(SOCKET socket)
 	msg.hdr.msgId  = LIST_JOB_START;
 	gui_send(socket, &msg);
 
-	EzJobFilePath(NULL, NULL, NULL, path);
+	FeedyJobFilePath(NULL, NULL, NULL, path);
 
 	{
 		msg.hdr.msgLen = sizeof(msg);
@@ -78,10 +78,10 @@ void job_load(SOCKET socket, SFileMsg *pmsg)
 	SJob	job;
 
 //	Error(LOG, 0, "job_load >>%s<<", pmsg->filename);
-	if (*pmsg->filename==0) strcpy(pmsg->filename, EzAppData.jobName);
+	if (*pmsg->filename==0) strcpy(pmsg->filename, FeedyAppData.jobName);
 	if (*pmsg->filename==0) return;
 
-	EzJobFilePath(pmsg->filename, pmsg->filename, "xml", path);
+	FeedyJobFilePath(pmsg->filename, pmsg->filename, "xml", path);
 	
 	if (xml_job_file(path, &job, READ)!=REPLY_OK)
 	{
@@ -104,9 +104,9 @@ void job_load(SOCKET socket, SFileMsg *pmsg)
 void job_save	(SOCKET socket, SJobMsg *pmsg)
 {
 	char path[MAX_PATH];
-	strcpy(EzAppData.jobName, pmsg->job.name);
+	strcpy(FeedyAppData.jobName, pmsg->job.name);
 	appdata_save(pmsg->job.name);
-	EzJobFilePath(pmsg->job.name, pmsg->job.name, "xml", path);
+	FeedyJobFilePath(pmsg->job.name, pmsg->job.name, "xml", path);
 
 	xml_job_file(path, &pmsg->job, WRITE);
 
