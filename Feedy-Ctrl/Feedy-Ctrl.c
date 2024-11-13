@@ -76,6 +76,8 @@ int		main(int argc, char *argv[])
 
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 
+	feedy_init();
+
 	appdata_load(FeedyAppData.jobName);
 	feedy_load_job(FeedyAppData.jobName);
 

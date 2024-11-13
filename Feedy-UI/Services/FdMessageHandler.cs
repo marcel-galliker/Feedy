@@ -27,6 +27,8 @@ namespace Feedy.Services
                 {
                     case GuiMsg.REP_VERSION:           handle_version(msg);            break;
 
+                    case GuiMsg.REP_STATUS:            handle_status(msg);              break;
+
                     case GuiMsg.LIST_JOB_START:        FdGolbals.Job.Files.Clear();    break;
                     case GuiMsg.LIST_JOB_FILE:         handle_job_file(msg);           break;
                     case GuiMsg.LIST_JOB_END:          FdGolbals.Job.ListLoaded++;     break;
@@ -49,7 +51,7 @@ namespace Feedy.Services
             }
         }
 
-        //--- handle_license ---------------------------------------------
+        //--- handle_version ---------------------------------------------
         private void handle_version(byte[] buf)
         {
             SGuiMsg msg;
@@ -57,6 +59,14 @@ namespace Feedy.Services
             FdGolbals.Version.Update(msg.data);
         }
         
+        //--- handle_status ---------------------------------------------
+        private void handle_status(byte[] buf)
+        {
+            SFeedyStatusMsg msg;
+            int len = GeStructConvert.ToStruct(out msg, buf);
+            FdGolbals.FeedyStatus.Set(msg.status);
+        }
+
         //--- handle_job_file ---------------------------------------------
         private void handle_job_file(byte[] buf)
         {

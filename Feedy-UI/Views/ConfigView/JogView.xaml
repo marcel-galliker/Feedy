@@ -37,29 +37,29 @@
 
             <StackPanel Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="top" HorizontalAlignment="Center" Orientation="Horizontal">
                 <TextBlock  Text="Speed "/>
-                <TextBlock  Text="{Binding Speed}"/>
+                <TextBlock  Text="{Binding TestSpeed}"/>
                 <TextBlock  Text=" %"/>
             </StackPanel>
             
-            <Slider Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Maximum="100" SmallChange="0" Value="{Binding Speed}"/>
+            <Slider Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Maximum="100" SmallChange="0" Value="{Binding TestSpeed}"/>
 
             <TextBlock Grid.Row="0" Grid.Column="2" Text="Pos" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
 
-            <utilities:GeButton Grid.Row="1" Grid.Column="0" Content="Z-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog" Confirm="Jog_Confirm"/>
-            <utilities:GeButton Grid.Row="1" Grid.Column="1" Content="Z+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[0]}"/>
+            <utilities:GeButton Grid.Row="1" Grid.Column="0" Content="Z-" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="1" Grid.Column="1" Content="Z+" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding MotorPos[0]}"/>
 
-            <utilities:GeButton Grid.Row="2" Grid.Column="0" Content="X-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <utilities:GeButton Grid.Row="2" Grid.Column="1" Content="X+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[1]}"/>
+            <utilities:GeButton Grid.Row="2" Grid.Column="0" Content="X-" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="2" Grid.Column="1" Content="X+" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding MotorPos[1]}"/>
 
-            <utilities:GeButton Grid.Row="3" Grid.Column="0" Content="CY-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <utilities:GeButton Grid.Row="3" Grid.Column="1" Content="CY+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[2]}"/>
+            <utilities:GeButton Grid.Row="3" Grid.Column="0" Content="CY-" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="3" Grid.Column="1" Content="CY+" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding MotorPos[2]}"/>
 
-            <utilities:GeButton Grid.Row="4" Grid.Column="0" Content="C-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <utilities:GeButton Grid.Row="4" Grid.Column="1" Content="C+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
-            <TextBox Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[3]}"/>
+            <utilities:GeButton Grid.Row="4" Grid.Column="0" Content="C-" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="4" Grid.Column="1" Content="C+" Background="White" Confirm="Jog_Confirm" Reject="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding MotorPos[3]}"/>
         </Grid>
     </GroupBox>
 </UserControl>

@@ -49,10 +49,10 @@ typedef struct SAppData
 } SAppData;
 
 //--- global variables ---------------------------------------------------
-extern  SConfig	FeedyCfg;
-extern  SAppData	FeedyAppData;
-extern	SJob		FeedyJob;
-extern  SStatusMsg FeedyStatusMsg;
+extern  SConfig			FeedyCfg;
+extern  SAppData		FeedyAppData;
+extern	SJob			FeedyJob;
+extern  SFeedyStatus FeedyStatus;
 
 //--- functions --------------------------------------------------------
 void FdGlobals_init(void); 

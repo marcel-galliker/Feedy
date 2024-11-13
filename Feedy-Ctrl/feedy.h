@@ -25,6 +25,11 @@ void feedy_init		(void);
 void feedy_load_job	(char *jobName);
 void feedy_reset_error(void);
 
-void feedy_start		(SOCKET socket);
+void feedy_start	(SOCKET socket);
 void feedy_stop		(SOCKET socket);
-void feedy_abort		(SOCKET socket);
+void feedy_abort	(SOCKET socket);
+
+void feedy_step_motor	(SOCKET socket, SMotorTest *pmsg);
+void feedy_start_motor	(SOCKET socket, SMotorTest *pmsg);
+void feedy_stop_motor	(SOCKET socket, SMotorTest *pmsg);
+void feedy_run_motor	(SOCKET socket, SMotorTest *pmsg);

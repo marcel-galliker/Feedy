@@ -205,7 +205,6 @@
     <Compile Include="Models\GripperSettings.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobSettings.cs" />
-    <Compile Include="Models\JogInfo.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\Dir.cs" />
     <Compile Include="Models\FeedyStatus.cs" />

@@ -162,3 +162,14 @@ void gui_send(SOCKET socket, void *pmsg)
 	}
 	else rt_sok_msg_send_nb(&socket, pmsg, pmsgHdr->msgLen);
 }
+
+//--- gui_send_status --------------------------------------------
+void gui_send_status(SOCKET socket)
+{
+	int time=ge_ticks();
+	SFeedyStatusMsg msg;
+	memcpy(&msg.status, &FeedyStatus, sizeof(FeedyStatus));
+	msg.hdr.msgId = REP_STATUS;
+	msg.hdr.msgLen = sizeof(msg);
+	gui_send(socket, &msg);
+}

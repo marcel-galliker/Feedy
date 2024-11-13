@@ -35,6 +35,8 @@
 
 static  HANDLE		_FeedyThreadHandle=NULL;
 
+static SMotorTest	_MotorTest;
+
 static int			_ErrorFlag;
 
 //--- prototypes ---------------------------------
@@ -44,6 +46,16 @@ static void _FeedyThread (void *par);
 void feedy_init(void)
 {
 	_ErrorFlag = 0;
+	/*--- create a receiver thread for that client ---*/
+	_FeedyThreadHandle=CreateThread ( 
+		NULL,									/* no security attributes */
+		0,										/* default stack size */
+		(LPTHREAD_START_ROUTINE) &_FeedyThread,	/* function to call */
+		NULL,									/* parameter for function */
+		0,										/* 0=thread runs immediately after being called */
+		NULL									/* returns thread identifier */
+	);
+
 }
 
 //--- feedy_reset_error -------------------------------
@@ -65,7 +77,7 @@ void feedy_load_job(char *jobName)
 //--- feedy_start ------------------------------------------------------
 void feedy_start(SOCKET socket)
 {
-	Error(LOG, 0, "feedy_start jobState=%d", FeedyStatusMsg);
+	Error(LOG, 0, "feedy_start jobState=%d", FeedyStatus);
 	err_reset();
 	{
 		SMsgHdr msg;
@@ -78,16 +90,16 @@ void feedy_start(SOCKET socket)
 //--- feedy_stop -------------------------------------------------------
 void feedy_stop(SOCKET socket)
 {
-	Error(LOG, 0, "feedy_stop jobState=%d", FeedyStatusMsg.jobState);
-	if (FeedyStatusMsg.jobState==JS_stopping) 
+	Error(LOG, 0, "feedy_stop jobState=%d", FeedyStatus.jobState);
+	if (FeedyStatus.jobState==JS_stopping) 
 	{
-		FeedyStatusMsg.jobState = JS_aborted;
+		FeedyStatus.jobState = JS_aborted;
 		feedy_abort(socket);
 	}
 	else
 	{
 		Error(LOG, 23, "Stopping");
-		FeedyStatusMsg.jobState = JS_stopping;
+		FeedyStatus.jobState = JS_stopping;
 		feedy_abort(socket);
 	}
 }
@@ -95,10 +107,10 @@ void feedy_stop(SOCKET socket)
 //--- feedy_abort -------------------------------------------------------
 void feedy_abort(SOCKET socket)
 {
-	EnJobState jobState=FeedyStatusMsg.jobState;
-	if (FeedyStatusMsg.jobState>JS_off)
+	EnJobState jobState=FeedyStatus.jobState;
+	if (FeedyStatus.jobState>JS_off)
 	{
-		FeedyStatusMsg.jobState=JS_off;
+		FeedyStatus.jobState=JS_off;
 		{
 			switch(jobState)
 			{
@@ -120,6 +132,32 @@ void feedy_abort(SOCKET socket)
 	}
 }
 
+//--- feedy_step_motor -----------------------------------
+void feedy_step_motor	(SOCKET socket, SMotorTest *pmsg)
+{
+	memset(&_MotorTest, 0, sizeof(_MotorTest));
+	FeedyStatus.motorPos[pmsg->motorNo] += pmsg->direction;
+	gui_send_status(INVALID_SOCKET);
+}
+
+//--- feedy_start_motor -----------------------------------------
+void feedy_start_motor(SOCKET socket, SMotorTest *pmsg)
+{
+	memcpy(&_MotorTest, pmsg, sizeof(_MotorTest));
+}
+
+//--- feedy_stop_motor -------------------------------------------
+void feedy_stop_motor	(SOCKET socket, SMotorTest *pmsg)
+{
+	memset(&_MotorTest, 0, sizeof(_MotorTest));
+}
+
+//--- feedy_run_motor --------------------------------------------
+void feedy_run_motor	(SOCKET socket, SMotorTest *pmsg)
+{
+	memcpy(&_MotorTest, pmsg, sizeof(_MotorTest));
+}
+
 //--- _FeedyThread -----------------------------
 static void _FeedyThread (void *par)
 {
@@ -127,5 +165,25 @@ static void _FeedyThread (void *par)
 	while (TRUE)
 	{
 		Sleep(10);
+
+		if (_MotorTest.direction)
+		{			
+			FeedyStatus.motorPos[_MotorTest.motorNo] += (100*_MotorTest.direction * _MotorTest.testSpeed) / 100;
+			FeedyStatus.testSpeed = _MotorTest.testSpeed;
+			if (FeedyStatus.motorPos[_MotorTest.motorNo]<_MotorTest.settings.testPosStart)
+			{
+				FeedyStatus.motorPos[_MotorTest.motorNo]=_MotorTest.settings.testPosStart;
+				memset(&_MotorTest, 0, sizeof(_MotorTest));
+			}
+
+			if (FeedyStatus.motorPos[_MotorTest.motorNo] > _MotorTest.settings.testPosEnd)
+			{
+				FeedyStatus.motorPos[_MotorTest.motorNo] = _MotorTest.settings.testPosEnd;
+				memset(&_MotorTest, 0, sizeof(_MotorTest));
+			}
+
+			gui_send_status(INVALID_SOCKET);
+			Sleep(100);
+		}
 	}
 }

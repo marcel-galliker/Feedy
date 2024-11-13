@@ -32,6 +32,12 @@ namespace Feedy.Services
         public const Int32 TEST_FEEDER			= 0x01002001;
         public const Int32 TEST_TRAY			= 0x01002002;
 
+        public const Int32 STEP_MOTOR			= 0x01002011;
+        public const Int32 START_MOTOR			= 0x01002012;
+        public const Int32 STOP_MOTOR			= 0x01002013;
+        public const Int32 RUN_MOTOR			= 0x01002014;
+
+
         public const Int32 REP_VERSION			= 0x03002001;
 
         public const Int32 ERROR_RESET			= 0x01003001;
@@ -60,7 +66,7 @@ namespace Feedy.Services
     public struct SFeedyStatusMsg
     {
         public SMsgHdr hdr;
-        public Int32 connected;
+        public SFeedyStatus status;
     }
 
     //--- SFileMsg -------------------------
@@ -86,13 +92,5 @@ namespace Feedy.Services
     {
 	    public SMsgHdr  hdr;			// LOAD_JOB / SAVE_JOB
 	    public SJob	    job;
-    }
-
-    //--- SStatusMsg -------------------------
-    [StructLayout(LayoutKind.Sequential, Pack = 1)]
-    public struct SStatusMsg
-    {
-	    public SMsgHdr  hdr;			
-	    public SStatus	status;
     }
 }

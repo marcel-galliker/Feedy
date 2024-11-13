@@ -22,7 +22,7 @@ namespace Feedy.Models
         //--- Get -----------------------------------
         public SJob Get()
         {
-            SJob job = new SJob();
+            SJob job        = new SJob();
             job.name        = Name; 
             job.description = Description;
             job.camPrgNo    = CamPrgNo;

@@ -77,6 +77,11 @@ void gui_handle_msg(SOCKET socket, SGuiMsg *pmsg)
 	case TEST_FEEDER:			_test_feeder(socket, (SFeeder*)pmsg->data); break;
 	case TEST_TRAY:				_test_tray(socket, (STray*)pmsg->data); break;
 
+	case STEP_MOTOR:			feedy_step_motor	(socket, (SMotorTest*)pmsg->data); break;
+	case START_MOTOR:			feedy_start_motor	(socket, (SMotorTest*)pmsg->data); break;
+	case STOP_MOTOR:			feedy_stop_motor	(socket, (SMotorTest*)pmsg->data); break;
+	case RUN_MOTOR:				feedy_run_motor		(socket, (SMotorTest*)pmsg->data); break;
+
 	case ERROR_RESET:			feedy_reset_error(); break; // hyper_reset_error(); break;
 
 	default: TrPrintf(-1, "gui_handle_msg: unknown ID=0x%08x\n", pmsg->hdr.msgId);
@@ -86,9 +91,7 @@ void gui_handle_msg(SOCKET socket, SGuiMsg *pmsg)
 //--- handle_gui_status --------------------------------------------
 static void _handle_gui_status(SOCKET socket)
 {
-	int time=ge_ticks();
-	//--- printer status -----------------------------------
-	gui_send(socket, &FeedyStatusMsg);
+	gui_send_status(INVALID_SOCKET);
 }
 
 //--- _test_feeder -------------------------------------------

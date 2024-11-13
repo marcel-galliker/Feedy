@@ -47,6 +47,11 @@
 #define TEST_FEEDER				0x01002001
 #define TEST_TRAY				0x01002002
 
+#define STEP_MOTOR				0x01002011
+#define START_MOTOR				0x01002012
+#define STOP_MOTOR				0x01002013
+#define RUN_MOTOR				0x01002014
+
 #define REP_VERSION				0x03002001
 
 #define ERROR_RESET				0x01003001
@@ -71,28 +76,16 @@ typedef struct SGuiMsg
 //--- SConfigMsg ---------------------------
 typedef struct SConfigMsg
 {
-	SMsgHdr      hdr;
+	SMsgHdr  hdr;
 	SConfig  cfg;
 } SConfigMsg;
 
-typedef enum EnJobState
+//--- SFeedyStatusMsg ---------------------------
+typedef struct SFeedyStatusMsg
 {
-	JS_undef,		// 0
-	JS_off,			// 1
-	JS_starting,	// 2
-	JS_printing,	// 3
-	JS_stopping,	// 4
-	JS_done,		// 5
-	JS_aborted		// 6
-} EnJobState;
-
-//--- SStatusMsg ---------------------------
-typedef struct SStatusMsg
-{
-	SMsgHdr		hdr;
-	INT32		connected;
-	EnJobState	jobState;	
-} SStatusMsg;
+	SMsgHdr			hdr;
+	SFeedyStatus	status;
+} SFeedyStatusMsg;
 
 //=== COMMON =================================
 //--- SFileMsg -------------------------

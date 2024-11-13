@@ -1,8 +1,8 @@
 ﻿using Feedy.Models;
-using GE_Utilities;
-using System.Threading;
+using Feedy.Services;
 using System.Windows;
 using System.Windows.Controls;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Views.ConfigView
 {
@@ -15,53 +15,50 @@ namespace Feedy.Views.ConfigView
         {
             InitializeComponent();
            
-            DataContext = FdGolbals.JogInfo;
+            DataContext = FdGolbals.FeedyStatus;
+        }
+
+        //--- _getMotorTest -------------------------------
+        private SMotorTest _getMotorTest(Button btn)
+        {
+            int row = Grid.GetRow(btn);
+            int col = Grid.GetColumn(btn);
+            SMotorTest test = new SMotorTest();
+            test.motorNo = row-1;
+            test.direction = (col==0)? -1:1;
+            test.settings  = FdGolbals.MotorSettings.Motors[test.motorNo].Get();
+            test.testSpeed = FdGolbals.FeedyStatus.TestSpeed;
+            return test;
         }
 
         //--- Jog_Clicked ------------------------------------------------
         private void Jog_Clicked(object sender, System.Windows.RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            int row = Grid.GetRow(btn);
-            int col = Grid.GetColumn(btn);
-            if (col==0) FdGolbals.JogInfo.Pos[row-1]--;
-            else        FdGolbals.JogInfo.Pos[row-1]++;
+            SMotorTest test = _getMotorTest(sender as Button);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.STEP_MOTOR, ref test);
         }
 
         //--- Jog_Confirm ------------------------------------------------
         private void Jog_Confirm(object sender, System.Windows.RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            int row = Grid.GetRow(btn);
-            int col = Grid.GetColumn(btn);
-            if (col==0) FdGolbals.JogInfo.Pos[row-1]--;
-            else        FdGolbals.JogInfo.Pos[row-1]++;
+            SMotorTest test = _getMotorTest(sender as Button);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.RUN_MOTOR, ref test);
         }
 
         //--- StartJog -------------------------------
-        private bool _running=false;
         private void StartJog(object sender, RoutedEventArgs e)
         {
-            Button btn = sender as Button;
-            int row = Grid.GetRow(btn);
-            int col = Grid.GetColumn(btn);
-            int step = (col==0)? -1 : 1;
-            _running = true;
-            Thread t = new Thread(()=>
-            {
-                while (_running)
-                {
-                    Thread.Sleep(100);
-                    GeBindable.Invoke(()=>FdGolbals.JogInfo.Pos[row-1]+=step);
-                }
-            });
-            t.Start();
+            SMotorTest test = _getMotorTest(sender as Button);
+            test.settings.testPosStart = -1000000;
+            test.settings.testPosEnd   =  1000000;
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.START_MOTOR, ref test);
         }
 
         //--- StopJog -------------------------------------
         private void StopJog(object sender, RoutedEventArgs e)
         {
-            _running = false;
+            SMotorTest test = _getMotorTest(sender as Button);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.STOP_MOTOR, ref test);
         }
     }
 }

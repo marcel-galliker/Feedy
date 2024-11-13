@@ -23,4 +23,5 @@
 void gui_server(void);
 
 void gui_send(SOCKET socket, void *pmsg);
+void gui_send_status(SOCKET socket);
 

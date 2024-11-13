@@ -28,10 +28,10 @@ char PATH_ROOT[4];
 char PATH_TEMP[MAX_PATH];
 
 
-SConfig		FeedyCfg;
-SAppData	FeedyAppData;
-SJob		FeedyJob;
-SStatusMsg	FeedyStatusMsg;
+SConfig			FeedyCfg;
+SAppData		FeedyAppData;
+SJob			FeedyJob;
+SFeedyStatus	FeedyStatus;
 
 //--- FdGlobals_init ---------------------------------
 void FdGlobals_init(void)

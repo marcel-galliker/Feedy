@@ -1,6 +1,7 @@
 ﻿using Feedy.Services;
 using Feedy.Views.JobView;
 using Feedy.Views.Main;
+using System;
 
 namespace Feedy.Models
 {
@@ -27,7 +28,5 @@ namespace Feedy.Models
         public static FdConfig          Cfg         = new FdConfig();
         public static Job               Job         = new Job();
         public static JobSettings       JobSettings = new JobSettings();
-
-        public static JogInfo           JogInfo = new JogInfo();
     }
 }

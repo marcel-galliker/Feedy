@@ -155,6 +155,7 @@ namespace GE_Utilities
             else _MouseRunningState=0;
         }
 
+        //--- GeButton_MouseLeave -----------------------------------
         private void GeButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
         {
             if (_MouseRunningState==2) 
