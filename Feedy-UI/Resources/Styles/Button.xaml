@@ -107,7 +107,9 @@
                         <Ellipse x:Name="border"
                                  Width="{TemplateBinding Height}" Height="{TemplateBinding Height}" 
                                  Stroke="LightGray"
-                                 Fill="#A0DDDDDD" />
+                                 Fill="{TemplateBinding Background}"
+                                 />
+                        <!--Fill="#A0DDDDDD" /> -->
                         <ContentPresenter x:Name="contentPresenter" 
                                           Focusable="False" 
                                           HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 

@@ -34,7 +34,7 @@ namespace Feedy.Views.EventsView
         {
             FdGolbals.Events.Confirm();
            
-            FdGolbals.FdInterface.SendCommand(EzGuiMsg.ERROR_RESET);
+            FdGolbals.FdInterface.SendCommand(GuiMsg.ERROR_RESET);
         }
     }
 }

@@ -1,30 +1,30 @@
 ﻿using GE_Utilities;
-using static Feedy.Services.FdDef;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
 {
     public class FeederSettings : GeBindable
     {
         //--- Set ----------------------------------------
-        public void Set(SFeeder bin)
+        public void Set(SFeeder fdr)
         {
-            IsUsed = bin.used!=0;
-            Speed = bin.speed;
-            Slope = bin.slope;
-            Turns = bin.turns;
-            MaxTurns = bin.maxTurns;
+            IsUsed = fdr.used!=0;
+            Speed = fdr.speed;
+            Slope = fdr.slope;
+            Turns = fdr.turns;
+            MaxTurns = fdr.maxTurns;
         }
 
         //--- Get -----------------------------------
         public SFeeder Get()
         {
-            SFeeder bin = new SFeeder();
-            bin.used = IsUsed? 1:0;
-            bin.speed = Speed;
-            bin.slope = Turns;
-            bin.turns = Turns;
-            bin.maxTurns = MaxTurns;
-            return bin;
+            SFeeder fdr = new SFeeder();
+            fdr.used = IsUsed? 1:0;
+            fdr.speed = Speed;
+            fdr.slope = Turns;
+            fdr.turns = Turns;
+            fdr.maxTurns = MaxTurns;
+            return fdr;
         }
         
         //--- Property IsChanged ---------------------------------------

@@ -408,7 +408,7 @@
     <ClInclude Include="..\Externals\GeUtilities\ge_trace.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_utilities.h" />
     <ClInclude Include="..\Feedy-Ctrl\crypt_lib.h" />
-    <ClInclude Include="FeedyDef.h" />
+    <ClInclude Include="feedy_def.h" />
     <ClInclude Include="feedy_lib.h" />
     <ClInclude Include="framework.h" />
     <ClInclude Include="xml_lib.h" />

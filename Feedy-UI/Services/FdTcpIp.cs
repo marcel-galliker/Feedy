@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using static Feedy.Services.FdDef;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Services
 {
     //--- constants --------------------------------------------------
-    public class EzGuiMsg
+    public class GuiMsg
     {
         public const Int32 PORT_GUI = 10000; // TCP-IP Port
 
@@ -28,6 +28,9 @@ namespace Feedy.Services
         public const Int32 RUN_JOB				= 0x01001031;
         public const Int32 STOP_JOB				= 0x01001032;
         public const Int32 ABORT_JOB			= 0x01001033;
+
+        public const Int32 TEST_FEEDER			= 0x01002001;
+        public const Int32 TEST_TRAY			= 0x01002002;
 
         public const Int32 REP_VERSION			= 0x03002001;
 

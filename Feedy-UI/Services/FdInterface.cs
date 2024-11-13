@@ -237,7 +237,7 @@ namespace Feedy.Services
                     _Client = new TcpClient();
                     try 
                     {
-                        _Client.Connect(Address, EzGuiMsg.PORT_GUI); 
+                        _Client.Connect(Address, GuiMsg.PORT_GUI); 
                     }
                     catch (Exception e)
                     {
@@ -352,12 +352,12 @@ namespace Feedy.Services
         }
 
         //--- SendMsg ----------------------------------------
-        public bool SendMsg<type>(UInt32 msgId, ref type msg)
+        public bool SendMsg<type>(UInt32 msgId, ref type msg, int hdrSize=0)
         {
             if (/*Connected && */ _Stream!=null)
             {
                 byte[] buffer;
-                GeStructConvert.ToBuffer<type>(out buffer, msg);
+                GeStructConvert.ToBuffer<type>(out buffer, msg, hdrSize);
                 SMsgHdr hdr= new SMsgHdr() { msgId = msgId, msgLen = buffer.Count() };
                 GeStructConvert.OverwriteBuffer(buffer, new SMsgHdr(){msgId=msgId, msgLen=buffer.Count()});
 
@@ -376,29 +376,11 @@ namespace Feedy.Services
             return false;
         }
 
-        //--- SendMsgBuf ----------------------------------------
-        public void SendMsgBuf(UInt32 msgId, string str)
+        //--- SendMsgData ------------------------------------------------
+        public bool SendMsgData<type>(UInt32 msgId, ref type msg)
         {
-            if (Connected)// && !FdGolbals.Settings.Demo)
-            {
-                char[] msg = new char[str.Length];
-                str.CopyTo(0, msg, 0, str.Length);
-                int hdrsize  = Marshal.SizeOf(typeof(SMsgHdr));
-                byte[] buffer = new byte[hdrsize+msg.Length+1];
-                for (int i=0; i<msg.Length; i++)
-                    buffer[hdrsize+i] = (byte)msg[i];
-                GeStructConvert.OverwriteBuffer(buffer, new SMsgHdr(){msgId=msgId, msgLen=buffer.Count()});
-                try
-                {
-                    _Stream.Write(buffer, 0, buffer.Count());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine("TCP/IP Send Exception: >>{0}<<", e.Message);
-                    Connected = false;
-                    _Client.Close();
-                }
-            }
+            return SendMsg<type>(msgId, ref msg, 8);
         }
+        
     }
 }

@@ -31,6 +31,8 @@
 
 //--- prototypes ---------------------------------------------------
 static void _handle_gui_status(SOCKET socket);
+static void _test_feeder(SOCKET socket, SFeeder *pfdr);
+static void _test_tray  (SOCKET socket, STray *pfdr);
 
 //--- gui_disconnected ----------------------------------
 void gui_disconnected(SOCKET socket)
@@ -72,6 +74,9 @@ void gui_handle_msg(SOCKET socket, SGuiMsg *pmsg)
 	case STOP_JOB:				feedy_stop		(socket);						 break;
 	case ABORT_JOB:				feedy_abort		(socket);						 break;
 
+	case TEST_FEEDER:			_test_feeder(socket, (SFeeder*)pmsg->data); break;
+	case TEST_TRAY:				_test_tray(socket, (STray*)pmsg->data); break;
+
 	case ERROR_RESET:			feedy_reset_error(); break; // hyper_reset_error(); break;
 
 	default: TrPrintf(-1, "gui_handle_msg: unknown ID=0x%08x\n", pmsg->hdr.msgId);
@@ -84,4 +89,16 @@ static void _handle_gui_status(SOCKET socket)
 	int time=ge_ticks();
 	//--- printer status -----------------------------------
 	gui_send(socket, &FeedyStatusMsg);
+}
+
+//--- _test_feeder -------------------------------------------
+static void _test_feeder(SOCKET socket, SFeeder *pfdr)
+{
+	TrPrintf(-1, "_test_feeder(used=%d, speed=%d, slope=%d, turns=%d, maxTurns=%d)", pfdr->used, pfdr->speed, pfdr->slope, pfdr->turns, pfdr->maxTurns);
+}
+
+//--- _test_tray ----------------------------------------------
+static void _test_tray  (SOCKET socket, STray *pfdr)
+{
+	TrPrintf(-1, "_test_tray");
 }

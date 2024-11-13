@@ -1,0 +1,65 @@
+﻿<UserControl x:Class="Feedy.Views.ConfigView.JogView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:local="clr-namespace:Feedy.Views.ConfigView"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <UserControl.Resources>
+        <Style TargetType="{x:Type Button}">
+            <Setter Property="Margin" Value="5"/>
+        </Style>
+        <Style TargetType="{x:Type TextBox}">
+            <Setter Property="Width" Value="50"/>
+            <Setter Property="Height" Value="20"/>
+            <Setter Property="HorizontalContentAlignment" Value="Right"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+        </Style>
+    </UserControl.Resources>
+
+    <GroupBox Header="JOG">
+        <Grid Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="50"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+                <RowDefinition Height="50"/>
+            </Grid.RowDefinitions>
+
+            <StackPanel Grid.Row="0" Grid.ColumnSpan="3" VerticalAlignment="top" HorizontalAlignment="Center" Orientation="Horizontal">
+                <TextBlock  Text="Speed "/>
+                <TextBlock  Text="{Binding Speed}"/>
+                <TextBlock  Text=" %"/>
+            </StackPanel>
+            
+            <Slider Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Maximum="100" SmallChange="0" Value="{Binding Speed}"/>
+
+            <TextBlock Grid.Row="0" Grid.Column="2" Text="Pos" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+
+            <utilities:GeButton Grid.Row="1" Grid.Column="0" Content="Z-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog" Confirm="Jog_Confirm"/>
+            <utilities:GeButton Grid.Row="1" Grid.Column="1" Content="Z+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[0]}"/>
+
+            <utilities:GeButton Grid.Row="2" Grid.Column="0" Content="X-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="2" Grid.Column="1" Content="X+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[1]}"/>
+
+            <utilities:GeButton Grid.Row="3" Grid.Column="0" Content="CY-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="3" Grid.Column="1" Content="CY+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="3" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[2]}"/>
+
+            <utilities:GeButton Grid.Row="4" Grid.Column="0" Content="C-" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <utilities:GeButton Grid.Row="4" Grid.Column="1" Content="C+" Background="White" Click="Jog_Clicked" Start="StartJog" Stop="StopJog"/>
+            <TextBox Grid.Row="4" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Right" Text="{Binding Pos[3]}"/>
+        </Grid>
+    </GroupBox>
+</UserControl>

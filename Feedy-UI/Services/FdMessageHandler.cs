@@ -25,20 +25,20 @@ namespace Feedy.Services
             {
                 switch (hdr.msgId)
                 {
-                    case EzGuiMsg.REP_VERSION:           handle_version(msg);            break;
+                    case GuiMsg.REP_VERSION:           handle_version(msg);            break;
 
-                    case EzGuiMsg.LIST_JOB_START:        FdGolbals.Job.Files.Clear();    break;
-                    case EzGuiMsg.LIST_JOB_FILE:         handle_job_file(msg);           break;
-                    case EzGuiMsg.LIST_JOB_END:          FdGolbals.Job.ListLoaded++;     break;
+                    case GuiMsg.LIST_JOB_START:        FdGolbals.Job.Files.Clear();    break;
+                    case GuiMsg.LIST_JOB_FILE:         handle_job_file(msg);           break;
+                    case GuiMsg.LIST_JOB_END:          FdGolbals.Job.ListLoaded++;     break;
 
-                    case EzGuiMsg.LOAD_CFG:              handle_cfg_loaded (msg);          break;
+                    case GuiMsg.LOAD_CFG:              handle_cfg_loaded (msg);          break;
 
-                    case EzGuiMsg.LOAD_JOB:              handle_job_load(msg);           break;
-                //    case EzGuiMsg.RUN_JOB:             handle_job_run(msg);            break;
-                //    case EzGuiMsg.ABORT_JOB:           handle_job_abort(msg);          break;
+                    case GuiMsg.LOAD_JOB:              handle_job_load(msg);           break;
+                //    case GuiMsg.RUN_JOB:             handle_job_run(msg);            break;
+                //    case GuiMsg.ABORT_JOB:           handle_job_abort(msg);          break;
     
-                    case EzGuiMsg.ERROR_RESET:           FdGolbals.Events.Confirm();    break;
-                    case EzGuiMsg.ERROR_EVENT:           handle_error_event(msg);       break;
+                    case GuiMsg.ERROR_RESET:           FdGolbals.Events.Confirm();    break;
+                    case GuiMsg.ERROR_EVENT:           handle_error_event(msg);       break;
 
                     default:    FdGolbals.Events.AddError(0, string.Format("UnKnown ID: 0x{0:x}", hdr.msgId)); break;
                 }

@@ -45,7 +45,7 @@
     <ClInclude Include="feedy_lib.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="FeedyDef.h">
+    <ClInclude Include="feedy_def.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

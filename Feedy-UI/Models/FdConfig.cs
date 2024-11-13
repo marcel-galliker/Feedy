@@ -1,5 +1,5 @@
 ﻿using GE_Utilities;
-using static Feedy.Services.FdDef;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
 {

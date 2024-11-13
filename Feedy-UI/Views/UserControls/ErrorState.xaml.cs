@@ -4,7 +4,7 @@ using MahApps.Metro.IconPacks;
 using System;
 using System.Windows.Controls;
 using System.Windows.Media;
-using static Feedy.Services.FdDef;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Views.UserControls
 {

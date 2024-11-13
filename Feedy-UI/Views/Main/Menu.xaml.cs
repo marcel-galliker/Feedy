@@ -90,6 +90,15 @@ namespace Feedy.Views.Main
                                             OnClick=_CheckMenu 
                                         });
 
+            _MenuItem.Add("PickPlace",  new MenuItem()
+                                        {
+                                            Group=0,
+                                            Id="PickPlace",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.ChartTimelineVariant, 
+                                            View=FdGolbals.MainWindow.PickPlaceView,
+                                            OnClick=_CheckMenu 
+                                        });
+
             _MenuItem.Add("Events",     new MenuItem()
                                         {
                                             Group=0,

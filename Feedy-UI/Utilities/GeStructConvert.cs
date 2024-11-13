@@ -18,13 +18,13 @@ namespace GE_Utilities
         }
 
         //--- ToBuffer --------------------------------------------
-        public static void ToBuffer<Type>(out byte[] dst, Type src)
+        public static void ToBuffer<Type>(out byte[] dst, Type src, int hdrsize=0)
         {
-            int size    = Marshal.SizeOf(typeof(Type));
+            int size    = Marshal.SizeOf(typeof(Type))+hdrsize;
             IntPtr ptr  = Marshal.AllocHGlobal(size);
             Marshal.StructureToPtr(src, ptr, false);
             dst = new byte[size];
-            Marshal.Copy(ptr, dst, 0, size);
+            Marshal.Copy(ptr, dst, hdrsize, size-hdrsize);
             Marshal.FreeHGlobal(ptr);            
         }
 

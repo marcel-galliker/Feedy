@@ -1,5 +1,7 @@
 ﻿using Feedy.Models;
 using Feedy.Models.Enums;
+using Feedy.Services;
+using System.Windows;
 using System.Windows.Controls;
 
 namespace Feedy.Views.JobView
@@ -25,6 +27,13 @@ namespace Feedy.Views.JobView
         //--- _Language ----------------------------------------------
         private void _Language()
         {
+        }
+
+        //--- Test_Clicked ----------------------------------------
+        private void Test_Clicked(object sender, RoutedEventArgs e)
+        {
+            Services.feedy_def.SFeeder set=FdGolbals.JobSettings.Feeder.Get();
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.TEST_FEEDER, ref set);
         }
 
     }

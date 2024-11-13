@@ -8,39 +8,45 @@
              xmlns:local="clr-namespace:Feedy.Views.JobView"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
-    <GroupBox Header="Bin">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MinWidth="100"/>
-                <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="70"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="1" Text="Used"/>
-            <CheckBox  Grid.Row="1" Grid.Column="2" IsChecked="{Binding IsUsed}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
+    <Grid>
+        <GroupBox Header="Feeder">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="100"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="70"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="2" Text="Speed"/>
-            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Speed}"/>
-            <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="1" Text="Used"/>
+                <CheckBox  Grid.Row="1" Grid.Column="2" IsChecked="{Binding IsUsed}" VerticalAlignment="Center" HorizontalAlignment="Stretch" />
 
-            <TextBlock Grid.Row="3" Text="Neigung"/>
-            <ComboBox  Grid.Row="3" Grid.Column="2" x:Name="CB_Position" SelectedValue="{Binding Slope}"/>
+                <TextBlock Grid.Row="2" Text="Speed"/>
+                <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Speed}"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="4" Text="Turns"/>
-            <ComboBox  Grid.Row="4" Grid.Column="2" x:Name="CB_Turns" SelectedValue="{Binding Turns}"/>
+                <TextBlock Grid.Row="3" Text="Neigung"/>
+                <ComboBox  Grid.Row="3" Grid.Column="2" x:Name="CB_Position" SelectedValue="{Binding Slope}"/>
 
-            <TextBlock Grid.Row="5" Text="Max Turns"/>
-            <ComboBox  Grid.Row="5" Grid.Column="2" x:Name="CB_MaxTurns" SelectedValue="{Binding MaxTurns}"/>
-        </Grid>
-    </GroupBox>
+                <TextBlock Grid.Row="4" Text="Turns"/>
+                <ComboBox  Grid.Row="4" Grid.Column="2" x:Name="CB_Turns" SelectedValue="{Binding Turns}"/>
+
+                <TextBlock Grid.Row="5" Text="Max Turns"/>
+                <ComboBox  Grid.Row="5" Grid.Column="2" x:Name="CB_MaxTurns" SelectedValue="{Binding MaxTurns}"/>
+
+            </Grid>
+        </GroupBox>
+        <utilities:GeButton Confirm="Test_Clicked" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,14,0,0" Background="white">
+            <iconPacks:PackIconMaterial Kind="Play" Foreground="LightGreen"/>
+        </utilities:GeButton>
+    </Grid>
 </UserControl>

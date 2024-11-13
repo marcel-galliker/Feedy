@@ -19,7 +19,7 @@
 #pragma once
 
 #include "ge_common.h"
-#include "FeedyDef.h"
+#include "feedy_def.h"
 
 #define EXPORT EXTERN_C _declspec(dllexport) 
 

@@ -19,7 +19,7 @@
 #pragma once
 
 //--- includes -----------------------------------------------------------
-#include "FeedyDef.h"
+#include "feedy_def.h"
 #include "feedy.h"
 
 //--- defines -------------------------------------------------------------

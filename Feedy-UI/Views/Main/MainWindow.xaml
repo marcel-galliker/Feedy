@@ -8,6 +8,7 @@
         xmlns:LogView="clr-namespace:Feedy.Views.LogView"
         xmlns:ConfigView="clr-namespace:Feedy.Views.ConfigView"
         xmlns:SettingsView="clr-namespace:Feedy.Views.SettingsView"
+        xmlns:PickPlaceView="clr-namespace:Feedy.Views.PickPlaceView"
         xmlns:local="clr-namespace:Feedy.Views.Main"
         mc:Ignorable="d"
         Closed="Window_Closed"
@@ -37,7 +38,8 @@
                 <LogView:LogView           x:Name="LogView"        Visibility="Collapsed"/>
                 <ConfigView:ConfigView     x:Name="ConfigView"     Visibility="Collapsed"/>
                 <SettingsView:SettingsView x:Name="SettingsView"   Visibility="Collapsed"/>
-
+                <PickPlaceView:PickPlaceView x:Name="PickPlaceView" Visibility="Collapsed"/> 
+                    
                 <!-- NOT CONNECTED ______________________________________________-->
                 <TextBlock x:Name="TX_NotConnected"
                    Grid.RowSpan="10" Grid.ColumnSpan="10" 

@@ -8,65 +8,71 @@
              xmlns:local="clr-namespace:Feedy.Views.JobView"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-    
-    <GroupBox Header="Tray">
-        <Grid>
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" MinWidth="100"/>
-                <ColumnDefinition Width="5"/>
-                <ColumnDefinition Width="70"/>
-                <ColumnDefinition Width="70"/>
-            </Grid.ColumnDefinitions>
-            <Grid.RowDefinitions>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
-            </Grid.RowDefinitions>
-            
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Nr"/>
-            <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding No}" />
+    <Grid>
+        <GroupBox Header="Tray">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto" MinWidth="100"/>
+                    <ColumnDefinition Width="5"/>
+                    <ColumnDefinition Width="70"/>
+                    <ColumnDefinition Width="70"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="auto"/>
+                </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Time 1st push"/>
-            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding Time1}"/>
-            <TextBlock Grid.Row="1" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Nr"/>
+                <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding No}" />
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Pause"/>
-            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Pause}"/>
-            <TextBlock Grid.Row="2" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="1" Grid.Column="0" Text="Time 1st push"/>
+                <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding Time1}"/>
+                <TextBlock Grid.Row="1" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Time 2nd push"/>
-            <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding Time2}"/>
-            <TextBlock Grid.Row="3" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="2" Grid.Column="0" Text="Pause"/>
+                <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Pause}"/>
+                <TextBlock Grid.Row="2" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="4" Grid.Column="0" Text="Repeats"/>
-            <utilities:GeNumBox Grid.Row="4" Grid.Column="2" Text="{Binding Repeats}"/>
+                <TextBlock Grid.Row="3" Grid.Column="0" Text="Time 2nd push"/>
+                <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding Time2}"/>
+                <TextBlock Grid.Row="3" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="5" Grid.Column="0" Text="Wait after shake"/>
-            <utilities:GeNumBox Grid.Row="5" Grid.Column="2" Text="{Binding WaitShake}"/>
-            <TextBlock Grid.Row="5" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Repeats"/>
+                <utilities:GeNumBox Grid.Row="4" Grid.Column="2" Text="{Binding Repeats}"/>
 
-            <TextBlock Grid.Row="6" Grid.Column="0" Text="Wait after fill"/>
-            <utilities:GeNumBox Grid.Row="6" Grid.Column="2" Text="{Binding WaitFill}"/>
-            <TextBlock Grid.Row="6" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="5" Grid.Column="0" Text="Wait after shake"/>
+                <utilities:GeNumBox Grid.Row="5" Grid.Column="2" Text="{Binding WaitShake}"/>
+                <TextBlock Grid.Row="5" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="7" Grid.Column="0" Text="Max tries"/>
-            <utilities:GeNumBox Grid.Row="7" Grid.Column="2" Text="{Binding Tries}"/>
+                <TextBlock Grid.Row="6" Grid.Column="0" Text="Wait after fill"/>
+                <utilities:GeNumBox Grid.Row="6" Grid.Column="2" Text="{Binding WaitFill}"/>
+                <TextBlock Grid.Row="6" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="8" Grid.Column="0" Text="Feed when less"/>
-            <utilities:GeNumBox Grid.Row="8" Grid.Column="2" Text="{Binding StartFeed}"/>
-            <TextBlock Grid.Row="8" Grid.Column="3" Text=" parts" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="7" Grid.Column="0" Text="Max tries"/>
+                <utilities:GeNumBox Grid.Row="7" Grid.Column="2" Text="{Binding Tries}"/>
 
-            <TextBlock Grid.Row="9" Grid.Column="0" Text="Stop feeding"/>
-            <utilities:GeNumBox Grid.Row="9" Grid.Column="2" Text="{Binding StopFeed}"/>
-            <TextBlock Grid.Row="9" Grid.Column="3" Text=" brightness" FontSize="{StaticResource FontSizeXS}"/>
+                <TextBlock Grid.Row="8" Grid.Column="0" Text="Feed when less"/>
+                <utilities:GeNumBox Grid.Row="8" Grid.Column="2" Text="{Binding StartFeed}"/>
+                <TextBlock Grid.Row="8" Grid.Column="3" Text=" parts" FontSize="{StaticResource FontSizeXS}"/>
 
-        </Grid>
-    </GroupBox>
+                <TextBlock Grid.Row="9" Grid.Column="0" Text="Stop feeding"/>
+                <utilities:GeNumBox Grid.Row="9" Grid.Column="2" Text="{Binding StopFeed}"/>
+                <TextBlock Grid.Row="9" Grid.Column="3" Text=" brightness" FontSize="{StaticResource FontSizeXS}"/>
+
+            </Grid>
+        </GroupBox>
+
+        <utilities:GeButton Confirm="Test_Clicked" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,14,0,0" Background="white">
+            <iconPacks:PackIconMaterial Kind="Play" Foreground="LightGreen"/>
+        </utilities:GeButton>
+
+    </Grid>
 </UserControl>

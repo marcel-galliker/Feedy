@@ -4,7 +4,7 @@ using System;
 using System.IO;
 using System.Net.NetworkInformation;
 using System.Windows;
-using static Feedy.Services.FdDef;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
 {
@@ -29,9 +29,9 @@ namespace Feedy.Models
         //--- LoadList -----------------------------------------------
         public void LoadList()
         {
-            FdGolbals.FdInterface.SendCommand(EzGuiMsg.LIST_JOB_START);
+            FdGolbals.FdInterface.SendCommand(GuiMsg.LIST_JOB_START);
         //    SFileMsg msg = new SFileMsg() { filename = "" };
-        //   FdGolbals.FdInterface.SendMsg(EzGuiMsg.LOAD_JOB, ref msg);
+        //   FdGolbals.FdInterface.SendMsg(GuiMsg.LOAD_JOB, ref msg);
         }
 
         //--- Property ListLoaded ---------------------------------------
@@ -47,7 +47,7 @@ namespace Feedy.Models
         {
             if (filename!=null && filename!="") FdGolbals.JobSettings.Name = filename;
             SFileMsg msg = new SFileMsg() { filename = FdGolbals.JobSettings.Name };
-            FdGolbals.FdInterface.SendMsg(EzGuiMsg.LOAD_JOB, ref msg);
+            FdGolbals.FdInterface.SendMsg(GuiMsg.LOAD_JOB, ref msg);
             _Loaded=true;
         }
 
@@ -60,7 +60,7 @@ namespace Feedy.Models
 
             SJobMsg msg = new SJobMsg();
             msg.job= FdGolbals.JobSettings.Get();  
-            FdGolbals.FdInterface.SendMsg(EzGuiMsg.SAVE_JOB, ref msg);
+            FdGolbals.FdInterface.SendMsg(GuiMsg.SAVE_JOB, ref msg);
         }
 
         //--- SaveNew ---------------------------------------
@@ -139,14 +139,14 @@ namespace Feedy.Models
                 FdGolbals.Events.AddError(0, "No job loaded!");
                 return;
             }
-            FdGolbals.FdInterface.SendCommand(EzGuiMsg.RUN_JOB);
+            FdGolbals.FdInterface.SendCommand(GuiMsg.RUN_JOB);
         }
 
         //--- Stop ----------------------------------
         public void Stop()
         {
             PrintingSpeed = 0;
-            FdGolbals.FdInterface.SendCommand(EzGuiMsg.STOP_JOB);
+            FdGolbals.FdInterface.SendCommand(GuiMsg.STOP_JOB);
         }
 
         //--- Property IsRunning ---------------------------------------

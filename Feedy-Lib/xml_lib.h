@@ -26,7 +26,7 @@ extern "C"{
 
 #include "ge_common.h"
 #include "ge_xml_file.h"
-#include "FeedyDef.h"
+#include "feedy_def.h"
 
 EXPORT int xml_last_job   (char *filepath, char *jobname, int strlen, EN_Xml_Action action);
 EXPORT int xml_job_file   (char *filepath, SJob *pJob, EN_Xml_Action action);

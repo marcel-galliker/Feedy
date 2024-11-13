@@ -8,7 +8,9 @@ namespace GE_Utilities
     {
         public GeButton()
         {
-            Click += GeButton_Click;
+            Click            += GeButton_Click;
+            PreviewMouseDown += GeButton_PreviewMouseDown;
+            MouseLeave       += GeButton_MouseLeave;
             ClickFontSize = 8;
         }
 
@@ -68,6 +70,28 @@ namespace GE_Utilities
         public static readonly DependencyProperty ConfirmProperty =
             DependencyProperty.Register("Confirm", typeof(Action<object, RoutedEventArgs>), typeof(GeButton));
 
+        //--- Property Start ---------------------
+        public Action<object, RoutedEventArgs> Start
+        {
+            get { return (Action<object, RoutedEventArgs>)GetValue(StartProperty); }
+            set { SetValue(StartProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsButtonChecked.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty StartProperty =
+            DependencyProperty.Register("Start", typeof(Action<object, RoutedEventArgs>), typeof(GeButton));
+
+        //--- Property Start ---------------------
+        public Action<object, RoutedEventArgs> Stop
+        {
+            get { return (Action<object, RoutedEventArgs>)GetValue(StopProperty); }
+            set { SetValue(StopProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for IsButtonChecked.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty StopProperty =
+            DependencyProperty.Register("Stop", typeof(Action<object, RoutedEventArgs>), typeof(GeButton));
+
         //--- Property Reject ---------------------
         public Action<object, RoutedEventArgs> Reject
         {
@@ -80,8 +104,18 @@ namespace GE_Utilities
             DependencyProperty.Register("Reject", typeof(Action<object, RoutedEventArgs>), typeof(GeButton));
 
         //--- GeButton_Click ------------------------
+        private int _MouseRunningState=0;
+
         private void GeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (_MouseRunningState==2) 
+            {
+                if (Stop!=null) Stop(this, null);
+                _MouseRunningState = 0;
+                e.Handled = true;
+                return;
+            }
+            _MouseRunningState = 0;
             if (Confirm!=null)
             {
                 e.Handled = true;
@@ -102,5 +136,35 @@ namespace GE_Utilities
                 }
             }
         }
+
+        //--- GeButton_PreviewMouseDown ------------------------------
+        private void GeButton_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+        {
+            if (Start!=null) 
+            {
+                _MouseRunningState = 1;
+                GeBindable.InvokeDelayed(100, () => 
+                {
+                    if (_MouseRunningState==1)
+                    {
+                        if (Start!=null) Start(this, null);
+                        _MouseRunningState = 2;
+                    }
+                });
+            }
+            else _MouseRunningState=0;
+        }
+
+        private void GeButton_MouseLeave(object sender, System.Windows.Input.MouseEventArgs e)
+        {
+            if (_MouseRunningState==2) 
+            {
+                if (Stop!=null) Stop(this, null);
+                _MouseRunningState = 0;
+                e.Handled = true;
+                return;
+            }
+        }
+
     }
 }

@@ -192,7 +192,6 @@
     <Compile Include="Models\Enums\EN_GripperType.cs" />
     <Compile Include="Models\FeederSettings.cs" />
     <Compile Include="Models\CamSettings.cs" />
-    <Compile Include="Models\Enums\EN_BunkerModes.cs" />
     <Compile Include="Models\Enums\EN_CamTrigger.cs" />
     <Compile Include="Models\Enums\EN_Int.cs" />
     <Compile Include="Models\Enums\EN_ScreenSize.cs" />
@@ -206,16 +205,18 @@
     <Compile Include="Models\GripperSettings.cs" />
     <Compile Include="Models\Job.cs" />
     <Compile Include="Models\JobSettings.cs" />
+    <Compile Include="Models\JogInfo.cs" />
     <Compile Include="Models\Language.cs" />
     <Compile Include="Models\Dir.cs" />
     <Compile Include="Models\FeedyStatus.cs" />
+    <Compile Include="Models\MotorSettings.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="Models\TraySettings.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Version.cs" />
     <Compile Include="Services\FdInterface.cs" />
     <Compile Include="Services\FdMessageHandler.cs" />
-    <Compile Include="Services\FdDef.cs" />
+    <Compile Include="Services\feedy_def.cs" />
     <Compile Include="Services\FdTcpIp.cs" />
     <Compile Include="Utilities\GeButton.cs" />
     <Compile Include="Utilities\Ge.cs" />
@@ -244,6 +245,12 @@
     <Compile Include="Utilities\GeWin.cs" />
     <Compile Include="Views\ConfigView\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConfigView\JogView.xaml.cs">
+      <DependentUpon>JogView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ConfigView\MotorParView.xaml.cs">
+      <DependentUpon>MotorParView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\EventsView\EventsView.xaml.cs">
       <DependentUpon>EventsView.xaml</DependentUpon>
@@ -274,6 +281,9 @@
     </Compile>
     <Compile Include="Views\Main\UserType.xaml.cs">
       <DependentUpon>UserType.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PickPlaceView\PickPlaceView.xaml.cs">
+      <DependentUpon>PickPlaceView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\Splash\Splash.xaml.cs">
       <DependentUpon>Splash.xaml</DependentUpon>
@@ -402,6 +412,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Views\ConfigView\JogView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ConfigView\MotorParView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Views\EventsView\EventsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -439,6 +457,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\Main\UserType.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PickPlaceView\PickPlaceView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

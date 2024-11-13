@@ -17,7 +17,7 @@
 // *************************************************************************************************
 #pragma once
 
-#include "FeedyDef.h"
+#include "feedy_def.h"
 
 #define MAX_MSG_SIZE	4096
 
@@ -43,6 +43,9 @@
 #define RUN_JOB					0x01001031
 #define STOP_JOB				0x01001032
 #define ABORT_JOB				0x01001033
+
+#define TEST_FEEDER				0x01002001
+#define TEST_TRAY				0x01002002
 
 #define REP_VERSION				0x03002001
 
