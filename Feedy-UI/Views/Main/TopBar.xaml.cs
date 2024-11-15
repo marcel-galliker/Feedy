@@ -167,6 +167,7 @@ namespace Feedy.Views.Main
         //--- Save_Clicked ---------------------------------------
         private void Save_Clicked(object sender, RoutedEventArgs e)
         {
+            FdGolbals.Cfg.Save();
             FdGolbals.Job.Save();
             JobCmdPopup.IsOpen   = false;
         }

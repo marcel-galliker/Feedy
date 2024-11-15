@@ -166,7 +166,6 @@ void gui_send(SOCKET socket, void *pmsg)
 //--- gui_send_status --------------------------------------------
 void gui_send_status(SOCKET socket)
 {
-	int time=ge_ticks();
 	SFeedyStatusMsg msg;
 	memcpy(&msg.status, &FeedyStatus, sizeof(FeedyStatus));
 	msg.hdr.msgId = REP_STATUS;

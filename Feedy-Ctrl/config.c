@@ -34,7 +34,7 @@
 void cfg_load	(SOCKET socket)
 {
 	char path[MAX_PATH];
-	EzUserFilePath(PATH_SETTINGS, "Printer", "xml", path);
+	EzUserFilePath(PATH_SETTINGS, "Feedy", "xml", path);
 	xml_cfg_file(path, &FeedyCfg, READ);
 
 	SConfigMsg reply;
@@ -48,6 +48,6 @@ void cfg_load	(SOCKET socket)
 void cfg_save	(SOCKET socket, SConfigMsg *pmsg)
 {
 	char path[MAX_PATH];
-	EzUserFilePath(PATH_SETTINGS, "Printer", "xml", path);
+	EzUserFilePath(PATH_SETTINGS, "Feedy", "xml", path);
 	xml_cfg_file(path, &pmsg->cfg, WRITE);
 }

@@ -24,6 +24,7 @@ namespace Feedy.Models
         }
     }
 
+    //--- MotorSettings -------------------------------------------
     public class MotorSettings : GeBindable
     { 
         //--- Set ---------------------------------

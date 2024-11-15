@@ -1,0 +1,58 @@
+﻿using GE_Utilities;
+
+namespace Feedy.Models
+{
+    public class Position : GeBindable
+    {
+        public Position()
+        {
+        }
+
+        public Position(double x, double cy, double z, double c)
+		{
+			Set(x, cy, z, c);
+		}
+
+		//--- Set ----------------------------------------
+        public void Set(double x, double cy, double z, double c)
+		{
+			X  = x;
+			CY = cy;
+			Z  = z;
+			C  = c;
+		}
+
+		//--- Property Z ---------------------------------------
+		private double _Z;
+		public double Z
+		{
+			get { return _Z; }
+			set { SetProperty(ref _Z, value); }
+		}
+
+		//--- Property X ---------------------------------------
+		private double _X;
+		public double X
+		{
+			get { return _X; }
+			set { SetProperty(ref _X, value); }
+		}
+
+		//--- Property CY ---------------------------------------
+		private double _CY;
+		public double CY
+		{
+			get { return _CY; }
+			set { SetProperty(ref _CY, value); }
+		}
+
+		//--- Property C ---------------------------------------
+		private double _C;
+		public double C
+		{
+			get { return _C; }
+			set { SetProperty(ref _C, value); }
+		}
+
+	}
+}

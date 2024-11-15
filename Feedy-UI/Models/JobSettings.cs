@@ -5,6 +5,12 @@ namespace Feedy.Models
 {
     public class JobSettings : GeBindable
     {
+        public JobSettings()
+        {
+            if (PickPlace==null) 
+                PickPlace=new PickPlace();
+        }
+
         //--- Set ----------------------------------------
         public void Set(SJob job)
         {
@@ -81,7 +87,6 @@ namespace Feedy.Models
             set { SetProperty(ref _Gripper, value); }
         }
 
-
         //--- Property Name ---------------------------------------
         private string _Name;
         public string Name
@@ -120,6 +125,14 @@ namespace Feedy.Models
         {
             get { return _Count; }
             set { SetProperty(ref _Count, value); }
+        }
+
+        //--- Property PickPlace ---------------------------------------
+        private PickPlace _PickPlace;
+        public PickPlace PickPlace
+        {
+            get { return _PickPlace; }
+            set { SetProperty(ref _PickPlace, value); }
         }
     }
 }

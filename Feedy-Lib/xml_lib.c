@@ -28,6 +28,8 @@ static int _xml_cam(HANDLE file, SCam *pcam, EN_Xml_Action action);
 static int _xml_tray(HANDLE file, STray *ptray, EN_Xml_Action action);
 static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action);
 
+static int _xml_motor(HANDLE file, int no, SMotorSettings *pmtr, EN_Xml_Action action);
+
 //--- xml_job_file -----------------------------------
 int xml_job_file (char *filepath, SJob *pJob, EN_Xml_Action action)
 {
@@ -181,8 +183,10 @@ int xml_cfg_file   (char *filepath, SConfig *pcfg, EN_Xml_Action action)
 	{
 		memset(pcfg, 0, sizeof(SConfig));
 	}
-	if (xml_chapter(file, "Printer", -1, action)==REPLY_OK)
+	if (xml_chapter(file, "Config", -1, action)==REPLY_OK)
 	{	
+		for (int i=0; i<SIZEOF(pcfg->motor); i++)
+			_xml_motor(file, i, &pcfg->motor[i], action);
 		xml_chapter(file, "..", -1, action);
 	}
 
@@ -191,4 +195,22 @@ int xml_cfg_file   (char *filepath, SConfig *pcfg, EN_Xml_Action action)
 	xml_destroy(file);
 
 	return REPLY_OK;
+}
+
+//--- _xml_motor ---------------------------------------------------------
+static int _xml_motor(HANDLE file, int no, SMotorSettings *pmtr, EN_Xml_Action action)
+{
+	if (xml_chapter(file, "Motor", no, action)==REPLY_OK)
+	{
+		xml_int32	(file, "powerHold",		action,	&pmtr->powerHold,  0);
+		xml_int32	(file, "powerMove",		action,	&pmtr->powerMove,  0);
+		xml_int32	(file, "acc",			action,	&pmtr->acc,  0);
+		xml_int32	(file, "speed",			action,	&pmtr->speed,  0);
+		xml_int32	(file, "testPosStart",	action,	&pmtr->testPosStart,  0);
+		xml_int32	(file, "testPosEnd",	action,	&pmtr->testPosEnd,  0);
+		xml_int32	(file, "testSpeed",		action,	&pmtr->testSpeed,  0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
 }

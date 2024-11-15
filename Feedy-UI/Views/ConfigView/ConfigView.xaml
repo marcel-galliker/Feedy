@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:uc="clr-namespace:Feedy.Views.UserControls"
              xmlns:local="clr-namespace:Feedy.Views.ConfigView"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
@@ -34,7 +35,7 @@
                     <RowDefinition Height="auto"/>
                 </Grid.RowDefinitions>
                 <local:MotorParView />
-                <local:JogView Grid.Row="1"/>
+                <uc:JogView Grid.Row="1"/>
             </Grid>
             
         </Grid>
