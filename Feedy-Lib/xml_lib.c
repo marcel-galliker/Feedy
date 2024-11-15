@@ -27,8 +27,11 @@ static int _xml_feeder(HANDLE file, SFeeder *pbin, EN_Xml_Action action);
 static int _xml_cam(HANDLE file, SCam *pcam, EN_Xml_Action action);
 static int _xml_tray(HANDLE file, STray *ptray, EN_Xml_Action action);
 static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action);
+static int _xml_position(HANDLE file, char *name, int no, SPosition *ppo, EN_Xml_Action action);
+static int _xml_pickplace(HANDLE file, SPickPlace *ppp, EN_Xml_Action action);
 
 static int _xml_motor(HANDLE file, int no, SMotorSettings *pmtr, EN_Xml_Action action);
+
 
 //--- xml_job_file -----------------------------------
 int xml_job_file (char *filepath, SJob *pJob, EN_Xml_Action action)
@@ -74,6 +77,7 @@ static int _xml_job(HANDLE file, SJob *pjob, EN_Xml_Action action)
 		_xml_cam	(file, &pjob->cam, action);
 		_xml_tray	(file, &pjob->tray, action);
 		_xml_gripper(file, &pjob->gripper, action);
+		_xml_pickplace(file, &pjob->pickPlace, action);
 
 		xml_chapter	(file, "..", -1, action);
 		return TRUE;
@@ -118,7 +122,7 @@ static int _xml_tray(HANDLE file, STray *ptray, EN_Xml_Action action)
 {
 	if (xml_chapter(file, "Tray", -1, action)==REPLY_OK)
 	{
-		xml_int32	(file, "_no",		action,	&ptray->no,  0);
+		xml_int32	(file, "plateNo",		action,	&ptray->plateNo,  0);
 		xml_int32	(file, "time1",		action,	&ptray->time1,  0);
 		xml_int32	(file, "pause",		action,	&ptray->pause,  0);
 		xml_int32	(file, "time2",		action,	&ptray->time2,  0);
@@ -138,12 +142,44 @@ static int _xml_tray(HANDLE file, STray *ptray, EN_Xml_Action action)
 //--- _xml_gripper --------------------------------------
 static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action)
 {
-	if (xml_chapter(file, "Tray", -1, action)==REPLY_OK)
+	if (xml_chapter(file, "Gripper", -1, action)==REPLY_OK)
 	{
-		xml_int32	(file, "_no",		action,	&pgrp->no,  0);
+		xml_int32	(file, "gripperNo",		action,	&pgrp->gripperNo,  0);
 		xml_int32	(file, "type",		action,	(INT32*)&pgrp->type,  0);
 		xml_int32	(file, "time1",		action,	&pgrp->time1,  0);
 		xml_int32	(file, "time2",		action,	&pgrp->time2,  0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
+}
+
+//--- _xml_position ------------------
+static int _xml_position(HANDLE file, char *name, int no, SPosition *ppos, EN_Xml_Action action)
+{
+	if (xml_chapter(file, name, no, action)==REPLY_OK)
+	{
+		xml_int32	(file, "y",		action,	&ppos->z,  0);
+		xml_int32	(file, "x",		action,	&ppos->x,  0);
+		xml_int32	(file, "cy",	action,	&ppos->cy,  0);
+		xml_int32	(file, "c",		action,	&ppos->c,  0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
+}
+
+//--- _xml_pickplace --------------------------------
+static int _xml_pickplace(HANDLE file, SPickPlace *ppp, EN_Xml_Action action)
+{
+	if (xml_chapter(file, "PickPlace", -1, action)==REPLY_OK)
+	{
+		_xml_position(file, "park", -1, &ppp->park, action);
+		_xml_position(file, "pick", -1, &ppp->pick, action);
+		_xml_position(file, "test", -1, &ppp->test, action);
+		for (int i=0; i<PlacePosCnt; i++)
+			_xml_position(file, "Place", i, &ppp->place[i], action);
+
 		xml_chapter	(file, "..", -1, action);
 		return TRUE;
 	}

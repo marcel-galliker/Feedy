@@ -24,7 +24,5 @@ namespace Feedy.Models
 		{
 			get { return Base+"Logs"+Path.DirectorySeparatorChar; }
 		}
-
-
     }
 }

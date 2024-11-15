@@ -8,7 +8,7 @@ namespace Feedy.Models
         //--- Set ----------------------------------------
         public void Set(STray tray)
         {
-            No          = tray.no;
+            No          = tray.plateNo;
             Time1       = tray.time1;
             Pause       = tray.pause;
             Time2       = tray.time2;
@@ -24,7 +24,7 @@ namespace Feedy.Models
         public STray Get()
         {
             STray tray      = new STray();
-            tray.no         = No;
+            tray.plateNo    = No;
             tray.time1      = Time1;
             tray.pause      = Pause;
             tray.time2      = Time2;
@@ -116,11 +116,5 @@ namespace Feedy.Models
             get { return _StopFeed; }
             set { SetProperty(ref _StopFeed, value); }
         }
-
-
-
-
-
-
     }
 }

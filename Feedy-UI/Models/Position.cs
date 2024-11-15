@@ -1,4 +1,5 @@
 ﻿using GE_Utilities;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
 {
@@ -20,6 +21,27 @@ namespace Feedy.Models
 			CY = cy;
 			Z  = z;
 			C  = c;
+		}
+
+		//--- Set ----------------------------
+		public void Set(SPosition pos)
+		{
+			X  = pos.x;
+			CY = pos.cy;
+			Z  = pos.z;
+			C  = pos.c;
+		}
+
+		//--- Get ----------------------------------
+		public SPosition Get()
+		{
+			SPosition pos=new SPosition();
+			pos.z  = (int)Z;
+			pos.x  = (int)X;
+			pos.cy = (int)CY;
+			pos.c  = (int)C;
+
+			return pos;
 		}
 
 		//--- Property Z ---------------------------------------

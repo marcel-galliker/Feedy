@@ -1,6 +1,7 @@
 ﻿using Feedy.Services;
 using GE_Utilities;
 using System.Collections.ObjectModel;
+using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
 {
@@ -15,6 +16,27 @@ namespace Feedy.Models
                     _Place.Add(new Position(i,i,i,i));
 			}
         }
+
+		//--- Set ----------------------------------
+		public void Set(SPickPlace pp)
+		{
+			Park.Set(pp.park);
+			Pick.Set(pp.pick);
+			Test.Set(pp.test);
+			for (int i = 0; i < feedy_def.PlacePosCnt; i++) Place[i].Set(pp.place[i]);
+		}
+
+		//--- Get ---------------------------------
+		public SPickPlace Get()
+		{
+			SPickPlace pp = new SPickPlace();
+			pp.place = new SPosition[feedy_def.PlacePosCnt];
+			pp.park = Park.Get();
+			pp.pick = Park.Get();
+			pp.test = Park.Get();
+			for (int i = 0; i < feedy_def.PlacePosCnt; i++) pp.place[i] = Place[i].Get();
+			return pp;
+		}
 
         //--- Property Park ---------------------------------------
         private Position _Park = new Position(1,1,1,1);

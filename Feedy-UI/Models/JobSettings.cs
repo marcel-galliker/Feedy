@@ -23,6 +23,7 @@ namespace Feedy.Models
             Cam.Set(job.cam);
             Tray.Set(job.tray);
             Gripper.Set(job.gripper);
+            PickPlace.Set(job.pickPlace);
         }
 
         //--- Get -----------------------------------
@@ -38,6 +39,7 @@ namespace Feedy.Models
             job.cam         = Cam.Get();
             job.tray        = Tray.Get();
             job.gripper     = Gripper.Get();
+            job.pickPlace   = PickPlace.Get();
             return job;
         }
         

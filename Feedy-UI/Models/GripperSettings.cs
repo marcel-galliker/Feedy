@@ -7,8 +7,8 @@ namespace Feedy.Models
     {
         public void Set(SGripper grp)
         {
-            No = grp.no;
-            Type = grp.type;
+            No    = grp.gripperNo;
+            Type  = grp.type;
             Time1 = grp.time1;
             Time2 = grp.time2;
         }
@@ -17,8 +17,8 @@ namespace Feedy.Models
         public SGripper Get()
         {
             SGripper grp = new SGripper();
-            grp.no = No;
-            grp.type = Type;
+            grp.gripperNo = No;
+            grp.type  = Type;
             grp.time1 = Time1;
             grp.time2 = Time2;
             return grp;
