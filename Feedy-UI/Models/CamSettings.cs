@@ -8,6 +8,7 @@ namespace Feedy.Models
         //--- Set ----------------------------------------
         public void Set(SCam cam)
         {
+            CamPrgNo  = cam.camPrgNo;
             Intensity = cam.intensity;
             SideUsed  = cam.sideUsed!=0;
             Trigger   = cam.trigger;
@@ -17,6 +18,7 @@ namespace Feedy.Models
         public SCam Get()
         {
             SCam cam = new SCam();
+            cam.camPrgNo    = CamPrgNo;
             cam.intensity = Intensity;
             cam.sideUsed  = SideUsed? 1:0;
             cam.trigger   = Trigger;
@@ -35,6 +37,14 @@ namespace Feedy.Models
                         SetProperty(ref _IsChanged, value);
                     }
                 }
+        }
+
+        //--- Property camPrgNo ---------------------------------------
+        private int _camPrgNo;
+        public int CamPrgNo
+        {
+            get { return _camPrgNo; }
+            set { SetProperty(ref _camPrgNo, value); }
         }
 
         //--- Property Intensity ---------------------------------------

@@ -88,7 +88,7 @@ namespace Feedy.Services
             {
                 FdGolbals.JobSettings.Set(msg.job);
             }
-            else  FdGolbals.Events.AddError(0, "Received invalid message Length SLoadFileMsg");
+            else  FdGolbals.Events.AddError(0, "Received invalid message Length SJobMsg");
         }
 
         //--- handle_cfg_loaded ---------------------------------------------

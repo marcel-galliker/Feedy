@@ -77,10 +77,14 @@ void gui_handle_msg(SOCKET socket, SGuiMsg *pmsg)
 	case TEST_FEEDER:			_test_feeder(socket, (SFeeder*)pmsg->data); break;
 	case TEST_TRAY:				_test_tray(socket, (STray*)pmsg->data); break;
 
-	case STEP_MOTOR:			feedy_step_motor	(socket, (SMotorTest*)pmsg->data); break;
-	case START_MOTOR:			feedy_start_motor	(socket, (SMotorTest*)pmsg->data); break;
-	case STOP_MOTOR:			feedy_stop_motor	(socket, (SMotorTest*)pmsg->data); break;
-	case RUN_MOTOR:				feedy_run_motor		(socket, (SMotorTest*)pmsg->data); break;
+	case MOTOR_STEP:			feedy_motor_step	(socket, (SMotorTest*)pmsg->data); break;
+	case MOTOR_START:			feedy_motor_start	(socket, (SMotorTest*)pmsg->data); break;
+	case MOTOR_STOP:			feedy_motor_stop	(socket, (SMotorTest*)pmsg->data); break;
+	case MOTOR_RUN:				feedy_motor_run		(socket, (SMotorTest*)pmsg->data); break;
+	case MOTOR_MOVE2POS:		feedy_motor_move2pos(socket, (SPosition*) pmsg->data); break;
+
+	case OPEN_GRIPPER:			Error(LOG, 0, "OPEN Gripper"); break;
+	case CLOSE_GRIPPER:			Error(LOG, 0, "CLOSE Gripper");break;
 
 	case ERROR_RESET:			feedy_reset_error(); break; // hyper_reset_error(); break;
 

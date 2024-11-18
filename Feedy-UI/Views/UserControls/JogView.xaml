@@ -41,7 +41,7 @@
                 <TextBlock  Text=" %"/>
             </StackPanel>
             
-            <Slider Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Maximum="100" SmallChange="0" Value="{Binding TestSpeed}"/>
+            <Slider Grid.Column="0" Grid.ColumnSpan="3" VerticalAlignment="Center" Maximum="100" SmallChange="0" Value="{Binding TestSpeed}" ValueChanged="Slider_ValueChanged"/>
 
             <TextBlock Grid.Row="0" Grid.Column="2" Text="Pos" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
 

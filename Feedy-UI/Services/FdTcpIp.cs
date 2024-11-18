@@ -32,11 +32,14 @@ namespace Feedy.Services
         public const Int32 TEST_FEEDER			= 0x01002001;
         public const Int32 TEST_TRAY			= 0x01002002;
 
-        public const Int32 STEP_MOTOR			= 0x01002011;
-        public const Int32 START_MOTOR			= 0x01002012;
-        public const Int32 STOP_MOTOR			= 0x01002013;
-        public const Int32 RUN_MOTOR			= 0x01002014;
+        public const Int32 MOTOR_STEP			= 0x01002011;
+        public const Int32 MOTOR_START			= 0x01002012;
+        public const Int32 MOTOR_STOP			= 0x01002013;
+        public const Int32 MOTOR_RUN			= 0x01002014;
+        public const Int32 MOTOR_MOVE2POS	    = 0x01002015;
 
+        public const Int32 OPEN_GRIPPER			= 0x01002020;
+        public const Int32 CLOSE_GRIPPER		= 0x01002021;
 
         public const Int32 REP_VERSION			= 0x03002001;
 

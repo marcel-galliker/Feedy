@@ -29,6 +29,9 @@ static int _xml_tray(HANDLE file, STray *ptray, EN_Xml_Action action);
 static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action);
 static int _xml_position(HANDLE file, char *name, int no, SPosition *ppo, EN_Xml_Action action);
 static int _xml_pickplace(HANDLE file, SPickPlace *ppp, EN_Xml_Action action);
+static int _xml_pick_settings(HANDLE file, SPickSettings *pset, EN_Xml_Action action);
+static int _xml_test_settings(HANDLE file, STestSettings *pset, EN_Xml_Action action);
+static int _xml_place_settings(HANDLE file, SPlaceSettings *pset, EN_Xml_Action action);
 
 static int _xml_motor(HANDLE file, int no, SMotorSettings *pmtr, EN_Xml_Action action);
 
@@ -69,7 +72,6 @@ static int _xml_job(HANDLE file, SJob *pjob, EN_Xml_Action action)
 	if (xml_chapter(file, "Job", -1, action)==REPLY_OK)
 	{
 		xml_str		(file, "description",	 action, pjob->description,		sizeof(pjob->description),      "");
-		xml_int32	(file, "camPrgNo", action,	&pjob->camPrgNo, 0);
 		xml_int32	(file, "speed", action, &pjob->speed, 100);
 		xml_int32	(file, "count", action, &pjob->count, 0);
 
@@ -107,6 +109,7 @@ static int _xml_cam(HANDLE file, SCam *pcam, EN_Xml_Action action)
 {
 	if (xml_chapter(file, "Cam", -1, action)==REPLY_OK)
 	{
+		xml_int32	(file, "camPrgNo", action,	&pcam->camPrgNo, 0);
 		xml_int32	(file, "intensity", action,	&pcam->intensity,  0);
 		xml_int32	(file, "sideUsed",	action, &pcam->sideUsed, 100);
 		xml_int32	(file, "trigger",	action, (INT32*)&pcam->trigger, 1);
@@ -146,8 +149,6 @@ static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action)
 	{
 		xml_int32	(file, "gripperNo",		action,	&pgrp->gripperNo,  0);
 		xml_int32	(file, "type",		action,	(INT32*)&pgrp->type,  0);
-		xml_int32	(file, "time1",		action,	&pgrp->time1,  0);
-		xml_int32	(file, "time2",		action,	&pgrp->time2,  0);
 		xml_chapter	(file, "..", -1, action);
 		return TRUE;
 	}
@@ -169,16 +170,60 @@ static int _xml_position(HANDLE file, char *name, int no, SPosition *ppos, EN_Xm
 	else return FALSE;
 }
 
+//--- _xml_pick_settings ------------------------------------------
+static int _xml_pick_settings(HANDLE file, SPickSettings *pset, EN_Xml_Action action)
+{
+	if (xml_chapter(file, "Pick", -1, action)==REPLY_OK)
+	{
+		xml_int32	(file, "approachHeight",action,	&pset->approachHeight,  0);
+		xml_int32	(file, "approachSpeed",	action,	&pset->approachSpeed,	0);
+		xml_int32	(file, "closeTime",		action,	&pset->closeTime,		0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
+}
+
+//--- _xml_test_settings ---------------------------------------
+static int _xml_test_settings(HANDLE file, STestSettings *pset, EN_Xml_Action action)
+{
+	if (xml_chapter(file, "Test", -1, action)==REPLY_OK)
+	{
+		xml_int32	(file, "testMode",		action,	(INT32*)&pset->testMode,		0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
+}
+
+//--- _xml_place_settings -----------------------------------------
+static int _xml_place_settings(HANDLE file, SPlaceSettings *pset, EN_Xml_Action action)
+{
+	if (xml_chapter(file, "Place", -1, action)==REPLY_OK)
+	{
+		xml_int32	(file, "placeMode",		action,	(INT32*)&pset->placeMode,		0);
+		xml_int32	(file, "approachHeight",action,	&pset->approachHeight,  0);
+		xml_int32	(file, "approachSpeed",	action,	&pset->approachSpeed,	0);
+		xml_int32	(file, "openTime",		action,	&pset->openTime,		0);
+		xml_chapter	(file, "..", -1, action);
+		return TRUE;
+	}
+	else return FALSE;
+}
+
 //--- _xml_pickplace --------------------------------
 static int _xml_pickplace(HANDLE file, SPickPlace *ppp, EN_Xml_Action action)
 {
 	if (xml_chapter(file, "PickPlace", -1, action)==REPLY_OK)
 	{
-		_xml_position(file, "park", -1, &ppp->park, action);
-		_xml_position(file, "pick", -1, &ppp->pick, action);
-		_xml_position(file, "test", -1, &ppp->test, action);
+		_xml_position(file, "ParkPos", -1, &ppp->parkPos, action);
+		_xml_pick_settings(file, &ppp->pickSettings, action);
+		_xml_position(file, "PickPos", -1, &ppp->pickPos, action);
+		_xml_test_settings(file, &ppp->testSettings, action);
+		_xml_position(file, "TestPos", -1, &ppp->testPos, action);
+		_xml_place_settings(file, &ppp->placeSettings, action);
 		for (int i=0; i<PlacePosCnt; i++)
-			_xml_position(file, "Place", i, &ppp->place[i], action);
+			_xml_position(file, "PlacePos", i, &ppp->placePos[i], action);
 
 		xml_chapter	(file, "..", -1, action);
 		return TRUE;

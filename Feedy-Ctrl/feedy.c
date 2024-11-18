@@ -132,30 +132,41 @@ void feedy_abort(SOCKET socket)
 	}
 }
 
-//--- feedy_step_motor -----------------------------------
-void feedy_step_motor	(SOCKET socket, SMotorTest *pmsg)
+//--- feedy_motor_step -----------------------------------
+void feedy_motor_step	(SOCKET socket, SMotorTest *pmsg)
 {
 	memset(&_MotorTest, 0, sizeof(_MotorTest));
 	FeedyStatus.motorPos[pmsg->motorNo] += pmsg->direction;
 	gui_send_status(INVALID_SOCKET);
 }
 
-//--- feedy_start_motor -----------------------------------------
-void feedy_start_motor(SOCKET socket, SMotorTest *pmsg)
+//--- feedy_motor_start -----------------------------------------
+void feedy_motor_start(SOCKET socket, SMotorTest *pmsg)
 {
 	memcpy(&_MotorTest, pmsg, sizeof(_MotorTest));
 }
 
-//--- feedy_stop_motor -------------------------------------------
-void feedy_stop_motor	(SOCKET socket, SMotorTest *pmsg)
+//--- feedy_motor_stop -------------------------------------------
+void feedy_motor_stop	(SOCKET socket, SMotorTest *pmsg)
 {
 	memset(&_MotorTest, 0, sizeof(_MotorTest));
 }
 
-//--- feedy_run_motor --------------------------------------------
-void feedy_run_motor	(SOCKET socket, SMotorTest *pmsg)
+//--- feedy_motor_run --------------------------------------------
+void feedy_motor_run	(SOCKET socket, SMotorTest *pmsg)
 {
 	memcpy(&_MotorTest, pmsg, sizeof(_MotorTest));
+}
+
+//--- feedy_motor_move2pos -----------------------------------
+void feedy_motor_move2pos(SOCKET socket, SPosition *pmsg)
+{
+	FeedyStatus.motorPos[0] = pmsg->z;
+	FeedyStatus.motorPos[1] = pmsg->x;
+	FeedyStatus.motorPos[2] = pmsg->cy;
+	FeedyStatus.motorPos[3] = pmsg->c;
+	FeedyStatus.testSpeed   = FeedyJob.speed;
+	gui_send_status(INVALID_SOCKET);
 }
 
 //--- _FeedyThread -----------------------------

@@ -16,7 +16,6 @@ namespace Feedy.Models
         {
             Name        = job.name;   
             Description = job.description;
-            CamPrgNo    = job.camPrgNo;
             Speed       = job.speed;
             Count       = job.count;
             Feeder.Set(job.feeder);
@@ -32,7 +31,6 @@ namespace Feedy.Models
             SJob job        = new SJob();
             job.name        = Name; 
             job.description = Description;
-            job.camPrgNo    = CamPrgNo;
             job.speed       = Speed;
             job.count       = Count;
             job.feeder      = Feeder.Get();
@@ -103,14 +101,6 @@ namespace Feedy.Models
         {
             get { return _Description; }
             set { IsChanged |= SetProperty(ref _Description, value); }
-        }
-
-        //--- Property camPrgNo ---------------------------------------
-        private int _camPrgNo;
-        public int CamPrgNo
-        {
-            get { return _camPrgNo; }
-            set { SetProperty(ref _camPrgNo, value); }
         }
 
         //--- Property Speed ---------------------------------------

@@ -9,8 +9,6 @@ namespace Feedy.Models
         {
             No    = grp.gripperNo;
             Type  = grp.type;
-            Time1 = grp.time1;
-            Time2 = grp.time2;
         }
 
         //--- Get -----------------------------------
@@ -19,8 +17,6 @@ namespace Feedy.Models
             SGripper grp = new SGripper();
             grp.gripperNo = No;
             grp.type  = Type;
-            grp.time1 = Time1;
-            grp.time2 = Time2;
             return grp;
         }
         
@@ -52,22 +48,6 @@ namespace Feedy.Models
         {
             get { return _Type; }
             set { SetProperty(ref _Type, value); }
-        }
-
-        //--- Property Time1 ---------------------------------------
-        private int _Time1;
-        public int Time1
-        {
-            get { return _Time1; }
-            set { SetProperty(ref _Time1, value); }
-        }
-
-        //--- Property Time2 ---------------------------------------
-        private int _Time2;
-        public int Time2
-        {
-            get { return _Time2; }
-            set { SetProperty(ref _Time2, value); }
         }
     }
 }

@@ -29,7 +29,8 @@ void feedy_start	(SOCKET socket);
 void feedy_stop		(SOCKET socket);
 void feedy_abort	(SOCKET socket);
 
-void feedy_step_motor	(SOCKET socket, SMotorTest *pmsg);
-void feedy_start_motor	(SOCKET socket, SMotorTest *pmsg);
-void feedy_stop_motor	(SOCKET socket, SMotorTest *pmsg);
-void feedy_run_motor	(SOCKET socket, SMotorTest *pmsg);
+void feedy_motor_step	(SOCKET socket, SMotorTest *pmsg);
+void feedy_motor_start	(SOCKET socket, SMotorTest *pmsg);
+void feedy_motor_stop	(SOCKET socket, SMotorTest *pmsg);
+void feedy_motor_run	(SOCKET socket, SMotorTest *pmsg);
+void feedy_motor_move2pos(SOCKET socket, SPosition *pmsg);

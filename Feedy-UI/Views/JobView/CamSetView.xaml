@@ -21,17 +21,22 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Text="Illum Intensity"/>
-            <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding Intensity}"/>
-            <TextBlock Grid.Row="0" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
+            <!-- Kamera ______________________________-->
+            <TextBlock Grid.Row="0" Text="Program No"/>
+            <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding CamPrgNo}"/>
 
-            <TextBlock Grid.Row="1" Text="Illum Side"/>
-            <CheckBox  Grid.Row="1" Grid.Column="2"  IsChecked="{Binding SideUsed}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Row="1" Text="Illum Intensity"/>
+            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding Intensity}"/>
+            <TextBlock Grid.Row="1" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
 
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Trigger"/>
-            <ComboBox  Grid.Row="2" Grid.Column="2" x:Name="CB_TriggerMode" SelectedValue="{Binding Trigger}"/>
+            <TextBlock Grid.Row="2" Text="Illum Side"/>
+            <CheckBox  Grid.Row="2" Grid.Column="2"  IsChecked="{Binding SideUsed}" VerticalAlignment="Center"/>
+
+            <TextBlock Grid.Row="3" Grid.Column="0" Text="Trigger"/>
+            <ComboBox  Grid.Row="3" Grid.Column="2" x:Name="CB_TriggerMode" SelectedValue="{Binding Trigger}"/>
 
         </Grid>
     </GroupBox>

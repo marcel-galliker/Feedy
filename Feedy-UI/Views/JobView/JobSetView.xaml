@@ -23,24 +23,20 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
             </Grid.RowDefinitions>
             
             <TextBlock Grid.Row="0" Text="Description"/>
             <utilities:GeTextBox   Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" VerticalContentAlignment="Center" x:Name="TB_Description"
                     Text="{Binding Description}" AcceptsReturn="True" />
-            <!-- Kamera ______________________________-->
-            <TextBlock Grid.Row="1" Text="Camera"/>
-            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding CamPrgNo}"/>
 
             <!-- Anzahl ______________________________-->
-            <TextBlock Grid.Row="2" Text="Count"/>
-            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Count}"/>
+            <TextBlock Grid.Row="1" Text="Count"/>
+            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding Count}"/>
 
             <!-- Speed ______________________________-->
-            <TextBlock Grid.Row="3" Text="Speed"/>
-            <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding Speed}"/>
-            <TextBlock Grid.Row="3" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
+            <TextBlock Grid.Row="2" Text="Speed"/>
+            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Speed}"/>
+            <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
 
         </Grid>
     </GroupBox>

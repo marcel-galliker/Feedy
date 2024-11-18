@@ -1,7 +1,6 @@
 ﻿using GE_Utilities;
 using System.Collections;
 using System.Collections.Generic;
-using static Feedy.Models.Settings;
 using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models.Enums

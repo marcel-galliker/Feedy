@@ -99,6 +99,15 @@ namespace Feedy.Views.Main
                                             OnClick=_CheckMenu 
                                         });
 
+            _MenuItem.Add("Config",     new MenuItem()
+                                        {
+                                            Group=0,
+                                            Id="Config",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.RobotIndustrial, 
+                                            View=FdGolbals.MainWindow.ConfigView,
+                                            OnClick=_CheckMenu 
+                                        });
+
             _MenuItem.Add("Events",     new MenuItem()
                                         {
                                             Group=0,
@@ -114,15 +123,6 @@ namespace Feedy.Views.Main
                                             Id="Log",
                                             Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.FileEyeOutline, 
                                             View=FdGolbals.MainWindow.LogView,
-                                            OnClick=_CheckMenu 
-                                        });
-
-            _MenuItem.Add("Config",     new MenuItem()
-                                        {
-                                            Group=0,
-                                            Id="Config",
-                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.RobotIndustrial, 
-                                            View=FdGolbals.MainWindow.ConfigView,
                                             OnClick=_CheckMenu 
                                         });
 
@@ -174,8 +174,6 @@ namespace Feedy.Views.Main
             _FeedyConnectedChanged();
             _UserChanged();
             _CheckMenu("Job");
-            _MenuItem["Events"    ].Visibility = Visibility.Collapsed;
-            _MenuItem["Log"       ].Visibility = Visibility.Collapsed;
         }
 
         //--- _CheckMenu ------------------

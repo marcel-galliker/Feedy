@@ -29,15 +29,6 @@
 
             <TextBlock Grid.Row="1" Grid.Column="0" Text="Type"/>
             <ComboBox  Grid.Row="1" Grid.Column="2" x:Name="CB_GripperType" SelectedValue="{Binding Type}"/>
-
-            <TextBlock Grid.Row="2" Grid.Column="0" Text="Time open"/>
-            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Time1}"/>
-            <TextBlock Grid.Row="2" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
-            <TextBlock Grid.Row="3" Grid.Column="0" Text="Time close"/>
-            <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding Time2}"/>
-            <TextBlock Grid.Row="3" Grid.Column="8" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
-
         </Grid>
     </GroupBox>
 </UserControl>

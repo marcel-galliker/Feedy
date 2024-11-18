@@ -39,7 +39,7 @@ namespace Feedy.Views.UserControls
         {
             if (PosChanged!=null) PosChanged();
             SMotorTest test = _getMotorTest(sender as Button);
-            FdGolbals.FdInterface.SendMsgData(GuiMsg.STEP_MOTOR, ref test);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.MOTOR_STEP, ref test);
         }
 
         //--- Jog_Confirm ------------------------------------------------
@@ -47,7 +47,7 @@ namespace Feedy.Views.UserControls
         {
             if (PosChanged!=null) PosChanged();
             SMotorTest test = _getMotorTest(sender as Button);
-            FdGolbals.FdInterface.SendMsgData(GuiMsg.RUN_MOTOR, ref test);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.MOTOR_RUN, ref test);
         }
 
         //--- StartJog -------------------------------
@@ -57,7 +57,7 @@ namespace Feedy.Views.UserControls
             SMotorTest test = _getMotorTest(sender as Button);
             test.settings.testPosStart = -1000000;
             test.settings.testPosEnd   =  1000000;
-            FdGolbals.FdInterface.SendMsgData(GuiMsg.START_MOTOR, ref test);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.MOTOR_START, ref test);
         }
 
         //--- StopJog -------------------------------------
@@ -65,7 +65,16 @@ namespace Feedy.Views.UserControls
         {
             if (PosChanged!=null) PosChanged();
             SMotorTest test = _getMotorTest(sender as Button);
-            FdGolbals.FdInterface.SendMsgData(GuiMsg.STOP_MOTOR, ref test);
+            FdGolbals.FdInterface.SendMsgData(GuiMsg.MOTOR_STOP, ref test);
+        }
+
+        private void Slider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
+            Slider slider = sender as Slider;
+            if (slider!=null)
+            {
+                if (slider.Value<5) slider.Value=5;
+            }
         }
     }
 }

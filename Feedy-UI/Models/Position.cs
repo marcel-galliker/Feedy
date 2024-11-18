@@ -9,13 +9,13 @@ namespace Feedy.Models
         {
         }
 
-        public Position(double x, double cy, double z, double c)
+        public Position(double z, double x, double cy, double c)
 		{
-			Set(x, cy, z, c);
+			Set(z, x, cy, c);
 		}
 
 		//--- Set ----------------------------------------
-        public void Set(double x, double cy, double z, double c)
+        public void Set(double z, double x, double cy, double c)
 		{
 			X  = x;
 			CY = cy;
@@ -26,9 +26,9 @@ namespace Feedy.Models
 		//--- Set ----------------------------
 		public void Set(SPosition pos)
 		{
+			Z  = pos.z;
 			X  = pos.x;
 			CY = pos.cy;
-			Z  = pos.z;
 			C  = pos.c;
 		}
 

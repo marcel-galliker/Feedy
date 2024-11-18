@@ -75,7 +75,6 @@ void job_load_file	(char *filename)
 void job_load(SOCKET socket, SFileMsg *pmsg)
 {
 	char	path[MAX_PATH];
-	SJob	job;
 
 //	Error(LOG, 0, "job_load >>%s<<", pmsg->filename);
 	if (*pmsg->filename==0) strcpy(pmsg->filename, FeedyAppData.jobName);
@@ -83,7 +82,7 @@ void job_load(SOCKET socket, SFileMsg *pmsg)
 
 	FeedyJobFilePath(pmsg->filename, pmsg->filename, "xml", path);
 	
-	if (xml_job_file(path, &job, READ)!=REPLY_OK)
+	if (xml_job_file(path, &FeedyJob, READ)!=REPLY_OK)
 	{
 		Error(ERR_ABORT, 10, "Job >>%s<< not found", pmsg->filename);
 		return;
@@ -95,7 +94,7 @@ void job_load(SOCKET socket, SFileMsg *pmsg)
 		memset(&msg, 0, sizeof(msg));
 		msg.hdr.msgLen = sizeof(msg);
 		msg.hdr.msgId  = LOAD_JOB;
-		memcpy(&msg.job, &job, sizeof(msg.job));
+		memcpy(&msg.job, &FeedyJob, sizeof(msg.job));
 		gui_send(socket, &msg);
 	}
 }

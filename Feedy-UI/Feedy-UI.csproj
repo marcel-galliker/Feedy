@@ -190,6 +190,8 @@
     <Compile Include="DLL\EZ-Xml.cs" />
     <Compile Include="DLL\EZ-Crypt.cs" />
     <Compile Include="Models\Enums\EN_GripperType.cs" />
+    <Compile Include="Models\Enums\EN_PlaceMode.cs" />
+    <Compile Include="Models\Enums\EN_TestMode.cs" />
     <Compile Include="Models\FeederSettings.cs" />
     <Compile Include="Models\CamSettings.cs" />
     <Compile Include="Models\Enums\EN_CamTrigger.cs" />
@@ -210,8 +212,11 @@
     <Compile Include="Models\FeedyStatus.cs" />
     <Compile Include="Models\MotorSettings.cs" />
     <Compile Include="Models\PickPlace.cs" />
+    <Compile Include="Models\PickSettings.cs" />
+    <Compile Include="Models\PlaceSettings.cs" />
     <Compile Include="Models\Position.cs" />
     <Compile Include="Models\Settings.cs" />
+    <Compile Include="Models\TestSettings.cs" />
     <Compile Include="Models\TraySettings.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Models\Version.cs" />
@@ -246,6 +251,15 @@
     <Compile Include="Utilities\GeWin.cs" />
     <Compile Include="Views\ConfigView\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PickPlaceView\PickSettingsView.xaml.cs">
+      <DependentUpon>PickSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PickPlaceView\PlaceSettingsView.xaml.cs">
+      <DependentUpon>PlaceSettingsView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\PickPlaceView\TestSettingsView.xaml.cs">
+      <DependentUpon>TestSettingsView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\UserControls\JogView.xaml.cs">
       <DependentUpon>JogView.xaml</DependentUpon>
@@ -413,6 +427,18 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\ConfigView\ConfigView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PickPlaceView\PickSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PickPlaceView\PlaceSettingsView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PickPlaceView\TestSettingsView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
