@@ -1,0 +1,42 @@
+﻿<UserControl x:Class="Feedy.Views.PickPlaceView.PlaceSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:local="clr-namespace:Feedy.Views.PickPlaceView"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+
+    <GroupBox Grid.Row="3" Grid.Column="1" Header="Settings" HorizontalAlignment="Left" VerticalAlignment="Stretch" BorderThickness="1" BorderBrush="DarkGray" Padding="5" Margin="7">
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto" MinWidth="100"/>
+                <ColumnDefinition Width="5"/>
+                <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="20"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock Grid.Row="0" Text="Approach Axis"/>
+            <ComboBox  Grid.Row="0" Grid.Column="2" x:Name="CB_PlaceMode" SelectedValue="{Binding PlaceMode}" Margin="0,-2"/>
+
+            <TextBlock Grid.Row="1" Text="Approach Height"/>
+            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding ApproachHeight}"/>
+            <TextBlock Grid.Row="1" Grid.Column="3" Text=" mm" FontSize="{StaticResource FontSizeXS}"/>
+
+            <TextBlock Grid.Row="2" Text="Approach Speed"/>
+            <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding ApproachSpeed}"/>
+            <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
+
+            <TextBlock Grid.Row="3" Text="Grp Open Time"/>
+            <utilities:GeNumBox Grid.Row="3" Grid.Column="2" Text="{Binding OpenTime}"/>
+            <TextBlock Grid.Row="3" Grid.Column="3" Text=" ms" FontSize="{StaticResource FontSizeXS}"/>
+        </Grid>
+    </GroupBox>
+</UserControl>
