@@ -44,7 +44,7 @@ namespace Feedy.Views.PickPlaceView
                 switch(i)
                 {
                     case 0: pos.DataContext = FdGolbals.JobSettings.PickPlace.ParkPos; pos.Title="Park"; break;
-                    case 1: pos.DataContext = FdGolbals.JobSettings.PickPlace.PickPos; pos.Title="Pick"; break;
+                    case 1: pos.DataContext = FdGolbals.JobSettings.PickPlace.PickPos; pos.Title="Offset"; Grid.SetColumn(pos, 3);break;
                     case 2: pos.DataContext = FdGolbals.JobSettings.PickPlace.TestPos; pos.Title="Test"; break;
                 }
                 _PosCtrl[i]=pos;
