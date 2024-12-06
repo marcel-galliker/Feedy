@@ -15,6 +15,8 @@
                 <ColumnDefinition Width="auto" MinWidth="100"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
@@ -22,11 +24,11 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             
             <TextBlock Grid.Row="0" Text="Description"/>
-            <utilities:GeTextBox   Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="2" VerticalContentAlignment="Center" x:Name="TB_Description"
+            <utilities:GeTextBox   Grid.Row="0" Grid.Column="2" Grid.ColumnSpan="4" VerticalContentAlignment="Center" x:Name="TB_Description"
                     Text="{Binding Description}" AcceptsReturn="True" />
 
             <!-- Anzahl ______________________________-->
@@ -37,7 +39,7 @@
             <TextBlock Grid.Row="2" Text="Speed"/>
             <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Speed}"/>
             <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
-
+            <Image Grid.Row="1" Grid.Column="5" Grid.RowSpan="5" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="IMG_Gripper" Source="D:\\Feedy\\Jobs\\Job1\\Hebel.png" Height="100"/>
         </Grid>
     </GroupBox>
 </UserControl>

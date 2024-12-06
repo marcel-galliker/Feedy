@@ -66,13 +66,13 @@ int		main(int argc, char *argv[])
 	{
 		char path[MAX_PATH];
 		char logdir[MAX_PATH];
-		sprintf(path, "%s%sEZ-PrintEngine.txt", PATH_TEMP, PATH_APP);
+		sprintf(path, "%s%sFeedy-Ctrl.txt", PATH_TEMP, PATH_APP);
 		printf("TrInit(%d, %s)\n", arg_trace, path);
-		TrInit("EZ-PrintEngine", arg_trace, path, EzUserFilePath(PATH_LOGS, NULL, NULL, logdir));
+		TrInit("Feedy-Ctrl", arg_trace, path, EzUserFilePath(PATH_LOGS, NULL, NULL, logdir));
 	}
-	TrPrintf(0, "Ez-PrintEngine %s  %s", __DATE__, __TIME__);
+	TrPrintf(0, "Feedy-Ctrl %s  %s", __DATE__, __TIME__);
 	TrPrintf(0, "Version %s\n", EzVersion);
-	Error(LOG, 0, "Ez-PrintEngine Starting");
+	Error(LOG, 0, "Feedy-Ctrl Starting");
 
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 

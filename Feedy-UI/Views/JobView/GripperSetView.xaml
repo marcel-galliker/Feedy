@@ -15,20 +15,24 @@
                 <ColumnDefinition Width="auto" MinWidth="100"/>
                 <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="70"/>
+                <ColumnDefinition Width="5"/>
                 <ColumnDefinition Width="70"/>
             </Grid.ColumnDefinitions>
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="auto"/>
-                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <TextBlock Grid.Row="0" Grid.Column="0" Text="Nr"/>
-            <utilities:GeNumBox Grid.Row="0" Grid.Column="2" Text="{Binding No}"/>
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="Type"/>
+            <ComboBox  Grid.Row="0" Grid.Column="2" x:Name="CB_GripperType" SelectedValue="{Binding Type}"/>
 
-            <TextBlock Grid.Row="1" Grid.Column="0" Text="Type"/>
-            <ComboBox  Grid.Row="1" Grid.Column="2" x:Name="CB_GripperType" SelectedValue="{Binding Type}"/>
+            <TextBlock Grid.Row="1" Grid.Column="0" Text="Nr"/>
+            <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding No}"/>
+
+            <Image Grid.Row="0" Grid.Column="4" Grid.RowSpan="4" VerticalAlignment="Top" x:Name="IMG_Gripper" Source="D:\\Feedy\\Jobs\\Job1\\Greifer B.png" Height="100"/>
+
         </Grid>
     </GroupBox>
 </UserControl>
