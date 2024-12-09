@@ -1,4 +1,5 @@
 ﻿using GE_Utilities;
+using System.IO;
 using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
@@ -8,6 +9,7 @@ namespace Feedy.Models
         public void Set(SGripper grp)
         {
             No    = grp.gripperNo;
+            Name  = grp.name;
             Type  = grp.type;
         }
 
@@ -16,7 +18,8 @@ namespace Feedy.Models
         {
             SGripper grp = new SGripper();
             grp.gripperNo = No;
-            grp.type  = Type;
+            grp.name      = Name;
+            grp.type      = Type;
             return grp;
         }
         
@@ -40,6 +43,24 @@ namespace Feedy.Models
         {
             get { return _No; }
             set { SetProperty(ref _No, value); }
+        }
+
+        //--- Property Name ---------------------------------------
+        private string _Name;
+        public string Name
+        {
+            get { return _Name; }
+            set { if (SetProperty(ref _Name, value))
+                    ImagePath=Path.Combine(FdGolbals.Job.Dir,   value); 
+                }  
+        }
+
+        //--- Property ImagePath ---------------------------------------
+        private string _ImagePath;
+        public string ImagePath
+        {
+            get { return _ImagePath; }
+            set { SetProperty(ref _ImagePath, value); }
         }
 
         //--- Property Type ---------------------------------------

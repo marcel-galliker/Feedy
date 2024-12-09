@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:uc="clr-namespace:Feedy.Views.UserControls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:Feedy.Views.JobView"
              mc:Ignorable="d" 
@@ -40,6 +41,11 @@
             <utilities:GeNumBox Grid.Row="2" Grid.Column="2" Text="{Binding Speed}"/>
             <TextBlock Grid.Row="2" Grid.Column="3" Text=" %" FontSize="{StaticResource FontSizeXS}"/>
             <Image Grid.Row="1" Grid.Column="5" Grid.RowSpan="5" VerticalAlignment="Top" HorizontalAlignment="Left" x:Name="IMG_Gripper" Source="D:\\Feedy\\Jobs\\Job1\\Hebel.png" Height="100"/>
+            <Button Grid.Row="1" Grid.Column="5"  HorizontalAlignment="Left" Background="#66EDEDED" BorderBrush="LightGray" Click="IMG_Image_Clicked">
+                <TextBlock Text="  ...  " Foreground="DarkGray"/>
+            </Button>
+            <uc:FileOpen x:Name="FileOpenPopup" Grid.Row="3" Grid.Column="1"/>
+            <!-- PlacementTarget="{Binding ElementName=CB_SaveAs}" Placement="Bottom"/> -->
         </Grid>
     </GroupBox>
 </UserControl>

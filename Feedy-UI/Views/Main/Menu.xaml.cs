@@ -1,7 +1,6 @@
 ﻿using Feedy.Models;
 using Feedy.Models.Enums;
 using GE_Utilities;
-using MahApps.Metro.IconPacks;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows;
@@ -80,6 +79,16 @@ namespace Feedy.Views.Main
         private void MenuBar_Loaded(object sender, RoutedEventArgs e)
         {
             if (_MenuItem.Count>0) return;
+
+            _MenuItem.Add("Home",        new MenuItem()
+                                        {
+                                            Group=0,
+                                            Id="Home",
+                                            Kind=MahApps.Metro.IconPacks.PackIconMaterialKind.HomeOutline, 
+                                            View=FdGolbals.MainWindow.HomeView,
+                                            OnClick=_CheckMenu 
+                                        });
+
 
             _MenuItem.Add("Job",        new MenuItem()
                                         {

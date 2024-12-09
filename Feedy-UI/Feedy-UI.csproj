@@ -252,6 +252,15 @@
     <Compile Include="Views\ConfigView\ConfigView.xaml.cs">
       <DependentUpon>ConfigView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\HomeView\HomeGripperView.xaml.cs">
+      <DependentUpon>HomeGripperView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeView\HomeJobView.xaml.cs">
+      <DependentUpon>HomeJobView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\HomeView\HomeView.xaml.cs">
+      <DependentUpon>HomeView.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Views\PickPlaceView\PickSettingsView.xaml.cs">
       <DependentUpon>PickSettingsView.xaml</DependentUpon>
     </Compile>
@@ -429,6 +438,18 @@
     <Page Include="Views\ConfigView\ConfigView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView\HomeGripperView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView\HomeJobView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\HomeView\HomeView.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="Views\PickPlaceView\PickSettingsView.xaml">
       <SubType>Designer</SubType>

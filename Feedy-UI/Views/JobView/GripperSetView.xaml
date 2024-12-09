@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:utilities="clr-namespace:GE_Utilities"
+             xmlns:uc="clr-namespace:Feedy.Views.UserControls"
              xmlns:iconPacks="http://metro.mahapps.com/winfx/xaml/iconpacks"
              xmlns:local="clr-namespace:Feedy.Views.JobView"
              mc:Ignorable="d" 
@@ -32,6 +33,11 @@
             <utilities:GeNumBox Grid.Row="1" Grid.Column="2" Text="{Binding No}"/>
 
             <Image Grid.Row="0" Grid.Column="4" Grid.RowSpan="4" VerticalAlignment="Top" x:Name="IMG_Gripper" Source="D:\\Feedy\\Jobs\\Job1\\Greifer B.png" Height="100"/>
+            
+            <Button Grid.Row="0" Grid.Column="4"  HorizontalAlignment="Left" Background="#66EDEDED" BorderBrush="LightGray" Click="IMG_Image_Clicked">
+                <TextBlock Text="  ...  " Foreground="DarkGray"/>
+            </Button>
+            <uc:FileOpen x:Name="FileOpenPopup" Grid.Row="3" Grid.Column="1"/>
 
         </Grid>
     </GroupBox>

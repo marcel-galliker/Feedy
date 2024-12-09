@@ -3,6 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:HomeView="clr-namespace:Feedy.Views.HomeView"
         xmlns:JobView="clr-namespace:Feedy.Views.JobView"
         xmlns:EventsView="clr-namespace:Feedy.Views.EventsView"
         xmlns:LogView="clr-namespace:Feedy.Views.LogView"
@@ -33,7 +34,8 @@
 
         <Border x:Name="_MainView" Grid.Row="1" Grid.Column="1" Background="LightGray">
             <Grid>
-                <JobView:JobView           x:Name="JobView" />
+                <HomeView:HomeView         x:Name="HomeView" />
+                <JobView:JobView           x:Name="JobView" Visibility="Collapsed"/>
                 <EventsView:EventsView     x:Name="EventsView"     Visibility="Collapsed"/>
                 <LogView:LogView           x:Name="LogView"        Visibility="Collapsed"/>
                 <ConfigView:ConfigView     x:Name="ConfigView"     Visibility="Collapsed"/>

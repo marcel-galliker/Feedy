@@ -1,4 +1,5 @@
 ﻿using GE_Utilities;
+using System.IO;
 using static Feedy.Services.feedy_def;
 
 namespace Feedy.Models
@@ -14,7 +15,8 @@ namespace Feedy.Models
         //--- Set ----------------------------------------
         public void Set(SJob job)
         {
-            Name        = job.name;   
+            Name        = job.name;
+            Image       = job.image;
             Description = job.description;
             Speed       = job.speed;
             Count       = job.count;
@@ -29,7 +31,8 @@ namespace Feedy.Models
         public SJob Get()
         {
             SJob job        = new SJob();
-            job.name        = Name; 
+            job.name        = Name;
+            job.image       = Image;
             job.description = Description;
             job.speed       = Speed;
             job.count       = Count;
@@ -93,6 +96,27 @@ namespace Feedy.Models
         {
             get { return _Name; }
             set { IsChanged |= SetProperty(ref _Name, value);}
+        }
+
+        //--- Property Image ---------------------------------------
+        private string _Image;
+        public string Image
+        {
+            get { return _Image; }
+            set { 
+                    if  (SetProperty(ref _Image, value))
+                    {
+                        ImagePath = Path.Combine(FdGolbals.Job.Dir, value);
+                    }
+                }
+        }
+
+        //--- Property ImagePath ---------------------------------------
+        private string _ImagePath;
+        public string ImagePath
+        {
+            get { return _ImagePath; }
+            set { SetProperty(ref _ImagePath, value); }
         }
 
         //--- Property Description ---------------------------------------

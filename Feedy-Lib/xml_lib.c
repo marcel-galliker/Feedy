@@ -72,6 +72,7 @@ static int _xml_job(HANDLE file, SJob *pjob, EN_Xml_Action action)
 	if (xml_chapter(file, "Job", -1, action)==REPLY_OK)
 	{
 		xml_str		(file, "description",	 action, pjob->description,		sizeof(pjob->description),      "");
+		xml_str	    (file, "image",		action,	pjob->image, sizeof(pjob->image),  "");
 		xml_int32	(file, "speed", action, &pjob->speed, 100);
 		xml_int32	(file, "count", action, &pjob->count, 0);
 
@@ -149,6 +150,7 @@ static int _xml_gripper(HANDLE file, SGripper *pgrp, EN_Xml_Action action)
 	{
 		xml_int32	(file, "gripperNo",		action,	&pgrp->gripperNo,  0);
 		xml_int32	(file, "type",		action,	(INT32*)&pgrp->type,  0);
+		xml_str	    (file, "name",		action,	pgrp->name, sizeof(pgrp->name),  "");
 		xml_chapter	(file, "..", -1, action);
 		return TRUE;
 	}

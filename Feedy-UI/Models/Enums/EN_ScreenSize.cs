@@ -21,6 +21,8 @@ namespace Feedy.Models.Enums
             list.Add(new GeEnum<int>(1280<<16 |  800, "1280 x  800"));
             list.Add(new GeEnum<int>(1024<<16 |  768, "1024 x  768"));
             list.Add(new GeEnum<int>( 800<<16 |  600, " 800 x  600"));
+            list.Add(new GeEnum<int>( 800<<16 |  480, "5\" 800 x  480"));
+            list.Add(new GeEnum<int>( 480<<16 |  272, "4.3\" 480 x  272"));
             return list;
         }
 
