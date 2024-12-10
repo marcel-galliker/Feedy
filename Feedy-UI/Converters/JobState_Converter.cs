@@ -1,11 +1,8 @@
-﻿using Feedy.Models;
-using Feedy.Services;
-using MahApps.Metro.IconPacks;
+﻿using MahApps.Metro.IconPacks;
 using System;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
-using static Feedy.Models.FeedyStatus;
 using static Feedy.Services.feedy_def;
 
 namespace Feedy.Converters
@@ -21,7 +18,7 @@ namespace Feedy.Converters
                 switch((EnJobState)value)
                 {
                     case EnJobState.JS_starting: running=true; break;
-                    case EnJobState.JS_running: running=true; break;
+                    case EnJobState.JS_running:  running=true; break;
                     case EnJobState.JS_stopping: running=true; break;
                     default: running=false; break;
                 }
@@ -33,9 +30,9 @@ namespace Feedy.Converters
             {
                 switch((EnJobState)value)
                 {
-                    case EnJobState.JS_starting:    return Visibility.Visible;
+                    case EnJobState.JS_starting:   return Visibility.Visible;
                     case EnJobState.JS_running:    return Visibility.Visible;
-                    case EnJobState.JS_stopping:    return Visibility.Visible;
+                    case EnJobState.JS_stopping:   return Visibility.Visible;
                     default: return Visibility.Collapsed;
                 }
             }

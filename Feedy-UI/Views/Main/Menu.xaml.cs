@@ -16,7 +16,7 @@ namespace Feedy.Views.Main
     {
         private EN_ScreenSize                   _ScreenSizeList = new EN_ScreenSize();
         private Dictionary<string, MenuItem>    _MenuItem = new Dictionary<string, MenuItem>();
-        
+        private string                          _ActiveMenu;
         public Menu()
         {
             InitializeComponent();
@@ -182,7 +182,6 @@ namespace Feedy.Views.Main
             FdGolbals.FdInterface.PropertyChanged += EzInterface_PropertyChanged;
             _FeedyConnectedChanged();
             _UserChanged();
-            _CheckMenu("Job");
         }
 
         //--- _CheckMenu ------------------
@@ -197,6 +196,7 @@ namespace Feedy.Views.Main
                     {
                         if (item.Key.Equals(name))
                         {
+                            _ActiveMenu = item.Key;
                             item.Value.IsChecked = true;
                             item.Value.View.Visibility = Visibility.Visible;
                         }
@@ -248,6 +248,16 @@ namespace Feedy.Views.Main
         {
             _MenuItem["User"].Text = FdGolbals.User.Name;
             _MenuItem["User"].Kind = FdGolbals.User.Icon;
+
+            Visibility visibility = (FdGolbals.User.Type==EN_UserType.USER_operator)? Visibility.Collapsed : Visibility.Visible;
+            _MenuItem["Job"].Visibility = visibility;
+            _MenuItem["PickPlace"].Visibility = visibility;
+            _MenuItem["Config"].Visibility = visibility;
+            _MenuItem["Log"].Visibility = visibility;
+            _MenuItem["Settings"].Visibility = visibility;
+
+            if (_ActiveMenu==null || _MenuItem[_ActiveMenu].Visibility!=Visibility.Visible)
+                _CheckMenu("Home");
         }
 
         //--- CB_ScreenSize_SelectionChanged -----------------------------------
