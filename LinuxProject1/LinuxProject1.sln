@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.11.35431.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinuxProject1", "LinuxProject1.vcxproj", "{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|AARCH64 = Debug|AARCH64
+		Debug|x86 = Debug|x86
+		Release|AARCH64 = Release|AARCH64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|AARCH64.ActiveCfg = Debug|VisualGDB
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|AARCH64.Build.0 = Debug|VisualGDB
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|x86.ActiveCfg = Debug|ARM64
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|x86.Build.0 = Debug|ARM64
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|AARCH64.ActiveCfg = Release|Win32
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|AARCH64.Build.0 = Release|Win32
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|x86.ActiveCfg = Release|Win32
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {51422668-F61F-4F27-AE9A-544E88A7C257}
+	EndGlobalSection
+EndGlobal

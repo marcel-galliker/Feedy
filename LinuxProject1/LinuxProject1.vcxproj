@@ -1,0 +1,152 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|VisualGDB">
+      <Configuration>Debug</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|VisualGDB">
+      <Configuration>Release</Configuration>
+      <Platform>VisualGDB</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <ProjectGuid>{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}</ProjectGuid>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Label="VisualGDBPackageDefinitions">
+    <ToolchainID>com.sysprogs.imported.arm-linux-gnueabi2</ToolchainID>
+    <ToolchainVersion>4.7.3/(crosstool-NG/r0</ToolchainVersion>
+  </PropertyGroup>
+  <ImportGroup Label="VisualGDBFindComponents">
+    <Import Project="$(LOCALAPPDATA)\VisualGDB\FindComponents.props" />
+  </ImportGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeIncludeSearchPath>$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3;$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\arm-linux-gnueabihf;$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\backward;$(TOOLCHAIN_ROOT)\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include;$(TOOLCHAIN_ROOT)\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include-fixed;$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\include;$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\libc\usr\include;$(TOOLCHAIN_ROOT)\sw\gcc\arm-linux-gnueabihf\libc\usr\include\arm-linux-gnueabihf;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Debug.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM64'">
+    <NMakeIncludeSearchPath>C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\aarch64-none-linux-gnu;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\backward;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include-fixed;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\libc\usr\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Debug.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <NMakeIncludeSearchPath>C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\aarch64-none-linux-gnu;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\backward;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include-fixed;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\libc\usr\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Debug.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeIncludeSearchPath>c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\arm-linux-gnueabihf;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\backward;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include-fixed;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include\arm-linux-gnueabihf;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Release.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM64'">
+    <NMakeIncludeSearchPath>c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\arm-linux-gnueabihf;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\backward;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include-fixed;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include\arm-linux-gnueabihf;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Release.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <NMakeIncludeSearchPath>c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\arm-linux-gnueabihf;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include\c++\4.7.3\backward;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include;c:\tools\altera\13.1\ds-5\sw\gcc\lib\gcc\arm-linux-gnueabihf\4.7.3\include-fixed;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include;c:\tools\altera\13.1\ds-5\sw\gcc\arm-linux-gnueabihf\libc\usr\include\arm-linux-gnueabihf;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
+    <NMakeForcedIncludes>$(ProjectDir)\gcc_Release.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
+    <NMakePreprocessorDefinitions>__VisualGDB_CFG_Release;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
+    <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
+    <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
+    <NMakeOutput>$(ProjectDir)LinuxProject1-Release.vgdbsettings</NMakeOutput>
+    <IncludePath />
+    <ReferencePath />
+    <LibraryPath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ItemGroup>
+    <ClCompile Include="LinuxProject1.cpp" />
+    <None Include="Makefile" />
+    <None Include="debug.mak" />
+    <None Include="release.mak" />
+    <None Include="LinuxProject1-Debug.vgdbsettings" />
+    <None Include="LinuxProject1-Release.vgdbsettings" />
+  </ItemGroup>
+</Project>

@@ -7,7 +7,8 @@
     </RemoteDebugMachine>
     <StartWorkingDirectory>
     </StartWorkingDirectory>
-    <StartArguments></StartArguments>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <PropertyGroup>
     <PublishUrlHistory />
@@ -24,7 +25,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
-    <StartArguments></StartArguments>
+    <StartArguments>
+    </StartArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugRemote|AnyCPU'">
     <StartWorkingDirectory>\\192.168.200.54\Ez-Editor\DebugRemote\x64</StartWorkingDirectory>
@@ -34,7 +36,23 @@
     <AuthenticationMode>None</AuthenticationMode>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseCS|AnyCPU'">
-    <StartArguments></StartArguments>
+    <StartArguments>
+    </StartArguments>
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM64'">
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|ARM64'">
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'DebugRemote|ARM64'">
+    <StartWorkingDirectory>\\192.168.200.54\Ez-Editor\DebugRemote\x64</StartWorkingDirectory>
+    <RemoteDebugEnabled>true</RemoteDebugEnabled>
+    <RemoteDebugMachine>192.168.200.54</RemoteDebugMachine>
+    <AuthenticationMode>None</AuthenticationMode>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'ReleaseCS|ARM64'">
     <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
   </PropertyGroup>
 </Project>
