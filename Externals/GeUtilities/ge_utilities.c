@@ -88,15 +88,33 @@ int strend(char *str, char *end)
 	int len=(int)strlen(str);
 	int endlen=(int)strlen(end);
 	if (endlen>len) return FALSE;
+#ifdef linux
+	if (strcmp(&str[len - endlen], end) == 0) return TRUE;
+#else
 	if (stricmp(&str[len-endlen], end)==0) return TRUE;
+#endif
 	return FALSE;
 }
 
+#ifdef linux
+int stricmp(const char *str1, char *str2)
+{
+	while (*str1 && *str2)
+	{
+		char a = (*str1++)&0x3F;
+		char b = (*str1++)&0x3F;	
+		if (a<b) return -1;
+		if (a>b) return 1;
+	}
+	return 0;
+}
+#endif
 //--- wtoi ----------------------------
 int  wtoi(UINT16 *wstr)
 {
 	int value=0;	
-	for (UINT16 *ch=wstr; *ch; ch++)
+	UINT16 *ch;
+	for (ch=wstr; *ch; ch++)
 	{
 		if (*ch==L'\0') break;
 		if (*ch==L' ' && value==0) continue;
@@ -132,11 +150,16 @@ char *ge_getline(char *str)
 //--- win_error ----------------
 char * win_error(int err, char *str, int size)
 {
+#ifdef linux
+	strncpy(str, strerror(err), size);
+	return str;
+#else
 	int len = sprintf(str, "%d: ", err);
 	len += FormatMessageA(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS,
 		NULL, err, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), &str[len], size-len, NULL);
 	str[len-2]=0; // remove cr/lf
-	return str;
+	return str;	
+#endif
 }
 
 //--- swap -----------------------------------
@@ -161,7 +184,8 @@ char *bin2hex(char *str, void *data, int len)
 	UINT8 *src=(UINT8*)data;
 	char *dst = str;
 	dst+= sprintf(dst, "%03d ", len);
-	for(int i=0; i<len; i++, src++)
+	int i;
+	for(i=0; i<len; i++, src++)
 	{
 		dst+=sprintf(dst, "%02x ", *src);
 	}
@@ -185,7 +209,8 @@ void *hex2bin(char *str, void *data, int len)
 	}
 
 	str += 4;
-	for(int i=0; i<len; i++, str+=3)
+	int i;
+	for(i=0; i<len; i++, str+=3)
 	{
 		sscanf(str, "%02x", &val);
 		*dst++ = val;

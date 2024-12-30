@@ -17,6 +17,14 @@ extern "C"{
 
 #include "ge_common.h"
 
+#ifdef linux
+	#define _SH_DENYRW      0x10    /* deny read/write mode */
+	#define _SH_DENYWR      0x20    /* deny write mode */
+	#define _SH_DENYRD      0x30    /* deny read mode */
+	#define _SH_DENYNO      0x40    /* deny none mode */
+	#define _SH_SECURE      0x80    /* secure mode */
+#endif
+
 typedef HANDLE SEARCH_Handle;
 
 int		ge_file_exists	  (const char *path);

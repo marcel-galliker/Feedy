@@ -21,14 +21,20 @@
 #include "ge_common.h"
 #include "feedy_def.h"
 
-#define EXPORT EXTERN_C _declspec(dllexport) 
+#ifdef linux
+	int ez_hex2byte   (char *str, BYTE *bytes, int len);
+#else
+	
+	#ifdef __cplusplus
+	extern "C"{
+	#endif
 
-#ifdef __cplusplus
-extern "C"{
-#endif
+	#define EXPORT EXTERN_C _declspec(dllexport) 
 
-EXPORT int ez_hex2byte   (char *str, byte *bytes, int len);
+	EXPORT int ez_hex2byte   (char *str, BYTE *bytes, int len);
 
-#ifdef __cplusplus
-}
-#endif
+	#ifdef __cplusplus
+	}
+	#endif
+
+#endif // linux

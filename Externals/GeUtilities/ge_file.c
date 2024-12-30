@@ -19,6 +19,7 @@
 	#include <string.h>
 	#include <utime.h>
 	#include <time.h>
+	#include <dirent.h>
 #else
 	#include <sys/types.h>
 	#include <sys/stat.h>
@@ -191,6 +192,8 @@ typedef struct
 	char	path[MAX_PATH];
 	char	match[MAX_PATH];
 } SSearchLx;
+
+#define err_system_error(no, buffer, size) strncpy(buffer, strerror(no), size)
 
 //--- ge_search_open ---------------------------------
 SEARCH_Handle ge_search_open (const char *path, const char *match)
@@ -446,6 +449,9 @@ int gettimeofday(struct timeval *tp, struct timezone *tzp)
 //--- ge_recycle_file -------------------------------
 int	ge_recycle_file(char *path)
 {
+#ifdef linux
+	return remove(path);
+#else
 	SHFILEOPSTRUCTA fileop;
 	int len=(int)strlen(path);
 	memset(&fileop, 0, sizeof(fileop));
@@ -455,6 +461,7 @@ int	ge_recycle_file(char *path)
 	path[len++]=0;
 	fileop.fFlags = FOF_ALLOWUNDO | FOF_NOCONFIRMATION;
 	return SHFileOperationA(&fileop);
+#endif
 }
 
 //--- remove_old_files --------------------------------------
@@ -552,7 +559,7 @@ int ge_file_mount(const char *remotePath, const char *mntPath, const char *user,
 			{
 				fgets(str, 100, fp);
 				// printf("%s\n", str);
-				if (str_start(str, remotePath)) 
+				if (strstart(str, (char*)remotePath)) 
 				{
 					// TrPrintf(-1, "sr_mnt_drive: already mounted: end");
 					pclose(fp);
@@ -588,7 +595,7 @@ int ge_file_mount(const char *remotePath, const char *mntPath, const char *user,
 #ifdef linux
 	char*	ge_user_path(char *path)
 	{
-		strcpy(path, "~\");
+		strcpy(path, "~\"");
 		return path;
 	}
 #else
@@ -603,9 +610,9 @@ int ge_file_mount(const char *remotePath, const char *mntPath, const char *user,
 
 //--- ge_appdata_path ---------------------------------------------
 #ifdef linux
-	char*	ge_appdata_path(char *path, char *appname)
+	char*	ge_appdata_path(char *path, char *appname, char *filename)
 	{
-		strcpy(path, "~\");
+		strcpy(path, "~\"");
 			return path;
 	}
 #else

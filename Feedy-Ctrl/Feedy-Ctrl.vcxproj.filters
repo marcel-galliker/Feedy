@@ -12,6 +12,12 @@
     <Filter Include="Utilities">
       <UniqueIdentifier>{4a8bb42f-c595-49a0-8870-ed5bcd30923d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{3bd850f7-4a00-4c8e-a699-5791f54a41eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Make files">
+      <UniqueIdentifier>{ea271e6c-61b2-4292-abd8-0951464b140d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Feedy-Ctrl.c">
@@ -127,5 +133,13 @@
     <ClInclude Include="job.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="FeedyCtrl-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="FeedyCtrl-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
   </ItemGroup>
 </Project>

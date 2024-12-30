@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{134d5160-c189-493f-a55d-1b03b17f0fde}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="tinystr.cpp">
@@ -35,5 +38,13 @@
     <ClInclude Include="tinyxml.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="TinyXML-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="TinyXML-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
   </ItemGroup>
 </Project>

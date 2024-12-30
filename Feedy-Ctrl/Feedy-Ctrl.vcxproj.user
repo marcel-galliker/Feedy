@@ -3,61 +3,34 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <RemoteDebuggerServerName>192.168.198.55</RemoteDebuggerServerName>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-simuprinter -simuhyper</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
+    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RemoteDebug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <RemoteDebuggerServerName>192.168.198.55</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugRemote|x64'">
-    <RemoteDebuggerServerName>192.168.198.55</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RemoteDebug|x64'">
-    <RemoteDebuggerServerName>192.168.198.55</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugRemote|x64'">
-    <RemoteDebuggerServerName>193.168.198.54</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='RemoteDebug|Win32'">
-    <RemoteDebuggerCommand>$(RemoteRoot)\$(Configuration)\$(Platform)\$(ProjectName).exe</RemoteDebuggerCommand>
-    <RemoteDebuggerServerName>$(RemoteComputer)</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-    <RemoteDebuggerCommandArguments>
-    </RemoteDebuggerCommandArguments>
-    <RemoteDebuggerWorkingDirectory>$(RemoteRoot)\$(Configuration)\$(Platform)</RemoteDebuggerWorkingDirectory>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='DebugRemote|Win32'">
-    <RemoteDebuggerCommand>$(RemoteRoot)\$(Configuration)\$(Platform)\$(ProjectName).exe</RemoteDebuggerCommand>
-    <RemoteDebuggerServerName>$(RemoteComputer)</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-    <RemoteDebuggerCommandArguments />
-    <RemoteDebuggerWorkingDirectory>$(RemoteRoot)\$(Configuration)\$(Platform)</RemoteDebuggerWorkingDirectory>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
-    <LocalDebuggerCommandArguments>-simuprinter -simuspeed 1000 +simuhyper -trace 1</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments />
+    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerMergeEnvironment>true</LocalDebuggerMergeEnvironment>
+    <LocalDebuggerSQLDebugging>false</LocalDebuggerSQLDebugging>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerCommandArguments>-simuprinter </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCS|x64'">
-    <LocalDebuggerCommandArguments>-simuprinter </LocalDebuggerCommandArguments>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <LocalDebuggerCommandArguments>
+    </LocalDebuggerCommandArguments>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <RemoteDebuggerServerName>$(RemoteComputer)</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <RemoteDebuggerCommandArguments>$(RemoteRoot)\$(Configuration)\$(Platform)</RemoteDebuggerCommandArguments>
-    <LocalDebuggerCommandArguments>-simuprinter -simuspeed 500 +simuhyper -trace 1</LocalDebuggerCommandArguments>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ReleaseCS|Win32'">
-    <RemoteDebuggerServerName>$(RemoteComputer)</RemoteDebuggerServerName>
-    <DebuggerFlavor>WindowsRemoteDebugger</DebuggerFlavor>
-    <RemoteDebuggerCommandArguments>$(RemoteRoot)\$(Configuration)\$(Platform)</RemoteDebuggerCommandArguments>
+    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerMergeEnvironment>true</LocalDebuggerMergeEnvironment>
+    <LocalDebuggerSQLDebugging>false</LocalDebuggerSQLDebugging>
   </PropertyGroup>
 </Project>

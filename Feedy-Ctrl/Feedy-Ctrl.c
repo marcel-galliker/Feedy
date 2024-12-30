@@ -74,8 +74,10 @@ int		main(int argc, char *argv[])
 	TrPrintf(0, "Version %s\n", EzVersion);
 	Error(LOG, 0, "Feedy-Ctrl Starting");
 
+#ifdef linux
+#else
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
-
+#endif
 	feedy_init();
 
 	appdata_load(FeedyAppData.jobName);

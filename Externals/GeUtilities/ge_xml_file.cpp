@@ -9,9 +9,10 @@
 //
 // ****************************************************************************
 
+#include <stdlib.h>
 #include "tinyxml.h"
-#include <stdlib.h> 
 #include "ge_common.h"
+#include "ge_utilities.h"
 #include "ge_file.h"
 #include "ge_xml_file.h"
 
@@ -449,7 +450,7 @@ void xml_enum(HANDLE hsetup, const char *name, EN_Xml_Action action, INT32  *val
 			if(*ch == '|')
 			{
 				*pstr = 0;
-				if (!stricmp(value, str)) 
+				if (!stricmp(value, str))
 				{						
 					*val=i;
 					return;		
@@ -559,7 +560,7 @@ void xml_mac_addr	(HANDLE hsetup, const char *name, EN_Xml_Action action, INT64 
 	{
 		const char *str = setup->actChapter->Attribute(name);
 		*val=0;
-		sscanf(str, "%02X-%02X-%02X-%02X-%02X-%02X", (UINT*)&addr[0], (UINT*)&addr[1], (UINT*)&addr[2], (UINT*)&addr[3], (UINT*)&addr[4], (UINT*)&addr[5]);
+		sscanf(str, "%02X-%02X-%02X-%02X-%02X-%02X", (UINT32*)&addr[0], (UINT32*)&addr[1], (UINT32*)&addr[2], (UINT32*)&addr[3], (UINT32*)&addr[4], (UINT32*)&addr[5]);
 	}
 }
 

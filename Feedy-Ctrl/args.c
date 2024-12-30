@@ -35,9 +35,15 @@ void args_init(int argc, char** argv)
 	int help=FALSE;
 	
 	char path[MAX_PATH];
+#ifdef linux
+	printf("GetExe-Filename!! >>%s<<\n", argv[0]);
+	ge_split_path(argv[0], arg_exeDir, NULL, NULL);
+#else
 	GetModuleFileNameA(NULL, path, sizeof(path));
 	ge_split_path(path, arg_exeDir, NULL, NULL);
+#endif
 
+	/*
 	if (strstart(arg_exeDir, "\\\\"))
 	{
 		strncpy(arg_exeDir, "D:", 2);
@@ -51,8 +57,9 @@ void args_init(int argc, char** argv)
 		}
 		SetCurrentDirectoryA(arg_exeDir);
 	}
-	
-	for (int i=1; i<argc; i++)
+	*/
+	int i;
+	for (i=1; i<argc; i++)
 	{
 		if      (!stricmp(argv[i], "-simuprinter"))	arg_simuPrinter	= TRUE;
 		else if (!stricmp(argv[i], "-simumeteor"))	arg_simuMeteor	= TRUE;

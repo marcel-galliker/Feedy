@@ -1,15 +1,39 @@
-#pragma once
-
-
 //--- includes --------------------------------------------------
+#ifdef linux
+	#include <stdlib.h>
+	#include <stdio.h>
+	#include <unistd.h>
+	#include <netdb.h>
+	#include <errno.h>
+	#include <sys/ioctl.h>
+	#include <sys/select.h>
+	#include <sys/socket.h>
+	#include <sys/time.h>
+	#include <sys/types.h>
+	#include <net/if.h>
+	#include <netinet/in.h>
+	#include <netinet/in_systm.h>
+	#include <netinet/ether.h>
+	#include <netinet/tcp.h>
+	#include <netinet/udp.h>
+	#include <linux/ip.h>
+	#include <linux/if_packet.h>
+	#include <arpa/inet.h>
+	#include <string.h>
+	#include <stdio.h>
+#endif
+
 #include <stdio.h>
 #include "rt_sok_api.h"
 #include "FdTcpIp.h"
 #include "FdGlobals.h"
 #include "ge_trace.h"
+#include "ge_threads.h"
+#include "rt_sok_api.h"
 #include "error.h"
 #include "gui_msg.h"
 #include "gui_server.h"
+
 
 //--- defines ---------------------------------------------------
 #define MAX_GUI_CLIENTS		5
@@ -40,13 +64,13 @@ void gui_server(void)
 
 	// --- take the socket and listen ---
 //	rt_sok_init (FALSE, GUI_HOST, GUI_PORT, &_GuiServerSok);
-	rt_sok_init (FALSE, NULL, GUI_PORT, &_GuiServerSok);
+	rt_sok_init_server(NULL, GUI_PORT, &_GuiServerSok);
 	if ( NonBlk)
-		rt_sok_set_nb (&_GuiServerSok);
+		rt_sok_set_blocking (&_GuiServerSok, FALSE);
 	listen (_GuiServerSok, MAX_GUI_CLIENTS);
 	TrPrintf( 0, "GUI: Server Socket %d (%s:%d)  Waiting for clients", _GuiServerSok, GUI_HOST, GUI_PORT);
 	while (TRUE) {
-		Sleep(1000);
+		sleep(1000);
 		/*--- Get the next available connection ---*/
 		for (i=0; i<MAX_GUI_CLIENTS; i++)
 		{
@@ -64,17 +88,22 @@ void gui_server(void)
 					*/
 				}
 				else {
-					BOOL bNoDelay = TRUE;
-					setsockopt (_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, (LPSTR) &bNoDelay, sizeof (BOOL));
-					/*--- create a receiver thread for that client ---*/
-					_GuiClientThreadHandle[i]=CreateThread ( 
-						NULL,									/* no security attributes */
-						0,										/* default stack size */
-						(LPTHREAD_START_ROUTINE) &_GuiClient_thread,	/* function to call */
-						&_GuiClientSok[i],						/* parameter for function */
-						0,										/* 0=thread runs immediately after being called */
-						NULL									/* returns thread identifier */
-					);
+					INT32 bNoDelay = TRUE;
+					#ifdef linux
+						setsockopt(_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, &bNoDelay, sizeof(INT32));
+						_GuiClientThreadHandle[i] = ge_thread_start((thread_main)_GuiClient_thread, &_GuiClientSok[i]) ;
+					#else
+						setsockopt(_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, (LPSTR) &bNoDelay, sizeof(INT32));
+						/*--- create a receiver thread for that client ---*/
+						_GuiClientThreadHandle[i] = CreateThread( 
+							NULL,									/* no security attributes */
+							0,										/* default stack size */
+							(LPTHREAD_START_ROUTINE) &_GuiClient_thread,	/* function to call */
+							&_GuiClientSok[i],						/* parameter for function */
+							0,										/* 0=thread runs immediately after being called */
+							NULL									/* returns thread identifier */
+						);
+					#endif
 					if (_GuiClientThreadHandle[i]==NULL)
 						printf("Could not start Thread");
 				}
@@ -98,7 +127,10 @@ static void _GuiClient_thread (SOCKET *socket)
 	}
 	*/
 
-	SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+	#ifdef linux
+	#else
+		SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
+	#endif
 	
 	feedy_reset_error();
 
@@ -131,8 +163,7 @@ static void _GuiClient_thread (SOCKET *socket)
 	}
 	TrPrintf( 0, "GUI_Client: Socket[%d]=>>%s<< closed", *socket, sok_get_socket_name(*socket, str, NULL, NULL));
 	gui_disconnected(*socket);
-	closesocket (*socket);
-	*socket=INVALID_SOCKET;
+	rt_sok_close(socket);
 } /* end main_thread */
 
 //--- gui_send -----------------------------------------
@@ -155,7 +186,8 @@ void gui_send(SOCKET socket, void *pmsg)
 	}
 	if (socket==0 || socket==INVALID_SOCKET)
 	{
-		for(int i=0; i<MAX_GUI_CLIENTS; i++)
+		int i;
+		for(i=0; i<MAX_GUI_CLIENTS; i++)
 		{
 			if (_GuiClientSok[i] && _GuiClientSok[i]!=INVALID_SOCKET) rt_sok_msg_send_nb(&_GuiClientSok[i], pmsg, pmsgHdr->msgLen);
 		}

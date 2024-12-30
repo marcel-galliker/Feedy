@@ -16,6 +16,9 @@
     <Filter Include="Utilities">
       <UniqueIdentifier>{2c981d19-f516-48f9-bc82-96769104c5a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="VisualGDB settings">
+      <UniqueIdentifier>{4d4b2e11-c231-4bdc-bdf9-833a2cf86185}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="framework.h">
@@ -74,14 +77,22 @@
     <ClCompile Include="..\Feedy-Ctrl\crypt_lib.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Externals\CryptLib\rijndael.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Externals\GeUtilities\ge_xml_file.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
     <ClCompile Include="feedy_lib.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Externals\CryptLib\rijndael.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Feedy-Lib-Debug.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="Feedy-Lib-Release.vgdbsettings">
+      <Filter>VisualGDB settings</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -224,7 +224,8 @@ static int _xml_pickplace(HANDLE file, SPickPlace *ppp, EN_Xml_Action action)
 		_xml_test_settings(file, &ppp->testSettings, action);
 		_xml_position(file, "TestPos", -1, &ppp->testPos, action);
 		_xml_place_settings(file, &ppp->placeSettings, action);
-		for (int i=0; i<PlacePosCnt; i++)
+		int i;
+		for (i=0; i<PlacePosCnt; i++)
 			_xml_position(file, "PlacePos", i, &ppp->placePos[i], action);
 
 		xml_chapter	(file, "..", -1, action);
@@ -268,7 +269,8 @@ int xml_cfg_file   (char *filepath, SConfig *pcfg, EN_Xml_Action action)
 	}
 	if (xml_chapter(file, "Config", -1, action)==REPLY_OK)
 	{	
-		for (int i=0; i<SIZEOF(pcfg->motor); i++)
+		int i;
+		for (i=0; i<SIZEOF(pcfg->motor); i++)
 			_xml_motor(file, i, &pcfg->motor[i], action);
 		xml_chapter(file, "..", -1, action);
 	}

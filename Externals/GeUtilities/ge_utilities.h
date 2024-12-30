@@ -21,6 +21,8 @@
 #include "ge_common.h"
 
 void char_to_wchar(wchar_t *puni, const char *pansi, int len);
+int stricmp(const char *str1, char *str2);
+
 
 #ifdef WIN32
 	void	TimetToFileTime( time_t t, LPFILETIME pft );

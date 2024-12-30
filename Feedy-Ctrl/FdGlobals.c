@@ -17,11 +17,17 @@
 // *************************************************************************************************
 
 //--- includes ---------------------------
+#include "ge_common.h"
 #include "ge_file.h"
 #include "ge_utilities.h"
 #include "FdGlobals.h"
 
+#ifdef linux
+//	#include <unistd.h>
+#endif
+
 static void no_abort(void){return;}
+char *getcwd(char *buf, size_t size);
 
 //--- global variables ---------------------------------------------------
 char PATH_ROOT[4];
@@ -37,7 +43,11 @@ SFeedyStatus	FeedyStatus;
 void FdGlobals_init(void)
 {
 	char dir[MAX_PATH];
-	GetCurrentDirectoryA(MAX_PATH, dir);
+	#ifdef linux
+		getcwd(dir, sizeof(dir));
+	#else
+		GetCurrentDirectoryA(MAX_PATH, dir);
+	#endif
 	if (strstart(dir, "\\\\"))
 	{
 		strcpy(PATH_ROOT, "D:\\");

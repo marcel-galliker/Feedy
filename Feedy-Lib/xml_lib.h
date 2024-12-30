@@ -18,7 +18,11 @@
 
 #pragma once
 
-#define EXPORT EXTERN_C _declspec(dllexport) 
+#ifdef linux
+	#define EXPORT 
+#else
+	#define EXPORT EXTERN_C _declspec(dllexport) 
+#endif
 
 #ifdef __cplusplus
 extern "C"{

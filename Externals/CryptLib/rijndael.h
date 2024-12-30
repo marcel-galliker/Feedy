@@ -1,8 +1,11 @@
 
 //rijndael.h
 
+#ifndef linux
+
 #ifndef __RIJNDAEL_H__
 #define __RIJNDAEL_H__
+
 
 #include <exception>
 #include <cstring>
@@ -187,3 +190,4 @@ private:
 
 #endif // __RIJNDAEL_H__
 
+#endif

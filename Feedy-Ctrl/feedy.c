@@ -1,6 +1,6 @@
 // *************************************************************************************************
 //																				
-//	printer.c: 
+//	feedy.c: 
 //																				
 // *************************************************************************************************
 //
@@ -16,10 +16,9 @@
 //
 // *************************************************************************************************
 
-#pragma once
-
 //--- includes ------------------------------------------------------
 #include "ge_common.h"
+#include "ge_threads.h"
 #include "ge_time.h"
 #include "args.h"
 #include "AppData.h"
@@ -46,16 +45,7 @@ static void _FeedyThread (void *par);
 void feedy_init(void)
 {
 	_ErrorFlag = 0;
-	/*--- create a receiver thread for that client ---*/
-	_FeedyThreadHandle=CreateThread ( 
-		NULL,									/* no security attributes */
-		0,										/* default stack size */
-		(LPTHREAD_START_ROUTINE) &_FeedyThread,	/* function to call */
-		NULL,									/* parameter for function */
-		0,										/* 0=thread runs immediately after being called */
-		NULL									/* returns thread identifier */
-	);
-
+	_FeedyThreadHandle = ge_thread_start((thread_main) &_FeedyThread, NULL);
 }
 
 //--- feedy_reset_error -------------------------------
@@ -172,10 +162,10 @@ void feedy_motor_move2pos(SOCKET socket, SPosition *pmsg)
 //--- _FeedyThread -----------------------------
 static void _FeedyThread (void *par)
 {
-	SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
+	ge_thread_set_priority(THREAD_PRIORITY_HIGHEST);
 	while (TRUE)
 	{
-		Sleep(10);
+		ge_thread_sleep(10);
 
 		if (_MotorTest.direction)
 		{			
@@ -194,7 +184,7 @@ static void _FeedyThread (void *par)
 			}
 
 			gui_send_status(INVALID_SOCKET);
-			Sleep(100);
+			ge_thread_sleep(100);
 		}
 	}
 }

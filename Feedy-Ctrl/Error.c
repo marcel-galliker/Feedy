@@ -17,8 +17,10 @@
 // *************************************************************************************************
 
 //--- includes ---------------------------
+#ifndef linux
+	#include <windows.h>
+#endif
 #include <stdarg.h>
-#include <windows.h>
 #include <stdlib.h>
 #include "ge_common.h"
 #include "ge_file.h"
@@ -106,7 +108,8 @@ int Error(int type, const char *file, int line, int errNo, char *format, ...)
 	msgLen = ge_get_system_date_str(msg, '-');
 	msg[msgLen++]='@';
 	msgLen += ge_get_system_time_str(&msg[msgLen]);
-	for (const char *pch=file; *pch; pch++)
+	const char *pch;
+	for (pch=file; *pch; pch++)
 		if (*pch=='\\') filename=pch+1;
 
 

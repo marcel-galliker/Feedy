@@ -26,10 +26,10 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <sys/utime.h>
-#include <direct.h>
+// #include <sys/utime.h>
+// #include <direct.h>
 #include <time.h>
-#include <shlobj.h>
+// #include <shlobj.h>
 
 //--- statics -----------------------------------------------
 static int	_TraceLevel=-1;
@@ -49,8 +49,8 @@ void TrInit (char *appName, int level, char *path, char *logdir)
 		ge_mkdir_path(path);
 
 		ge_remove_old_files(logdir, 30);
-		struct __stat64 st;
-		if (_stat64(path, &st)==0)
+		time_t time;
+		if (time=ge_file_get_mtime(path))
 		{
 			char dir[MAX_PATH];
 			char name[MAX_PATH];
@@ -58,7 +58,7 @@ void TrInit (char *appName, int level, char *path, char *logdir)
 			ge_split_path(path, dir, name, ext);
 
 			char time_stamp[100];
-			ge_get_date_time_str(st.st_mtime, time_stamp);
+			ge_get_date_time_str(time, time_stamp);
 
 			char logpath[MAX_PATH];
 			sprintf(logpath, "%s%s - %s%s", logdir, name, time_stamp, ext);
@@ -79,9 +79,16 @@ void TrPrintf (int level, char *format, ...)
 
 	if (level <= _TraceLevel) 
 	{
-		int time=ge_ticks();
+		int time = ge_ticks();
 		len = sprintf(str, "%03d.%03d: ", time/1000, time%1000);
-		len = _vsnprintf(&str[len], TRACE_LEN-len, format, (va_list)&format + sizeof(format));
+		#ifdef linux
+			va_list ap;
+			va_start(ap, format);
+			len = vsnprintf(&str[len], TRACE_LEN - len, format, ap);
+			va_end(ap);
+		#else
+		//	len = _vsnprintf(&str[len], TRACE_LEN-len, format, (va_list)&format + sizeof(format));
+		#endif
 		if (len<0 || (len>TRACE_LEN-(int)strlen(_AppName)-10)) {
 			memcpy(&str[TRACE_LEN-strlen(_AppName)-10], "...\n", 5);
 			str[TRACE_LEN-strlen(_AppName)-10+4]=0;

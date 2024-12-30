@@ -16,10 +16,11 @@
 //
 // *************************************************************************************************#pragma once
 
+#include <stdarg.h>
 #include "feedy_lib.h"
 #include "ge_file.h"
 
-static byte _val(char ch, int *perror)
+static BYTE _val(char ch, int *perror)
 {
 	switch(ch)
 	{
@@ -44,12 +45,13 @@ static byte _val(char ch, int *perror)
 }
 
 //--- ez_hex2byte -----------------------------------
-int ez_hex2byte   (char *str, byte *bytes, int len)
+int ez_hex2byte   (char *str, BYTE *bytes, int len)
 {
 	int l=(int)strlen(str);
 //	if (l!=2*len) return REPLY_ERROR;
 	int reply=REPLY_OK;
-	for (int i=0; i<len && reply==REPLY_OK; i++)
+	int i;
+	for (i=0; i<len && reply==REPLY_OK; i++)
 	{
 		bytes[i] = (_val(*str++, &reply) <<4) | _val(*str++, &reply);
 	}
@@ -62,6 +64,7 @@ int Error(int type, const char *file, int line, int errNo, char *format, ...)
 	va_list arglist;
 	va_start(arglist, format);
 	vprintf(format, arglist);
+	va_end(arglist);
 	return 0;
 }
 

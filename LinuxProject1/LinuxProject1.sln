@@ -8,17 +8,23 @@ EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|AARCH64 = Debug|AARCH64
+		Debug|VisualGDB = Debug|VisualGDB
 		Debug|x86 = Debug|x86
 		Release|AARCH64 = Release|AARCH64
+		Release|VisualGDB = Release|VisualGDB
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|AARCH64.ActiveCfg = Debug|VisualGDB
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|AARCH64.Build.0 = Debug|VisualGDB
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|VisualGDB.ActiveCfg = Debug|VisualGDB
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|VisualGDB.Build.0 = Debug|VisualGDB
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|x86.ActiveCfg = Debug|ARM64
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Debug|x86.Build.0 = Debug|ARM64
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|AARCH64.ActiveCfg = Release|Win32
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|AARCH64.Build.0 = Release|Win32
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|VisualGDB.ActiveCfg = Release|VisualGDB
+		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|VisualGDB.Build.0 = Release|VisualGDB
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|x86.ActiveCfg = Release|Win32
 		{05CD60FD-83D0-4E56-92B5-B7C267AB98FA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection

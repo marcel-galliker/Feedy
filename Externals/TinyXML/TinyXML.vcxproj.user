@@ -1,4 +1,21 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="Current" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
+    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerMergeEnvironment>true</LocalDebuggerMergeEnvironment>
+    <LocalDebuggerSQLDebugging>false</LocalDebuggerSQLDebugging>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|VisualGDB'">
+    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
+    <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
+    <LocalDebuggerWorkingDirectory>$(ProjectDir)</LocalDebuggerWorkingDirectory>
+    <LocalDebuggerAttach>false</LocalDebuggerAttach>
+    <LocalDebuggerDebuggerType>Auto</LocalDebuggerDebuggerType>
+    <LocalDebuggerMergeEnvironment>true</LocalDebuggerMergeEnvironment>
+    <LocalDebuggerSQLDebugging>false</LocalDebuggerSQLDebugging>
+  </PropertyGroup>
 </Project>

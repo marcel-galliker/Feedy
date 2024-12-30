@@ -25,7 +25,7 @@ int ge_get_system_date_time_str(char *str);
 int ge_get_system_time_str(char *str);
 int ge_get_system_date_str(char *str, char separator);
 int ge_get_system_numdate_str(char *str, char separator);
-int ge_get_days_between(SYSTEMTIME *from, SYSTEMTIME *to);
+// int ge_get_days_between(SYSTEMTIME *from, SYSTEMTIME *to);
 
 #ifdef __cplusplus
 }

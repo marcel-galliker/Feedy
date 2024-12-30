@@ -1,6 +1,8 @@
+#ifndef linux
 
 #include "crypt_lib.h"
 #include "rijndael.h"
+#include "ge_common.h"
 
 #include <ctime>
 
@@ -10,7 +12,7 @@ const char * CHAIN = "/12/116/122/9/228/109/118/160/187/79/214/170/100/66/118/16
 
 static void generate_numbers()
 {
-	char code[_MAX_PATH];
+	char code[256];
 	int len=0;
 	memset(code, 0, sizeof(code));
 	srand ((UINT32)time(NULL));
@@ -24,7 +26,7 @@ static void generate_numbers()
 
 int decrypt(byte *crypt, int clen, byte *buffer, int blen)
 {
-//	generate_numbers();
+	//	generate_numbers();
 	CRijndael oRijndael;
 	oRijndael.MakeKey(KEY, CHAIN, 32, BLOCK_SIZE);
 	oRijndael.Decrypt((const char*)crypt, (char*)buffer, clen);
@@ -50,3 +52,5 @@ int encrypt(byte *buffer, int blen, byte *crypt, int clen)
 	}
 	return 0;
 }
+
+#endif

@@ -11,7 +11,12 @@
 
 #pragma once
 
-#include <windows.h>
+#include "ge_common.h"
+
+#ifdef linux
+#else
+	#include <windows.h>
+#endif
 
 #ifdef __cplusplus
 extern "C"{
