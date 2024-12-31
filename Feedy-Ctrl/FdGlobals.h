@@ -24,13 +24,22 @@
 
 //--- defines -------------------------------------------------------------
 // #define PATH_ROOT		"D:\\"
-extern  char PATH_ROOT[4];
+extern  char PATH_ROOT[32];
 extern  char PATH_TEMP[MAX_PATH];
-#define PATH_APP		"Feedy\\"
-#define PATH_SETTINGS	PATH_APP "Settings\\"
-#define PATH_JOBS		PATH_APP "Jobs\\"
-#define PATH_LOGS		PATH_APP "Logs\\"
 
+#ifdef linux
+	#define PATH_APP		"feedy/"
+	#define PATH_SETTINGS	PATH_APP "settings/"
+	#define PATH_JOBS		PATH_APP "jobs/"
+	#define PATH_LOGS		PATH_APP "logs/"
+	#define PATH_TRACE		PATH_APP "trace/"
+#else
+	#define PATH_APP		"Feedy\\"
+	#define PATH_SETTINGS	PATH_APP "Settings\\"
+	#define PATH_JOBS		PATH_APP "Jobs\\"
+	#define PATH_LOGS		PATH_APP "Logs\\"
+	#define PATH_TRACE		PATH_APP "Trace\\"
+#endif
 #define APP_DATA_FNAME	"AppData.xml"
 
 //--- laylout ---------------------------

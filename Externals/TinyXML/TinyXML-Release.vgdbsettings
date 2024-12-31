@@ -17,10 +17,10 @@
   <Build xsi:type="com.visualgdb.build.make">
     <BuildLogMode xsi:nil="true" />
     <ToolchainID>
-      <ID>com.sysprogs.imported.arm-linux-gnueabi2</ID>
+      <ID>com.sysprogs.imported.aarch64-none-linux-gnu</ID>
       <Version>
-        <GCC>4.7.3</GCC>
-        <GDB>(crosstool-NG</GDB>
+        <GCC>14.2.1</GCC>
+        <GDB>(Arm</GDB>
         <Revision>0</Revision>
       </Version>
     </ToolchainID>

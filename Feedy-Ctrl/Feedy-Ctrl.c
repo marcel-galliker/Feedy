@@ -66,7 +66,7 @@ int		main(int argc, char *argv[])
 	{
 		char path[MAX_PATH];
 		char logdir[MAX_PATH];
-		sprintf(path, "%s%sFeedy-Ctrl.txt", PATH_TEMP, PATH_APP);
+		sprintf(path, "%s%sFeedy-Ctrl.txt", PATH_ROOT, PATH_TRACE);
 		printf("TrInit(%d, %s)\n", arg_trace, path);
 		TrInit("Feedy-Ctrl", arg_trace, path, EzUserFilePath(PATH_LOGS, NULL, NULL, logdir));
 	}

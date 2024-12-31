@@ -230,9 +230,6 @@
 #ifndef __SIZEOF_POINTER__
 #define __SIZEOF_POINTER__ 4
 #endif
-#ifndef NDEBUG
-#define NDEBUG 1
-#endif
 #ifndef __GCC_ATOMIC_CHAR16_T_LOCK_FREE
 #define __GCC_ATOMIC_CHAR16_T_LOCK_FREE 2
 #endif
@@ -304,9 +301,6 @@
 #endif
 #ifndef __gnu_linux__
 #define __gnu_linux__ 1
-#endif
-#ifndef RELEASE
-#define RELEASE 1
 #endif
 #ifndef __ARM_PCS_VFP
 #define __ARM_PCS_VFP 1
@@ -585,6 +579,9 @@
 #endif
 #ifndef __UDQ_FBIT__
 #define __UDQ_FBIT__ 64
+#endif
+#ifndef DEBUG
+#define DEBUG 1
 #endif
 #ifndef __INT8_TYPE__
 #define __INT8_TYPE__ signed char

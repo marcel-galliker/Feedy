@@ -23,11 +23,6 @@
 
 char arg_exeDir[200];
 int arg_trace		= 0;	// trace is off!
-int arg_file_trace  = FALSE;
-int arg_simuPrinter = FALSE;
-int arg_simuHyper	= FALSE;
-int arg_simuMeteor	= FALSE;
-int arg_simuSpeed	= 0;
 
 //--- args_init -----------------------------------
 void args_init(int argc, char** argv)
@@ -61,12 +56,7 @@ void args_init(int argc, char** argv)
 	int i;
 	for (i=1; i<argc; i++)
 	{
-		if      (!stricmp(argv[i], "-simuprinter"))	arg_simuPrinter	= TRUE;
-		else if (!stricmp(argv[i], "-simumeteor"))	arg_simuMeteor	= TRUE;
-		else if (!stricmp(argv[i], "-simuhyper"))	arg_simuHyper	= TRUE;
-		else if (!stricmp(argv[i], "-trace"))		arg_trace		= atoi(argv[++i]);
-		else if (!stricmp(argv[i], "-simuspeed"))	
-			arg_simuSpeed	= atoi(argv[++i]);
+		if      (!stricmp(argv[i], "-trace"))		arg_trace		= atoi(argv[++i]);
 		else help=TRUE;
 	}
 
@@ -74,8 +64,6 @@ void args_init(int argc, char** argv)
 	if (help) 
 	{
 		printf("Parameters:\n");
-		printf(" -simuprinter:   Simulate the printer\n");
-		printf(" -simumeteor:   Simulate the meteor interface printer\n");
 		printf(" -trace <level>: Set the trace level\n");
 	}
 }

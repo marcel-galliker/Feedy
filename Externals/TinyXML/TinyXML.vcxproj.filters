@@ -46,5 +46,14 @@
     <None Include="TinyXML-Release.vgdbsettings">
       <Filter>VisualGDB settings</Filter>
     </None>
+    <None Include="Makefile">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="debug.mak">
+      <Filter>VisualGDB settings</Filter>
+    </None>
+    <None Include="release.mak">
+      <Filter>VisualGDB settings</Filter>
+    </None>
   </ItemGroup>
 </Project>

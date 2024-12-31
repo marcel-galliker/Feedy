@@ -30,7 +30,7 @@ static void no_abort(void){return;}
 char *getcwd(char *buf, size_t size);
 
 //--- global variables ---------------------------------------------------
-char PATH_ROOT[4];
+char PATH_ROOT[32];
 char PATH_TEMP[MAX_PATH];
 
 
@@ -45,22 +45,28 @@ void FdGlobals_init(void)
 	char dir[MAX_PATH];
 	#ifdef linux
 		getcwd(dir, sizeof(dir));
+		strcpy(PATH_ROOT, "/opt/");
+		sprintf(PATH_TEMP, "/tmp/feedy/");
+		ge_mkdir_path(PATH_TEMP);
 	#else
 		GetCurrentDirectoryA(MAX_PATH, dir);
+		if (strstart(dir, "\\\\"))
+		{
+			strcpy(PATH_ROOT, "D:\\");
+		}
+		else
+		{
+			strncpy(PATH_ROOT, dir, 3);
+		}
+		sprintf(PATH_TEMP, "%sTemp\\", PATH_ROOT);
+		ge_mkdir_path(dir);
 	#endif
-	if (strstart(dir, "\\\\"))
-	{
-		strcpy(PATH_ROOT, "D:\\");
-	}
-	else
-	{
-		strncpy(PATH_ROOT, dir, 3);
-	}
-	sprintf(PATH_TEMP, "%sTemp\\", PATH_ROOT);
 
 	sprintf(dir, "%s"PATH_JOBS, PATH_ROOT);
 	ge_mkdir_path(dir);
 	sprintf(dir, "%s"PATH_LOGS, PATH_ROOT);
+	ge_mkdir_path(dir);
+	sprintf(dir, "%s"PATH_TRACE, PATH_ROOT);
 	ge_mkdir_path(dir);
 	sprintf(dir, "%s"PATH_SETTINGS, PATH_ROOT);
 	ge_mkdir_path(dir);
