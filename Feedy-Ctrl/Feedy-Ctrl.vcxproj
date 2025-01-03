@@ -20,6 +20,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Externals\GeUtilities\ge_file.c" />
+    <ClCompile Include="..\Externals\GeUtilities\ge_sockets.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_threads.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_time.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_trace.c" />
@@ -35,12 +36,12 @@
     <ClCompile Include="job.c" />
     <ClCompile Include="feedy.c" />
     <ClCompile Include="config.c" />
-    <ClCompile Include="rt_sok_api.c" />
     <ClCompile Include="version.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Externals\GeUtilities\ge_common.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_file.h" />
+    <ClInclude Include="..\Externals\GeUtilities\ge_sockets.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_threads.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_time.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_trace.h" />
@@ -56,7 +57,6 @@
     <ClInclude Include="job.h" />
     <ClInclude Include="feedy.h" />
     <ClInclude Include="config.h" />
-    <ClInclude Include="rt_sok_api.h" />
     <ClInclude Include="version.h" />
   </ItemGroup>
   <ItemGroup>

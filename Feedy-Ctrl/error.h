@@ -19,7 +19,7 @@
 #pragma once
 
 //--- includes ---------------------------
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 
 //--- defines ----------------------------
 

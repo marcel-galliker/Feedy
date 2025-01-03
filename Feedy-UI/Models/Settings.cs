@@ -208,7 +208,10 @@ namespace Feedy.Models
         public string IpAddress
         {
             get { return _IpAddress; }
-            set { SetProperty(ref _IpAddress, value);}                
+            set { 
+                    SetProperty(ref _IpAddress, value);
+                    FdGolbals.FdInterface.Address = _IpAddress;
+                }                
         }
 
     }

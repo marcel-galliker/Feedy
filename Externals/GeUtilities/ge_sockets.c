@@ -18,10 +18,10 @@
 /*					4 bytes: length of message in bytes							*/
 /*					rest: message itself										*/
 /*																				*/
-/*			  rt_sok_init														*/
-/*			  rt_sok_close														*/
-/*			  rt_sok_send														*/
-/*			  rt_sok_receive													*/
+/*			  ge_sok_init														*/
+/*			  ge_sok_close														*/
+/*			  ge_sok_send														*/
+/*			  ge_sok_receive													*/
 /*																				*/
 /* ****************************************************************************	*/
 
@@ -63,8 +63,7 @@
 
 #include "ge_time.h"
 #include "ge_trace.h"
-
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 
 /* --- Makros ----------------------------------------------------------------- */
 
@@ -79,7 +78,7 @@ int	UdpRec, UdpSent;
 
 
 /* --- Prototypes ------------------------------------------------------------- */
-static int sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port);
+static int _ge_sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port);
 /* ---------------------------------------------------------------------------- */
 
 
@@ -89,8 +88,42 @@ static int sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port);
 /* **************************************************************************** */
 
 
+//--- sok_sockaddr --------------------------------------------------------------------------------
+static int _ge_sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port)
+{
+
+	ipAddr->sin_family = AF_INET;
+	ipAddr->sin_port = htons((short)port);
+	if (addr)
+	{
+		//--- Resolve host name ---
+#ifdef linux
+		if (inet_pton(ipAddr->sin_family, addr, &ipAddr->sin_addr)) return REPLY_OK;
+#else
+		int a[4];
+		if (sscanf(addr, "%d.%d.%d.%d", &a[0], &a[1], &a[2], &a[3])==4) 
+		{
+			UCHAR *sin_addr=(UCHAR*)&ipAddr->sin_addr;
+			sin_addr[0] = a[0];
+			sin_addr[1] = a[1];
+			sin_addr[2] = a[2];
+			sin_addr[3] = a[3];
+			return 0;
+		}
+#endif
+
+		struct hostent *hostInfo;
+		hostInfo = gethostbyname(addr);				// (gethostbyname allocates one hostent structure per thread)
+		if (hostInfo == NULL) return ge_sok_error(NULL, __FILE__, __LINE__);
+		memcpy((char *)&(ipAddr->sin_addr), (char *)hostInfo->h_addr_list[0], hostInfo->h_length);
+	}
+	else ipAddr->sin_addr.s_addr = INADDR_ANY;
+
+	return 0;
+}
+
 /*******************************************************************************
-rt_sok_init: initializes sockets, either for a client or a server 
+ge_sok_init: initializes sockets, either for a client or a server 
 
 	client		TRUE: it is a client that tries to connect to an existing end-point
 				FALSE: it is a server that creates an end-point
@@ -102,7 +135,7 @@ rt_sok_init: initializes sockets, either for a client or a server
 	socki		pointer to socket handle
 
 *******************************************************************************/
-int	rt_sok_init_server(char *addr, int port, SOCKET *socki)
+int	ge_sok_init_server(char *addr, int port, SOCKET *socki)
 {
 	SOCKET sok;
 	int ret=0;
@@ -112,9 +145,7 @@ int	rt_sok_init_server(char *addr, int port, SOCKET *socki)
 
 	*socki = INVALID_SOCKET;
 	
-#ifdef linux
-
-#else
+#ifndef linux
 	/* --- Startup Winsockets --- */
 	UNT16	version;						
 	WSADATA	data;
@@ -136,24 +167,113 @@ int	rt_sok_init_server(char *addr, int port, SOCKET *socki)
 	if (sok == INVALID_SOCKET)
 		return(7);
 	
-	sok_sockaddr(&ipAddr, addr, port);
+	_ge_sok_sockaddr(&ipAddr, addr, port);
 	/* --- Socket options --- */
 	
 	ret = setsockopt(sok, IPPROTO_TCP, TCP_NODELAY, (char*) &init, sizeof(INT32));
 	if (ret) return(8);
-
-	if (bind(sok, (struct sockaddr *) &ipAddr, sizeof(ipAddr)) != 0)
+	ret = bind(sok, (struct sockaddr *) &ipAddr, sizeof(ipAddr));
+	if (ret != 0)
 		return(9);
 	
 	*socki = sok;
 	return REPLY_OK;
 }
 
-//--- rt_sok_send_timeout ------------------------------------
+//--- ge_sok_open_client --------------------------------------------------------------
+int ge_sok_open_client(SOCKET *psocket, const char *addr, int port, int type, int timeout)
+{
+	//---opens TCP/IP (stream) Socket -------------
+
+	//	struct hostent *hostInfo;
+	SOCKET sok;
+	struct sockaddr_in ipAddr;
+	int ret;
+
+	*psocket = INVALID_SOCKET;
+
+	if (type != SOCK_STREAM) return 1;
+
+	//	if (type==SOCK_STREAM && sok_ping(addr)) return REPLY_ERROR;
+
+#ifdef WIN32
+	// if (!_wsa_started)
+	{
+	//	_wsa_started = TRUE;
+
+		WSADATA	data;
+		WORD version;
+		//--- Startup Winsockets ---
+		version = MAKEWORD(2, 2);
+		if (WSAStartup(version, &data))
+		{
+			version = MAKEWORD(1, 1);
+			if (WSAStartup(version, &data)) return sok_error(NULL, __LINE__);
+		}
+	}
+#endif // WIN32
+
+	//--- Get socket ---
+	sok = socket(AF_INET, type, 0);
+	if (sok == INVALID_SOCKET) 
+		return ge_sok_error(NULL, __FILE__, __LINE__);
+
+	_ge_sok_sockaddr(&ipAddr, addr, port);
+	
+	int value = TRUE;
+	if (setsockopt(sok, IPPROTO_TCP, TCP_NODELAY, (char*)&value, sizeof (value))) 
+		return ge_sok_error(NULL, __FILE__, __LINE__);
+
+
+	//	if( (flags = fcntl(sok, F_GETFL, 0)) < 0) return sok_error(&sok, __LINE__);
+	//	fcntl(sok, F_SETFL, flags | O_NONBLOCK);
+	if (timeout)
+	{
+		ret=connect(sok, (struct sockaddr *)&ipAddr, sizeof(ipAddr));
+		ret=ge_sok_send_timeout(sok, timeout);
+		ge_sok_set_blocking(&sok, TRUE);
+		if (ret==0)
+		{
+			TrPrintf(-1, "sok_open_client(client, %s:%d) timeout %d ms\n", addr, port, timeout);
+			return WSAETIMEDOUT;
+		}
+	}
+	else if (connect(sok, (struct sockaddr *)&ipAddr, sizeof(ipAddr))) 
+	{
+		return ge_sok_error(NULL, __FILE__, __LINE__);
+	}
+
+	*psocket = sok;
+
+	return 0;
+}
+
+/*******************************************************************************
+ge_sok_close: close sockets, either for a client or a server 
+
+	client		TRUE: it is a client
+				FALSE: it is a server 
+
+*******************************************************************************/
+void	ge_sok_close		( SOCKET *socki)
+{
+	if (*socki)
+	{
+	#ifdef linux
+		close(*socki);
+	#else
+		closesocket( *socki);
+	#endif
+	//	WSACleanup ();
+		*socki = INVALID_SOCKET;
+	}
+}
+
+//--- ge_sok_send_timeout ------------------------------------
 // return>0: ready to send
 // return=0: not ready to send
 // return<0: error
-int rt_sok_send_timeout(SOCKET socket, int ms)
+int ge_sok_send_timeout(SOCKET socket, int ms)
 {
 	if (ms==0) return 1;
 
@@ -177,11 +297,11 @@ int rt_sok_send_timeout(SOCKET socket, int ms)
 	return ret;
 }
 
-//--- rt_sok_recv_timeout --------------------------------
+//--- ge_sok_recv_timeout --------------------------------
 // return>0: message received
 // return=0: no message received
 // return<0: error
-int rt_sok_recv_timeout(SOCKET socket, int ms)
+int ge_sok_recv_timeout(SOCKET socket, int ms)
 {
 	fd_set fdSet;
 
@@ -198,27 +318,6 @@ int rt_sok_recv_timeout(SOCKET socket, int ms)
 
 	// Call select. No need to use FD_ISSET because select was called for one socket descriptor.
 	return select((int)socket + 1, &fdSet, NULL, NULL, &timeout);
-}
-
-/*******************************************************************************
-rt_sok_close: close sockets, either for a client or a server 
-
-	client		TRUE: it is a client
-				FALSE: it is a server 
-
-*******************************************************************************/
-void	rt_sok_close		( SOCKET *socki)
-{
-	if (*socki)
-	{
-	#ifdef linux
-		close(*socki);
-	#else
-		closesocket( *socki);
-	#endif
-	//	WSACleanup ();
-		*socki = INVALID_SOCKET;
-	}
 }
 
 //--- sok_ping ------------------------------------------------------
@@ -273,7 +372,7 @@ int sok_ping(const char *ipAddr)
 			int len=sizeof(struct sockaddr_in);
 			unsigned char res[30];
 
-			ret=rt_sok_recv_timeout(s, 50);
+			ret=ge_sok_recv_timeout(s, 50);
 			if (ret>0)
 			{
 				ret = recvfrom(s, res, sizeof(res), 0, (struct sockaddr*)&addr, &len);
@@ -289,110 +388,8 @@ int sok_ping(const char *ipAddr)
 }
 */
 
-//--- sok_sockaddr --------------------------------------------------------------------------------
-static int sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port)
-{
-
-	ipAddr->sin_family = AF_INET;
-	ipAddr->sin_port = htons((short)port);
-	if (addr)
-	{
-		//--- Resolve host name ---
-#ifdef linux
-		if (inet_pton(ipAddr->sin_family, addr, &ipAddr->sin_addr)) return REPLY_OK;
-#else
-		int a[4];
-		if (sscanf(addr, "%d.%d.%d.%d", &a[0], &a[1], &a[2], &a[3])==4) 
-		{
-			UCHAR *sin_addr=(UCHAR*)&ipAddr->sin_addr;
-			sin_addr[0] = a[0];
-			sin_addr[1] = a[1];
-			sin_addr[2] = a[2];
-			sin_addr[3] = a[3];
-			return 0;
-		}
-#endif
-
-		struct hostent *hostInfo;
-		hostInfo = gethostbyname(addr);				// (gethostbyname allocates one hostent structure per thread)
-		if (hostInfo == NULL) return rt_sok_error(NULL, __FILE__, __LINE__);
-		memcpy((char *)&(ipAddr->sin_addr), (char *)hostInfo->h_addr_list[0], hostInfo->h_length);
-	}
-	else ipAddr->sin_addr.s_addr = INADDR_ANY;
-
-	return 0;
-}
-
-//--- sok_open_client --------------------------------------------------------------
-int sok_open_client(SOCKET *psocket, const char *addr, int port, int type, int timeout)
-{
-	//---opens TCP/IP (stream) Socket -------------
-
-	//	struct hostent *hostInfo;
-	SOCKET sok;
-	struct sockaddr_in ipAddr;
-	int ret;
-
-	*psocket = INVALID_SOCKET;
-
-	if (type != SOCK_STREAM) return 1;
-
-	//	if (type==SOCK_STREAM && sok_ping(addr)) return REPLY_ERROR;
-
-#ifdef WIN32
-	// if (!_wsa_started)
-	{
-	//	_wsa_started = TRUE;
-
-		WSADATA	data;
-		WORD version;
-		//--- Startup Winsockets ---
-		version = MAKEWORD(2, 2);
-		if (WSAStartup(version, &data))
-		{
-			version = MAKEWORD(1, 1);
-			if (WSAStartup(version, &data)) return sok_error(NULL, __LINE__);
-		}
-	}
-#endif // WIN32
-
-	//--- Get socket ---
-	sok = socket(AF_INET, type, 0);
-	if (sok == INVALID_SOCKET) 
-		return rt_sok_error(NULL, __FILE__, __LINE__);
-
-	sok_sockaddr(&ipAddr, addr, port);
-	
-	int value = TRUE;
-	if (setsockopt(sok, IPPROTO_TCP, TCP_NODELAY, (char*)&value, sizeof (value))) 
-		return rt_sok_error(NULL, __FILE__, __LINE__);
-
-
-	//	if( (flags = fcntl(sok, F_GETFL, 0)) < 0) return sok_error(&sok, __LINE__);
-	//	fcntl(sok, F_SETFL, flags | O_NONBLOCK);
-	if (timeout)
-	{
-		ret=connect(sok, (struct sockaddr *)&ipAddr, sizeof(ipAddr));
-		ret=rt_sok_send_timeout(sok, timeout);
-		rt_sok_set_blocking(&sok, TRUE);
-		if (ret==0)
-		{
-			TrPrintf(-1, "sok_open_client(client, %s:%d) timeout %d ms\n", addr, port, timeout);
-			return WSAETIMEDOUT;
-		}
-	}
-	else if (connect(sok, (struct sockaddr *)&ipAddr, sizeof(ipAddr))) 
-	{
-		return rt_sok_error(NULL, __FILE__, __LINE__);
-	}
-
-	*psocket = sok;
-
-	return 0;
-}
-
-//--- rt_sok_set_blocking --------------------------
-int rt_sok_set_blocking(SOCKET *socki, int blocking)
+//--- ge_sok_set_blocking --------------------------
+int ge_sok_set_blocking(SOCKET *socki, int blocking)
 {
 	if (*socki < 0) return REPLY_ERROR;
 
@@ -410,7 +407,7 @@ int rt_sok_set_blocking(SOCKET *socki, int blocking)
 }
 
 /*******************************************************************************
-rt_sok_msg_send_nb: sends a message though a socket. Non blocking mode.
+ge_sok_msg_send_nb: sends a message though a socket. Non blocking mode.
 
 	socki		pointer to socket where msg_send is to be sent
 	msg_send	pointer to structure (buffer, struct, ..) to be sent
@@ -421,7 +418,7 @@ rt_sok_msg_send_nb: sends a message though a socket. Non blocking mode.
 				n  = length
 
 *******************************************************************************/
-int rt_sok_msg_send_nb(SOCKET *socki, void *msg_send, INT32 send_size)
+int ge_sok_msg_send_nb(SOCKET *socki, void *msg_send, INT32 send_size)
 {
 	INT32 leni, sent, ret;
 	fd_set writeSock;
@@ -516,7 +513,7 @@ int rt_sok_msg_send_nb(SOCKET *socki, void *msg_send, INT32 send_size)
 }
 
 /*******************************************************************************
-rt_sok_receive_nb: receives a message from a socket. Non blocking mode.
+ge_sok_receive_nb: receives a message from a socket. Non blocking mode.
 
 	socki			pointer to socket where msg is goint to come_send is to be sent
 	msg_send		pointer to structure (buffer, struct, ..) to be sent
@@ -526,7 +523,7 @@ rt_sok_receive_nb: receives a message from a socket. Non blocking mode.
 			n     = length
 
 *******************************************************************************/
-int		rt_sok_receive_nb	( SOCKET *socki, void *msg_rec, INT32 max_rec_size)
+int		ge_sok_receive_nb	( SOCKET *socki, void *msg_rec, INT32 max_rec_size)
 {
 	INT32 leni, rec, ret;
 	char *pMsg;
@@ -605,7 +602,7 @@ sok_error:
 
 *******************************************************************************/
 
-int rt_sok_error(SOCKET *pSocket, char *file, int line)
+int ge_sok_error(SOCKET *pSocket, char *file, int line)
 {
 	int errCode;
 	#ifdef linux 
@@ -620,7 +617,7 @@ int rt_sok_error(SOCKET *pSocket, char *file, int line)
 /*******************************************************************************
 
 *******************************************************************************/
-int rt_sok_set_no_delay(SOCKET socket)
+int ge_sok_set_no_delay(SOCKET socket)
 {
 	INT32 val=1;
 	return setsockopt (socket, IPPROTO_TCP, TCP_NODELAY, (char*) &val, sizeof (INT32));
@@ -628,8 +625,8 @@ int rt_sok_set_no_delay(SOCKET socket)
 
 /*******************************************************************************/
 
-//--- sok_get_socket_name ---------------------------------------------------------------
-char *sok_get_socket_name(SOCKET socket, char *namestr, char *ipstr, UINT32 *pport)
+//--- ge_sok_get_socket_name ---------------------------------------------------------------
+char *ge_sok_get_socket_name(SOCKET socket, char *namestr, char *ipstr, UINT32 *pport)
 {
 	struct sockaddr sender;
 	int  len = sizeof(sender);

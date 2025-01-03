@@ -27,7 +27,7 @@
 #include <string.h>
 #include <time.h>
 #include "args.h"
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 #include "ge_utilities.h"
 #include "ge_trace.h"
 #include "FdGlobals.h"

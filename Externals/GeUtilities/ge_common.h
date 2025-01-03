@@ -45,9 +45,11 @@
 
     typedef void*               HANDLE;
 
+    #define REC_SEP "/"
 #else
 	#include <io.h>
 	#include <Windows.h>
+    #define REC_SEP "\\"
 #endif
 
 #define STR_32 32

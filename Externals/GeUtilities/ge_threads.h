@@ -18,6 +18,10 @@
 
 #pragma once
 
+#ifdef linux
+	#include <pthread.h>
+#endif
+
 //--- includes ------------------------------------------------------
 #include "ge_common.h"
 

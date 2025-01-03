@@ -151,19 +151,19 @@ int    ge_sem_post(HANDLE sem)
 //--- ge_thread_start ---------------------------------------------
 HANDLE ge_thread_start(thread_main start, void *arg)
 {
-	#ifdef linux
-		pthread_t handle; 
-		int ret = pthread_create(&handle, NULL, start, arg);
-		return (HANDLE)handle;
+#ifdef linux
+	pthread_t handle; 
+	int ret = pthread_create(&handle, NULL, start, arg);
+	return (HANDLE)handle;
 #else
-		return CreateThread( 
-			NULL,									/* no security attributes */
-			0,										/* default stack size */
-			start,							/* function to call */
-			NULL,									/* parameter for function */
-			0,										/* 0=thread runs immediately after being called */
-			NULL									/* returns thread identifier */
-			);
+	return CreateThread( 
+		NULL,									/* no security attributes */
+		0,										/* default stack size */
+		start,							/* function to call */
+		NULL,									/* parameter for function */
+		0,										/* 0=thread runs immediately after being called */
+		NULL									/* returns thread identifier */
+		);
 #endif
 }
 
@@ -188,7 +188,7 @@ int ge_thread_set_priority(int prio)
 void ge_thread_sleep(int ms)
 {
 	#ifdef linux
-		sleep(ms);
+		usleep(ms*1000);
 	#else
 		Sleep(ms);
 	#endif

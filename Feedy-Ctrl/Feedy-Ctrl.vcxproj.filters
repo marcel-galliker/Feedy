@@ -29,9 +29,6 @@
     <ClCompile Include="gui_server.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="rt_sok_api.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Externals\GeUtilities\ge_xml_file.cpp">
       <Filter>Utilities</Filter>
     </ClCompile>
@@ -74,11 +71,11 @@
     <ClCompile Include="FdGlobals.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Externals\GeUtilities\ge_sockets.c">
+      <Filter>Utilities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="rt_sok_api.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="gui_server.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -132,6 +129,9 @@
     </ClInclude>
     <ClInclude Include="job.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\GeUtilities\ge_sockets.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

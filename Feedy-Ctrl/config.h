@@ -18,7 +18,7 @@
 
 #pragma once
 
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 #include "FdTcpIp.h"
 
 void cfg_list	(SOCKET socket);

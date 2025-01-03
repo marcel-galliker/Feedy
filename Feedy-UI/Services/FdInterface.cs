@@ -10,8 +10,6 @@ using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Threading;
-using System.Windows;
-using System.Runtime.CompilerServices;
 
 namespace Feedy.Services
 {
@@ -224,7 +222,7 @@ namespace Feedy.Services
             while (GeBindable.Dispatcher==null)
                 Thread.Sleep(100);
 
-           _Start_PrintEngine();
+         //  _Start_PrintEngine();
 
             while (_Running)// && !FdGolbals.Settings.Demo)
             {

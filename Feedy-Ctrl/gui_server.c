@@ -24,12 +24,11 @@
 #endif
 
 #include <stdio.h>
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 #include "FdTcpIp.h"
 #include "FdGlobals.h"
 #include "ge_trace.h"
 #include "ge_threads.h"
-#include "rt_sok_api.h"
 #include "error.h"
 #include "gui_msg.h"
 #include "gui_server.h"
@@ -42,15 +41,14 @@
 
 
 //--- global variables -------------------------------
-static const int	NonBlk=TRUE;
 static	SOCKET		_GuiServerSok;	// main socket 							
 static	SOCKET		_GuiClientSok[MAX_GUI_CLIENTS];			// channel per client					
 static  HANDLE		_GuiClientThreadHandle[MAX_GUI_CLIENTS];
 
 //--- prototypes ---------------------------------------------
 
-static void _GuiClient_thread (SOCKET *socket);
-
+//static void _GuiClient_thread (SOCKET *socket);
+static void *_GuiClient_thread (void *arg);
 //--- gui_server -------------------------------
 void gui_server(void)
 {
@@ -63,14 +61,12 @@ void gui_server(void)
 	}
 
 	// --- take the socket and listen ---
-//	rt_sok_init (FALSE, GUI_HOST, GUI_PORT, &_GuiServerSok);
-	rt_sok_init_server(NULL, GUI_PORT, &_GuiServerSok);
-	if ( NonBlk)
-		rt_sok_set_blocking (&_GuiServerSok, FALSE);
+	ge_sok_init_server(NULL, GUI_PORT, &_GuiServerSok);
+//	ge_sok_set_blocking (&_GuiServerSok, FALSE);
 	listen (_GuiServerSok, MAX_GUI_CLIENTS);
 	TrPrintf( 0, "GUI: Server Socket %d (%s:%d)  Waiting for clients", _GuiServerSok, GUI_HOST, GUI_PORT);
 	while (TRUE) {
-		sleep(1000);
+		ge_thread_sleep(1000);
 		/*--- Get the next available connection ---*/
 		for (i=0; i<MAX_GUI_CLIENTS; i++)
 		{
@@ -90,8 +86,9 @@ void gui_server(void)
 				else {
 					INT32 bNoDelay = TRUE;
 					#ifdef linux
+						TrPrintf(-1, "GUI Connected, socket=%d", _GuiClientSok[i]);
 						setsockopt(_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, &bNoDelay, sizeof(INT32));
-						_GuiClientThreadHandle[i] = ge_thread_start((thread_main)_GuiClient_thread, &_GuiClientSok[i]) ;
+						_GuiClientThreadHandle[i] = ge_thread_start((thread_main)&_GuiClient_thread, &_GuiClientSok[i]);
 					#else
 						setsockopt(_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, (LPSTR) &bNoDelay, sizeof(INT32));
 						/*--- create a receiver thread for that client ---*/
@@ -115,7 +112,7 @@ void gui_server(void)
 }
 
 //--- _GuiClient_thread ----------------------------
-static void _GuiClient_thread (SOCKET *socket)
+static void *_GuiClient_thread (void *arg)
 {
 	char str[32];
 //	TrPrintf( 0, "GUI_Client: Socket[%d]=>>%s<< connected", *socket, sok_get_socket_name(*socket, str, NULL, NULL));
@@ -127,6 +124,8 @@ static void _GuiClient_thread (SOCKET *socket)
 	}
 	*/
 
+	SOCKET *socket = (SOCKET*)arg;
+	TrPrintf(-1, "_GuiClient_thread (socket=%d)", *socket);
 	#ifdef linux
 	#else
 		SetThreadPriority (GetCurrentThread(), THREAD_PRIORITY_BELOW_NORMAL);
@@ -134,7 +133,7 @@ static void _GuiClient_thread (SOCKET *socket)
 	
 	feedy_reset_error();
 
-	rt_sok_set_no_delay(*socket);
+	ge_sok_set_no_delay(*socket);
 
 	int len, recv;
 	SGuiMsg msg;
@@ -142,28 +141,28 @@ static void _GuiClient_thread (SOCKET *socket)
 	{
 		len = sizeof(msg.hdr);
 
-		recv=rt_sok_receive_nb (socket, &msg.hdr, len);
+		recv=ge_sok_receive_nb (socket, &msg.hdr, len);
 		if (recv!=len) 
 		{
-			TrPrintf(1, "rt_sok_receive_nb header: len=%d(%d)", recv, len);
+			TrPrintf(1, "ge_sok_receive_nb header: len=%d(%d)", recv, len);
 			break;
 		}
 
 		if (msg.hdr.msgLen>len)
 		{
 			len = msg.hdr.msgLen-len;
-			recv=rt_sok_receive_nb (socket, &msg.data, len);
+			recv=ge_sok_receive_nb (socket, &msg.data, len);
 			if (recv!=len) 
 			{
-				TrPrintf(1, "rt_sok_receive_nb data: len=%d(%d)", recv, len);
+				TrPrintf(1, "ge_sok_receive_nb data: len=%d(%d)", recv, len);
 				break;
 			}
 		}
 		gui_handle_msg(*socket, &msg);
 	}
-	TrPrintf( 0, "GUI_Client: Socket[%d]=>>%s<< closed", *socket, sok_get_socket_name(*socket, str, NULL, NULL));
+	TrPrintf( 0, "GUI_Client: Socket[%d]=>>%s<< closed", *socket, ge_sok_get_socket_name(*socket, str, NULL, NULL));
 	gui_disconnected(*socket);
-	rt_sok_close(socket);
+	ge_sok_close(socket);
 } /* end main_thread */
 
 //--- gui_send -----------------------------------------
@@ -189,10 +188,10 @@ void gui_send(SOCKET socket, void *pmsg)
 		int i;
 		for(i=0; i<MAX_GUI_CLIENTS; i++)
 		{
-			if (_GuiClientSok[i] && _GuiClientSok[i]!=INVALID_SOCKET) rt_sok_msg_send_nb(&_GuiClientSok[i], pmsg, pmsgHdr->msgLen);
+			if (_GuiClientSok[i] && _GuiClientSok[i]!=INVALID_SOCKET) ge_sok_msg_send_nb(&_GuiClientSok[i], pmsg, pmsgHdr->msgLen);
 		}
 	}
-	else rt_sok_msg_send_nb(&socket, pmsg, pmsgHdr->msgLen);
+	else ge_sok_msg_send_nb(&socket, pmsg, pmsgHdr->msgLen);
 }
 
 //--- gui_send_status --------------------------------------------

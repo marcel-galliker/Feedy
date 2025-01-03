@@ -16,7 +16,7 @@
 //
 // *************************************************************************************************
 
-#include "rt_sok_api.h"
+#include "ge_sockets.h"
 #include "ge_file.h"
 #include "ge_time.h"
 #include "ge_trace.h"

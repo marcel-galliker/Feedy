@@ -76,7 +76,7 @@ error:
 	$(error Invalid configuration, please check your inputs)
 endif
 
-SOURCEFILES := ../Externals/GeUtilities/ge_file.c ../Externals/GeUtilities/ge_threads.c ../Externals/GeUtilities/ge_time.c ../Externals/GeUtilities/ge_trace.c ../Externals/GeUtilities/ge_xml_file.cpp ../Externals/GeUtilities/ge_utilities.c AppData.c args.c Error.c FdGlobals.c Feedy-Ctrl.c gui_msg.c gui_server.c job.c feedy.c config.c rt_sok_api.c version.c
+SOURCEFILES := ../Externals/GeUtilities/ge_file.c ../Externals/GeUtilities/ge_sockets.c ../Externals/GeUtilities/ge_threads.c ../Externals/GeUtilities/ge_time.c ../Externals/GeUtilities/ge_trace.c ../Externals/GeUtilities/ge_xml_file.cpp ../Externals/GeUtilities/ge_utilities.c AppData.c args.c Error.c FdGlobals.c Feedy-Ctrl.c gui_msg.c gui_server.c job.c feedy.c config.c version.c
 EXTERNAL_LIBS := ../Externals/TinyXML/$(BINARYDIR)/TinyXML.a ../Feedy-Lib/$(BINARYDIR)/Feedy-Lib.a
 EXTERNAL_LIBS_COPIED := $(foreach lib, $(EXTERNAL_LIBS),$(BINARYDIR)/$(notdir $(lib)))
 
@@ -264,6 +264,10 @@ $(BINARYDIR)/%.o : %.cxx $(all_make_files) |$(BINARYDIR)
 
 
 $(BINARYDIR)/ge_file.o : ../Externals/GeUtilities/ge_file.c $(all_make_files) |$(BINARYDIR)
+	$(CC) $(CFLAGS) -c $< -o $@ $(CC_DEPENDENCY_FILE_SPECIFIER) $(@:.o=.dep)
+
+
+$(BINARYDIR)/ge_sockets.o : ../Externals/GeUtilities/ge_sockets.c $(all_make_files) |$(BINARYDIR)
 	$(CC) $(CFLAGS) -c $< -o $@ $(CC_DEPENDENCY_FILE_SPECIFIER) $(@:.o=.dep)
 
 

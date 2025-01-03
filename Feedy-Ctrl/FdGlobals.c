@@ -96,7 +96,7 @@ char * FeedyJobFilePath(const char* jobname, const char* filename, const char *e
 	strcpy(path, PATH_ROOT);
 	int len=(int)strlen(path);
 	len += sprintf(&path[len], PATH_JOBS);
-	if (jobname!=NULL)  len+=sprintf(&path[len], "%s\\", jobname);
+	if (jobname!=NULL)  len+=sprintf(&path[len], "%s" REC_SEP, jobname);
 	if (filename!=NULL) len+=sprintf(&path[len], "%s", filename);
 	if (ext!=NULL)
 	{
