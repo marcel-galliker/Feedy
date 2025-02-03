@@ -1,5 +1,8 @@
 
-
+#include <string.h>
+#include "ge_utilities.h"
+#include "..\Externals\\CryptLib\sha1.h"
+#include "..\Externals\\CryptLib/base64.h"
 #include "gui_server.h"
 
 
@@ -7,6 +10,8 @@ static void _GuiServer_thread (void *ppar);
 static void _GuiClient_thread (void *ppar);
 static SOCKET _GuiServerSok=INVALID_SOCKET;
 static SOCKET _GuiClientSok=INVALID_SOCKET;
+static int    _LoginDone;
+static void _login(SOCKET socket, char *msg, int len);
 
 HANDLE _GuiServerHdl;
 HANDLE _GuiClientHdl;
@@ -66,6 +71,7 @@ static void _GuiServer_thread (void *ppar)
 	ret=setsockopt (_GuiServerSok, IPPROTO_TCP, TCP_NODELAY, (char*) &val, sizeof (BOOL));
 	ret=bind(_GuiServerSok, (struct sockaddr *) &baseAddr, sizeof (baseAddr));
 	listen (_GuiServerSok, 10);
+	_LoginDone=FALSE;
 	while(TRUE)
 	{
 		_GuiClientSok=accept (_GuiServerSok, NULL, NULL);
@@ -88,9 +94,78 @@ static void _GuiServer_thread (void *ppar)
 	}
 }
 
+//--- _login -----------------------------------------------------
+static void _login(SOCKET socket, char *msg, int len)
+{
+	char reply[1024];
+	char keyAccept[128];
+	memset(reply, 0, sizeof(reply));
+	memset(keyAccept, 0, sizeof(keyAccept));
+	int repLen=0;
+
+	char *line=(char*)msg;
+	for (int i=0; i<len; i++)
+	{
+		if (msg[i]=='\r')
+		{
+			msg[i]=0;
+			printf("%s\n", line);
+			int len=strlen("sec-websocket-key: ");
+			if (!strnicmp(line, "sec-websocket-key: ", len))
+			{
+				//	const char *test_key="Sec-WebSocket-Key: jRuBF0LDp3Q9OJirluIZJG==";
+				//	const char *test_accept="Sec-WebSocket-Accept: 2U1wM4jKbGHrsow5ubzxLFHULPY=";
+				//	const char *test_key="Sec-WebSocket-Key: dGhlIHNhbXBsZSBub25jZQ==";
+				//  const char *test_accept="Sec-WebSocket-Accept: s3pPLMBiTxaQ9kYGzzhZRbK+xOo=";
+					const char *test_key="Sec-WebSocket-Key: 0KL2VEa4pM4XAGndahwriw==";
+				//	const char *test_accept="Sec-WebSocket-Accept: jiCWDwQsaaD3h2jlEGq4RgrBE/E=";
+				//  line = (char*)test_key;
+			//	printf("KEY1=>>%s<<\n", &line[len]);
+				strcpy(keyAccept, &line[len]);
+				if (TRUE)
+				{
+					char key[128];
+				//	line=(char*)test_key;
+					printf("KEY: >>%s<<\n", &line[len]);
+					sprintf(key, "%s%s", &line[len], "258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
+					int l=strlen(key);
+				//	printf("KEY2=>>%s<<\n", key);
+					{
+						SHA1_CTX ctxt;
+						UINT8 code[SHA1_DIGEST_SIZE];
+						memset(code, 0, sizeof(code));
+						SHA1_Init  (&ctxt);
+						SHA1_Update(&ctxt, (const UINT8*)key, strlen(key));
+						SHA1_Final (&ctxt, code);
+
+						int   c64l=32;
+						int ret= base64_encode(code, SHA1_DIGEST_SIZE, keyAccept, &c64l);
+						printf("Sec-WebSocket-Accept: %s\n", keyAccept);
+					}
+				}
+			}
+			line=(char*)&msg[i+2];
+		}
+	}
+	if (*keyAccept)
+	{
+		repLen += sprintf(&reply[repLen], "HTTP/1.1 101 Switching Protocols\r\n");
+		repLen += sprintf(&reply[repLen], "Connection: Upgrade\r\n");
+		repLen += sprintf(&reply[repLen], "Upgrade: websocket\r\n");
+		repLen += sprintf(&reply[repLen], "Sec-WebSocket-Accept: %s\r\n\r\n", keyAccept);
+		int ret=send(socket, (char*)reply, repLen, 0);
+		printf("LOGIN Reply:\n");
+		printf(reply);
+		printf("SENT LOGIN %d/%d bytes\n", repLen, ret);
+		_LoginDone = TRUE;
+	}
+}
+
 //--- _GuiClient_thread ----------------------------------------
 static void _GuiClient_thread (void *ppar)
 {
+// https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
+
 	SOCKET clientSok = (SOCKET) ppar;
 	while (clientSok!=INVALID_SOCKET)
 	{
@@ -100,18 +175,14 @@ static void _GuiClient_thread (void *ppar)
 		if (len>0)
 		{
 			printf("recv %d bytes >>%s<<\n", len, msg);
-			int ret=send(clientSok, (char*)msg, len, 0);
-			printf("send %d bytes\n", len);
+			_login(clientSok,(char*)msg, len);
 		}
 		else
 		{
 			printf("recv return=%d\n", len);
 			closesocket(clientSok);
+			_LoginDone = FALSE;
 			clientSok = INVALID_SOCKET;
 		}
-
-
 	}
 }
-
-

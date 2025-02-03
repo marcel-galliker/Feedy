@@ -20,8 +20,12 @@
 
 #include "ge_common.h"
 
+#ifdef __cplusplus
+extern "C"{
+#endif
+
 void char_to_wchar(wchar_t *puni, const char *pansi, int len);
-int stricmp(const char *str1, char *str2);
+// int stricmp(const char *str1, char *str2);
 
 
 #ifdef WIN32
@@ -43,3 +47,7 @@ char *bin2hex(char *str, void *data, int len);	// converts to hex-string
 void *hex2bin(char *str, void *data, int len);	// converts from hex-string
 
 UINT32 swap(UINT32 *value);
+
+#ifdef __cplusplus
+}
+#endif

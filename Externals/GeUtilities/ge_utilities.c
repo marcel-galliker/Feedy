@@ -199,12 +199,12 @@ void *hex2bin(char *str, void *data, int len)
 	int val;
 	if ((int)strlen(str)<4+3*len) 
 	{
-		TrPrintf(-1, "hex2bin Error 1: strlen=%d, size=%d, len=%d", strlen(str), len, 4+3*len);
+	//	TrPrintf(-1, "hex2bin Error 1: strlen=%d, size=%d, len=%d", strlen(str), len, 4+3*len);
 		return NULL;
 	}
 	if (atoi(str)!=len) 
 	{
-		TrPrintf(-1, "hex2bin Error 2");
+	//	TrPrintf(-1, "hex2bin Error 2");
 		return NULL;
 	}
 

@@ -10,7 +10,7 @@
 
 //--- defines ---------------------------------------------------
 #define GUI_SERVER_HOST	"localhost"
-#define GUI_SERVER_PORT 1234
+#define GUI_SERVER_PORT 3000
 
 class gui_server
 {
