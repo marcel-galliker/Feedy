@@ -1,0 +1,11 @@
+<form [formGroup]="userForm" (ngSubmit)="onSubmit()">
+
+  <div>
+    <p>name: </p>
+  </div>
+  <label for="name">Name: </label>
+  <input id="name" type="text" formControlName="name">
+
+  <button type="button" (click)="updateName()">Update Name</button><br>
+  <button type="submit" [disabled]="!userForm.valid">Submit</button>
+</form>
