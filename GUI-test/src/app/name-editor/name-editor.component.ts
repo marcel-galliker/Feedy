@@ -1,12 +1,8 @@
 import { Component, inject } from '@angular/core';
 import {FormControl, FormGroup} from '@angular/forms';
 import { GESocketService } from './../ge-socket.service';
-// import { Socket } from 'ngx-socket-io';
-import { map } from 'rxjs/operators';
-import { webSocket, WebSocketSubject } from 'rxjs/webSocket';
-//import { WebSocketService } from './../ge-socket.service';
-
-import { io, Socket } from 'socket.io-client';
+import { Store } from '@ngrx/store';
+import { increment, decrement, reset } from '../counter.actions';
 
 @Component({
   selector: 'app-name-editor',
@@ -14,16 +10,15 @@ import { io, Socket } from 'socket.io-client';
 
   templateUrl: './name-editor.component.html',
   styleUrl: './name-editor.component.css',
-//  providers: [GESocketService]
 })
 
 export class NameEditorComponent {
 
   private count=0;
 
-  constructor(private socket: GESocketService)
+  constructor(private socket: GESocketService, private store: Store<{ count: number }>)
   {
-    socket.init();
+//    socket.init(store);
   }
 
   userForm=new FormGroup(

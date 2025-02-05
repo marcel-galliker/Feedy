@@ -1,7 +1,4 @@
 import { Component } from '@angular/core';
-import { NameEditorComponent} from './name-editor/name-editor.component';
-import { GESocketService} from './ge-socket.service';
-
 
 @Component({
   selector: 'app-root',

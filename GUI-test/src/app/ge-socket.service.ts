@@ -2,10 +2,8 @@
 // https://medium.com/@sehban.alam/integrating-socket-io-with-angular-real-time-awesomeness-made-easy-039dabf97c7a
 
 import { Injectable } from '@angular/core';
-import { Action } from 'rxjs/internal/scheduler/Action';
-import { webSocket } from 'rxjs/webSocket';
-import { createAction, props } from '@ngrx/store';
-import { createReducer, on } from '@ngrx/store';
+import { Store } from '@ngrx/store';
+import { increment, decrement, reset } from './counter.actions';
 
 @Injectable(
   {providedIn: 'root'}
@@ -17,7 +15,7 @@ export class GESocketService
   private socket = new WebSocket('ws://localhost:3000');
   // socket;// = new WebSocket('ws://localhost:1234');
 
-  constructor()
+  constructor(private store: Store<{ count: number }>)
   {
   //  this.socket = new WebSocket("ws://localhost:1234");
     console.trace("GESocketService INITIALIZED");
@@ -34,6 +32,7 @@ export class GESocketService
 
     this.socket.onmessage = (event) => {
       console.log('Received message:', event.data);
+      this.store.dispatch(increment());
     };
 
     this.socket.onclose = (event) => {
