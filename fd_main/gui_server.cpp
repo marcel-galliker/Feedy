@@ -10,8 +10,9 @@ static void _GuiServer_thread (void *ppar);
 static void _GuiClient_thread (void *ppar);
 static SOCKET _GuiServerSok=INVALID_SOCKET;
 static SOCKET _GuiClientSok=INVALID_SOCKET;
-static int    _LoginDone;
-static void _login(SOCKET socket, char *msg, int len);
+static int	_login(SOCKET socket, char *msg, int len);
+static int _decode_message(void *msgIn, int lenIn, void *msgOut, int sizeOut, int *lenOut);
+static int _send_message(SOCKET socket, void *msg, int len);
 
 HANDLE _GuiServerHdl;
 HANDLE _GuiClientHdl;
@@ -71,7 +72,6 @@ static void _GuiServer_thread (void *ppar)
 	ret=setsockopt (_GuiServerSok, IPPROTO_TCP, TCP_NODELAY, (char*) &val, sizeof (BOOL));
 	ret=bind(_GuiServerSok, (struct sockaddr *) &baseAddr, sizeof (baseAddr));
 	listen (_GuiServerSok, 10);
-	_LoginDone=FALSE;
 	while(TRUE)
 	{
 		_GuiClientSok=accept (_GuiServerSok, NULL, NULL);
@@ -95,7 +95,7 @@ static void _GuiServer_thread (void *ppar)
 }
 
 //--- _login -----------------------------------------------------
-static void _login(SOCKET socket, char *msg, int len)
+static int _login(SOCKET socket, char *msg, int len)
 {
 	char reply[1024];
 	char keyAccept[128];
@@ -157,8 +157,93 @@ static void _login(SOCKET socket, char *msg, int len)
 		printf("LOGIN Reply:\n");
 		printf(reply);
 		printf("SENT LOGIN %d/%d bytes\n", repLen, ret);
-		_LoginDone = TRUE;
+		return TRUE;
 	}
+	return FALSE;
+}
+
+//--- _decode_message ------------------------------------------
+static int _decode_message(void *msgIn, int lenIn, void *msgOut, int sizeOut, int *lenOut)
+{
+	UCHAR *pmsgIn  = (UCHAR*)msgIn;
+	UCHAR *pmsgOut = (UCHAR*)msgOut;
+	int offset;
+
+	if (lenIn<5) return FALSE;
+	int fin    = (pmsgIn[0]&0x80)>>7;
+	int rsv    = (pmsgIn[0]&0x70)>>6;
+	int opcode = (pmsgIn[0])&0x0f;
+	int mask   = (pmsgIn[1]&0x80)>>7;
+	int len    = (pmsgIn[1]&0x7F);
+	if (len<126) offset=2;
+	else if (len==126)
+	{
+		len=0x100*pmsgIn[2]+pmsgIn[3];
+		offset=4;
+	}
+	else if (len==127)
+	{
+	}
+	UCHAR maskkey[4];
+	maskkey[0]=pmsgIn[offset++];
+	maskkey[1]=pmsgIn[offset++];
+	maskkey[2]=pmsgIn[offset++];
+	maskkey[3]=pmsgIn[offset++];
+
+	if (sizeOut<len) return FALSE;
+	memset(pmsgOut, 0, sizeOut);
+	for (int i=0; i<len; i++)
+	{
+		pmsgOut[i] = pmsgIn[offset+i] ^ maskkey[i%4];
+	}
+	*lenOut = len;
+	return TRUE;
+}
+
+//--- send_message ---------------------------------------------
+static int _send_message(SOCKET socket, void *msg, int len)
+{
+	UCHAR *pmsg=(UCHAR*)msg;
+	UCHAR *data = (UCHAR*)malloc(len+10);
+	int offset=2;
+
+	memset(data, 0, len+10);
+	data[0] = 0x80	// FIN
+			| 0x01;	// Opcode: TEXT
+	if (len<126)
+	{
+		data[1] = 0x00  // no mask
+			| len;		
+	}
+	else if (len<0x10000)
+	{
+		data[1] = 0x00  // no mask
+			| 126;
+		UCHAR* plen=(UCHAR*)&len;
+		data[2]=plen[1];
+		data[3]=plen[0];
+		offset=4;
+	}
+	else
+	{
+		data[1] = 0x00  // no mask
+			| 127;
+		UCHAR* plen=(UCHAR*)&len;
+		data[2]=0;
+		data[3]=0;
+		data[4]=0;
+		data[5]=0;
+		data[6]=plen[3];
+		data[7]=plen[2];
+		data[8]=plen[1];
+		data[9]=plen[0];
+		offset=10;
+	}
+	memcpy(&data[offset], msg, len);
+	send(socket, (const char*)data, len+offset , 0);
+
+	free(data);
+	return TRUE;
 }
 
 //--- _GuiClient_thread ----------------------------------------
@@ -170,18 +255,24 @@ static void _GuiClient_thread (void *ppar)
 	while (clientSok!=INVALID_SOCKET)
 	{
 		UCHAR msg[1024];
+		UCHAR payload[1024];
+		int lenOut;
 		memset(msg, 0, sizeof(msg));
 		int len=recv(clientSok, (char*)msg, sizeof(msg), 0);
 		if (len>0)
 		{
-			printf("recv %d bytes >>%s<<\n", len, msg);
-			_login(clientSok,(char*)msg, len);
+			if (_login(clientSok,(char*)msg, len));
+			else if (_decode_message(msg, len, payload, sizeof(payload), &lenOut))
+			{
+				printf("len=%d >>%s<<\n", lenOut, payload);
+				_send_message(clientSok, payload, lenOut);
+			}
+			else printf("recv %d bytes >>%s<<\n", len, msg);
 		}
 		else
 		{
 			printf("recv return=%d\n", len);
 			closesocket(clientSok);
-			_LoginDone = FALSE;
 			clientSok = INVALID_SOCKET;
 		}
 	}
