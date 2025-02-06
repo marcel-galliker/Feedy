@@ -61,6 +61,7 @@
 	#include <fcntl.h>
 #endif
 
+#include "ge_common.h"
 #include "ge_time.h"
 #include "ge_trace.h"
 #include "ge_sockets.h"
@@ -79,6 +80,7 @@ int	UdpRec, UdpSent;
 
 /* --- Prototypes ------------------------------------------------------------- */
 static int _ge_sok_sockaddr(struct sockaddr_in *ipAddr, const char *addr, int port);
+static int _sok_error(SOCKET* pSocket, int line);
 /* ---------------------------------------------------------------------------- */
 
 
@@ -140,14 +142,13 @@ int	ge_sok_init_server(char *addr, int port, SOCKET *socki)
 	SOCKET sok;
 	int ret=0;
 	struct	sockaddr_in ipAddr;
-	struct	hostent *hostInfo;
 	INT32 init=TRUE;
 
 	*socki = INVALID_SOCKET;
 	
 #ifndef linux
 	/* --- Startup Winsockets --- */
-	UNT16	version;						
+	UINT16	version;						
 	WSADATA	data;
 
 	version = MAKEWORD(2, 0);
@@ -208,7 +209,7 @@ int ge_sok_open_client(SOCKET *psocket, const char *addr, int port, int type, in
 		if (WSAStartup(version, &data))
 		{
 			version = MAKEWORD(1, 1);
-			if (WSAStartup(version, &data)) return sok_error(NULL, __LINE__);
+			if (WSAStartup(version, &data)) return ge_sok_error(NULL, __FILE__, __LINE__);
 		}
 	}
 #endif // WIN32
@@ -225,7 +226,7 @@ int ge_sok_open_client(SOCKET *psocket, const char *addr, int port, int type, in
 		return ge_sok_error(NULL, __FILE__, __LINE__);
 
 
-	//	if( (flags = fcntl(sok, F_GETFL, 0)) < 0) return sok_error(&sok, __LINE__);
+	//	if( (flags = fcntl(sok, F_GETFL, 0)) < 0) return ge_sok_error(NULL, __FILE__, __LINE__);
 	//	fcntl(sok, F_SETFL, flags | O_NONBLOCK);
 	if (timeout)
 	{

@@ -34,6 +34,7 @@
 #include "AppData.h"
 #include "error.h"
 #include "version.h"
+#include "web_sockets.h"
 #include "gui_server.h"
 
 // ---------- DEFINES -----------------------------------------------------------------------------
@@ -78,6 +79,7 @@ int		main(int argc, char *argv[])
 #else
 	SetPriorityClass(GetCurrentProcess(), HIGH_PRIORITY_CLASS);
 #endif
+	ws_init();
 	feedy_init();
 
 	appdata_load(FeedyAppData.jobName);

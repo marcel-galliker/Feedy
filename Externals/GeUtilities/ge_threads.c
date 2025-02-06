@@ -157,12 +157,12 @@ HANDLE ge_thread_start(thread_main start, void *arg)
 	return (HANDLE)handle;
 #else
 	return CreateThread( 
-		NULL,									/* no security attributes */
-		0,										/* default stack size */
-		start,							/* function to call */
-		NULL,									/* parameter for function */
-		0,										/* 0=thread runs immediately after being called */
-		NULL									/* returns thread identifier */
+		NULL,							/* no security attributes */
+		0,								/* default stack size */
+		start,	/* function to call */
+		NULL,							/* parameter for function */
+		0,								/* 0=thread runs immediately after being called */
+		NULL							/* returns thread identifier */
 		);
 #endif
 }

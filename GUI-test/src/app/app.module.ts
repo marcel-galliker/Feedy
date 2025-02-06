@@ -4,17 +4,23 @@ import { ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { NameEditorComponent } from './name-editor/name-editor.component';
-import { GESocketService } from './ge-socket.service';
+import { NameEditorComponent } from './Components/name-editor/name-editor.component';//'./components/name-editor/name-editor.component';
+import { GESocketService } from './Services/ge-socket.service';
 import { StoreModule } from '@ngrx/store';
-import { counterReducer } from './counter.reducer';
-import { MyCounterComponent } from './my-counter/my-counter.component';
+import { counterReducer } from './Services/counter.reducer';
+import { MyCounterComponent } from './Components/my-counter/my-counter.component';
+import { MenuComponent } from './Components/menu/menu.component';
+import { HomeComponent } from './Components/home/home.component';
+import { JobComponent } from './Components/job/job.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NameEditorComponent,
     MyCounterComponent,
+    MenuComponent,
+    HomeComponent,
+    JobComponent,
   ],
   imports: [
     BrowserModule,

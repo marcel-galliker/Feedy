@@ -1,0 +1,35 @@
+.menu-main
+{
+  background-color: Black;
+  height:max-content;
+}
+
+.menu-button
+{
+  background-color: transparent;
+  display:inline-block;
+  text-align: left;
+  border:none;
+  height:50px;
+  width:150px;
+  font-size: large;
+  color: white;
+}
+
+.menu-icon
+{
+  width: 25px;
+  height:25px;
+  margin-left: 2px;
+  margin-right: 5%;
+  vertical-align: middle;
+  fill: white;
+}
+
+.menu-item
+{
+  height:50px;
+  width:200px;
+  font-size: large;
+  color: white;
+}

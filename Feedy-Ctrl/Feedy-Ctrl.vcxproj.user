@@ -5,7 +5,7 @@
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
     <LocalDebuggerCommandArguments>
     </LocalDebuggerCommandArguments>
-    <LocalDebuggerCommand>$(VisualGDBSettingsFile)</LocalDebuggerCommand>
+    <LocalDebuggerCommand>$(TargetPath)</LocalDebuggerCommand>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <RemoteDebuggerServerName>192.168.198.55</RemoteDebuggerServerName>

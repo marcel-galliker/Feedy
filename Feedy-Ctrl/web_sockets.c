@@ -1,12 +1,17 @@
+// #define WIN32_LEAN_AND_MEAN
+
+#include <windows.h>
+#include <winsock.h>
+#include <stdio.h>
 
 #include <string.h>
 #include "ge_utilities.h"
 #include "..\Externals\\CryptLib\sha1.h"
 #include "..\Externals\\CryptLib/base64.h"
-#include "gui_server.h"
+#include "web_sockets.h"
 
 
-static void _GuiServer_thread (void *ppar);
+static void _ws_thread (void *ppar);
 static void _GuiClient_thread (void *ppar);
 static SOCKET _GuiServerSok=INVALID_SOCKET;
 static SOCKET _GuiClientSok=INVALID_SOCKET;
@@ -14,26 +19,26 @@ static int	_login(SOCKET socket, char *msg, int len);
 static int _decode_message(void *msgIn, int lenIn, void *msgOut, int sizeOut, int *lenOut);
 static int _send_message(SOCKET socket, void *msg, int len);
 
-HANDLE _GuiServerHdl;
-HANDLE _GuiClientHdl;
+static HANDLE _GuiServerHdl;
+static HANDLE _GuiClientHdl;
 
-//--- gui_server -------------------------------------------
-gui_server::gui_server()
+//--- ws_init -------------------------------------------
+void ws_init(void)
 {
 	_GuiServerHdl=CreateThread ( 
 		NULL,									/* no security attributes */
 		0,										/* default stack size */
-		(LPTHREAD_START_ROUTINE) &_GuiServer_thread,	/* function to call */
+		(LPTHREAD_START_ROUTINE) &_ws_thread,	/* function to call */
 		NULL,									/* parameter for function */
 		0,										/* 0=thread runs immediately after being called */
 		NULL									/* returns thread identifier */
 	);
 }
 
-//--- _GuiServer_thread ---------------------------------
-static void _GuiServer_thread (void *ppar)
+//--- _ws_thread ---------------------------------
+static void _ws_thread (void *ppar)
 {
-	printf("_GuiServer_thread\n");
+	printf("_ws_thread\n");
 
 	/*
 	int	i;
@@ -64,9 +69,9 @@ static void _GuiServer_thread (void *ppar)
 	/* --- Get port Number --- */
 	baseAddr.sin_addr.s_addr = INADDR_ANY;
 	baseAddr.sin_family = AF_INET;       
-	baseAddr.sin_port = htons( (short) GUI_SERVER_PORT);
+	baseAddr.sin_port = htons( (short) WS_SERVER_PORT);
 
-	hostInfo = gethostbyname ((char*) GUI_SERVER_HOST);
+	hostInfo = gethostbyname ((char*) WS_SERVER_HOST);
 	memcpy((char *) &(baseAddr.sin_addr), (char *) hostInfo->h_addr, hostInfo->h_length);
 	int val=TRUE;
 	ret=setsockopt (_GuiServerSok, IPPROTO_TCP, TCP_NODELAY, (char*) &val, sizeof (BOOL));
@@ -110,7 +115,7 @@ static int _login(SOCKET socket, char *msg, int len)
 		{
 			msg[i]=0;
 			printf("%s\n", line);
-			int len=strlen("sec-websocket-key: ");
+			int len=(int)strlen("sec-websocket-key: ");
 			if (!strnicmp(line, "sec-websocket-key: ", len))
 			{
 				//	const char *test_key="Sec-WebSocket-Key: jRuBF0LDp3Q9OJirluIZJG==";
@@ -128,14 +133,14 @@ static int _login(SOCKET socket, char *msg, int len)
 				//	line=(char*)test_key;
 					printf("KEY: >>%s<<\n", &line[len]);
 					sprintf(key, "%s%s", &line[len], "258EAFA5-E914-47DA-95CA-C5AB0DC85B11");
-					int l=strlen(key);
+					int l=(int)strlen(key);
 				//	printf("KEY2=>>%s<<\n", key);
 					{
 						SHA1_CTX ctxt;
 						UINT8 code[SHA1_DIGEST_SIZE];
 						memset(code, 0, sizeof(code));
 						SHA1_Init  (&ctxt);
-						SHA1_Update(&ctxt, (const UINT8*)key, strlen(key));
+						SHA1_Update(&ctxt, (const UINT8*)key, (int)strlen(key));
 						SHA1_Final (&ctxt, code);
 
 						int   c64l=32;

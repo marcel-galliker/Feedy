@@ -74,6 +74,15 @@
     <ClCompile Include="..\Externals\GeUtilities\ge_sockets.c">
       <Filter>Utilities</Filter>
     </ClCompile>
+    <ClCompile Include="web_sockets.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\CryptLib\base64.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Externals\CryptLib\sha1.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui_server.h">
@@ -132,6 +141,15 @@
     </ClInclude>
     <ClInclude Include="..\Externals\GeUtilities\ge_sockets.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="web_sockets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\CryptLib\base64.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Externals\CryptLib\sha1.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

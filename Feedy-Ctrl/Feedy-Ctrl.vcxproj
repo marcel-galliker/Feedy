@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Externals\CryptLib\base64.c" />
+    <ClCompile Include="..\Externals\CryptLib\sha1.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_file.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_sockets.c" />
     <ClCompile Include="..\Externals\GeUtilities\ge_threads.c" />
@@ -37,8 +39,11 @@
     <ClCompile Include="feedy.c" />
     <ClCompile Include="config.c" />
     <ClCompile Include="version.c" />
+    <ClCompile Include="web_sockets.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Externals\CryptLib\base64.h" />
+    <ClInclude Include="..\Externals\CryptLib\sha1.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_common.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_file.h" />
     <ClInclude Include="..\Externals\GeUtilities\ge_sockets.h" />
@@ -58,6 +63,7 @@
     <ClInclude Include="feedy.h" />
     <ClInclude Include="config.h" />
     <ClInclude Include="version.h" />
+    <ClInclude Include="web_sockets.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="FeedyCtrl-Debug.vgdbsettings" />
@@ -69,14 +75,14 @@
     <Keyword>Win32Proj</Keyword>
     <ProjectGuid>{dc554e1a-3136-4e48-a2a3-5b4b481db6c4}</ProjectGuid>
     <RootNamespace>EZPrintEngine</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.19041.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Makefile</ConfigurationType>
+    <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v143</PlatformToolset>
-    <CharacterSet>Unicode</CharacterSet>
+    <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'" Label="Configuration">
     <ConfigurationType>Makefile</ConfigurationType>
@@ -118,17 +124,19 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <OutDir>$(ProjectDir)..\$(Configuration)\$(Platform)\</OutDir>
     <IntDir>$(Platform)\$(Configuration)\</IntDir>
-    <ExecutablePath>$(PATH)</ExecutablePath>
+    <ExecutablePath>$(VC_ExecutablePath_x64);$(CommonExecutablePath)</ExecutablePath>
     <NMakeBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /build "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeBuildCommandLine>
     <NMakeReBuildCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /rebuild "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeReBuildCommandLine>
     <NMakeCleanCommandLine>"$(VISUALGDB_DIR)\VisualGDB.exe" /clean "$(ProjectPath)" "/solution:$(SolutionPath)"  "/config:$(Configuration)" "/platform:$(Platform)"</NMakeCleanCommandLine>
     <NMakeOutput>$(ProjectDir)Feedy-Ctrl-Debug.vgdbsettings</NMakeOutput>
     <NMakeIncludeSearchPath>C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\aarch64-none-linux-gnu;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include\c++\14.2.1\backward;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include-fixed;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\include;C:\Tools\ARM-64-Toolchain\14.2 rel1\aarch64-none-linux-gnu\libc\usr\include;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <NMakeForcedIncludes>$(ProjectDir)\gcc_Debug.h;$(VISUALGDB_DIR)\gcc_compat.h;$(NMakeForcedIncludes)</NMakeForcedIncludes>
-    <PublicIncludeDirectories>c:\Tools\AARCH64-Toolchain\14.2 rel1\lib\gcc\aarch64-none-linux-gnu\14.2.1\include\stddef.h</PublicIncludeDirectories>
+    <PublicIncludeDirectories>
+    </PublicIncludeDirectories>
     <NMakePreprocessorDefinitions>__VisualGDB_CFG_Debug;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|VisualGDB'">
     <LinkIncremental>true</LinkIncremental>
@@ -170,8 +178,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <DisableSpecificWarnings>4996; 4477</DisableSpecificWarnings>
-      <LanguageStandard>
-      </LanguageStandard>
+      <LanguageStandard>Default</LanguageStandard>
       <AdditionalIncludeDirectories>..\Externals\GeUtilities;..\Externals\TinyXML;..\Feedy-Lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

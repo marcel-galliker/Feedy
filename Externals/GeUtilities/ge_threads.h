@@ -37,7 +37,7 @@ int    ge_sem_wait		(HANDLE sem, int time);
 int    ge_sem_post		(HANDLE sem);
 
 
-typedef void *(*thread_main)(void *args);
+typedef INT32 (*thread_main)(void *args);
 
 HANDLE ge_thread_start(thread_main start, void *arg);
 int ge_thread_set_priority(int prio);

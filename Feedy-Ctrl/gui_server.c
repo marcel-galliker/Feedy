@@ -163,6 +163,7 @@ static void *_GuiClient_thread (void *arg)
 	TrPrintf( 0, "GUI_Client: Socket[%d]=>>%s<< closed", *socket, ge_sok_get_socket_name(*socket, str, NULL, NULL));
 	gui_disconnected(*socket);
 	ge_sok_close(socket);
+	return 0;
 } /* end main_thread */
 
 //--- gui_send -----------------------------------------

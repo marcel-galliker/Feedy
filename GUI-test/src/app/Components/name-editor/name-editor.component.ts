@@ -1,8 +1,8 @@
 import { Component, inject } from '@angular/core';
-import {FormControl, FormGroup} from '@angular/forms';
-import { GESocketService } from './../ge-socket.service';
+import { FormControl, FormGroup} from '@angular/forms';
+import { GESocketService } from './../../Services/ge-socket.service';
 import { Store } from '@ngrx/store';
-import { increment, decrement, reset } from '../counter.actions';
+import { increment, decrement, reset } from '../../Services/counter.actions';
 
 @Component({
   selector: 'app-name-editor',
