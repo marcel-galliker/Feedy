@@ -1,7 +1,7 @@
 .menu-main
 {
   background-color: Black;
-  height:max-content;
+  height:800px;
 }
 
 .menu-button
@@ -14,6 +14,7 @@
   width:150px;
   font-size: large;
   color: white;
+  fill: white;
 }
 
 .menu-icon
@@ -23,7 +24,6 @@
   margin-left: 2px;
   margin-right: 5%;
   vertical-align: middle;
-  fill: white;
 }
 
 .menu-item
@@ -32,4 +32,5 @@
   width:200px;
   font-size: large;
   color: white;
+  fill: White;
 }

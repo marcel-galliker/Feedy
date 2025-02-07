@@ -1,6 +1,5 @@
-import { Component } from '@angular/core';
-import { effect } from "@angular/core";
-import { menu_selection} from '../../Services/signals';
+import { Component, effect } from '@angular/core';
+import { menu_selection, CMenuSignal } from '../../Services/signals';
 
 @Component({
   selector: 'app-menu',
@@ -12,20 +11,23 @@ import { menu_selection} from '../../Services/signals';
 
 export class MenuComponent {
 
-  menu_selection$ = menu_selection;
+  private menu_selection$ = menu_selection;
   private selectedCompoment : string = "";
 
   //--- constructor ---------------------------------------
   constructor()
   {
-     effect(() => {
-          const selected = this.menu_selection$();
-          var element = document.getElementById(this.selectedCompoment) as HTMLElement;
-          if (element!=null) {element.style.color= 'White'; element.style.fill='White';}
-          this.selectedCompoment="BTN_"+selected.menu;
-          element = document.getElementById(this.selectedCompoment) as HTMLElement;
-          if (element!=null) {element.style.color='Red'; element.style.fill='Red'};
-        });
+     effect(() => {this.onMennu(this.menu_selection$()); });
+  }
+
+  //--- OnMenu -----------------------------------
+  onMennu(menu: CMenuSignal)
+  {
+    var element = document.getElementById(this.selectedCompoment) as HTMLElement;
+    if (element!=null) {element.style.color= 'White'; element.style.fill='White';}
+    this.selectedCompoment="BTN_"+menu.menu;
+    element = document.getElementById(this.selectedCompoment) as HTMLElement;
+    if (element!=null) {element.style.color='orange'; element.style.fill='orange'};
   }
 
   //--- onHome ------------------------------------

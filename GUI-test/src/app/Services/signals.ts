@@ -3,4 +3,9 @@
 
 import { signal } from "@angular/core";
 
-export const menu_selection = signal({menu: "Home"});
+export class CMenuSignal
+{
+  menu: string = "";
+};
+
+export const menu_selection = signal<CMenuSignal>({menu: "Home"});

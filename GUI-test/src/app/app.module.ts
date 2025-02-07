@@ -12,6 +12,7 @@ import { MyCounterComponent } from './Components/my-counter/my-counter.component
 import { MenuComponent } from './Components/menu/menu.component';
 import { HomeComponent } from './Components/home/home.component';
 import { JobComponent } from './Components/job/job.component';
+import { TopBarComponent } from './Components/top-bar/top-bar.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { JobComponent } from './Components/job/job.component';
     MenuComponent,
     HomeComponent,
     JobComponent,
+    TopBarComponent,
   ],
   imports: [
     BrowserModule,

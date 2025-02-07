@@ -1,3 +1,16 @@
-<div>
-  HOME
-</div>
+<form [formGroup]="homeForm">
+  <div class="home-main">
+    HOME <button type="button" (click)="onTest()">TEST</button>
+    <div Style="grid-column: 1; grid-row: 2; width:auto; height: 500px;">
+      General<br>
+      <label for="description">Description: {{Job$().description}}</label>
+      INPUT: {{ value() }}
+   <!--   <input id="description" type="text" formControlName="description"> -->
+
+    </div>
+  <!--  <div class="divider" role="separator"></div> -->
+    <div Style="grid-column: 2; grid-row: 2; background-color: yellow;">
+      Gripper
+    </div>
+  </div>
+</form>

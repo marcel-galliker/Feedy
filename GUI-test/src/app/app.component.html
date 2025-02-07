@@ -64,14 +64,13 @@
   main {
     /* Riverdi 10.1" display: 1280x800px */
     width: 1280px;
-    min-height: 800px;
-    display: grid;
+    height: 800px;
+    display: block;
     justify-content: start;
     align-items: start;
     /*padding: 1rem;*/
     box-sizing: inherit;
     position: relative;
-    background-color: aqua;
   }
 
   .angular-logo {
@@ -81,9 +80,8 @@
   .content {
     display: flex;
     justify-content: start;
-    width: 100%;
+    width: auto;
     height: 100%;
-    background-color: blue;
   }
 
   .content > div {
@@ -190,17 +188,21 @@
 </style>
 
 <main class="main">
-  <div class="content">
-    <div class="menu" style="grid-row: 1; grid-column: 1; background-color: black;">
-      <app-menu></app-menu>
-    </div>
-    <div class="divider" role="separator" aria-label="Divider"></div>
+  <div class="content" style="display:grid;
+      grid-template-rows: 50px 750px;
+      grid-template-columns: 150px 1130px;
+      grid-row-gap: 5px;"
+      >
 
-    <app-home id="Home" style="grid-row: 1; grid-column: 2; background-color: greenyellow;"></app-home>
-    <app-job id="Job" style="grid-row: 1; grid-column: 2; background-color: orange;"></app-job>
+    <app-menu class="menu" style="grid-row-start: 1; grid-row-end: 2; grid-column: 1;"/>
 
-    <app-my-counter style="grid-row: 1; grid-column: 2;"></app-my-counter>
-    <app-my-counter></app-my-counter>
+    <app-top-bar style="grid-row: 1; grid-column-start: 2; grid-column-end: 3;"/>
+
+    <app-home id="Home" style="grid-row: 2; grid-column: 2; "/>
+    <app-job  id="Job"  style="grid-row: 2; grid-column: 2; display:none"/>
+
+    <app-my-counter style="grid-row: 3; grid-column: 1;"/>
+    <app-name-editor style="grid-row: 3; grid-column: 2;"/>
   </div>
 </main>
 

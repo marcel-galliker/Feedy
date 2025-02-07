@@ -6,15 +6,21 @@
 
 #include <string.h>
 #include "ge_utilities.h"
+#include "ge_trace.h"
+#include "ge_threads.h"
 #include "..\Externals\\CryptLib\sha1.h"
 #include "..\Externals\\CryptLib/base64.h"
 #include "web_sockets.h"
 
 
+#define MAX_CLIENTS 10
+
 static void _ws_thread (void *ppar);
 static void _GuiClient_thread (void *ppar);
+static void _ws_test_thread (void *ppar);
 static SOCKET _GuiServerSok=INVALID_SOCKET;
-static SOCKET _GuiClientSok=INVALID_SOCKET;
+static SOCKET _GuiClientSok[MAX_CLIENTS];
+static int	  _GuiClientCnt=0;
 static int	_login(SOCKET socket, char *msg, int len);
 static int _decode_message(void *msgIn, int lenIn, void *msgOut, int sizeOut, int *lenOut);
 static int _send_message(SOCKET socket, void *msg, int len);
@@ -25,10 +31,21 @@ static HANDLE _GuiClientHdl;
 //--- ws_init -------------------------------------------
 void ws_init(void)
 {
+	for(int i=0; i<MAX_CLIENTS; i++)
+		_GuiClientSok[i]=INVALID_SOCKET;
+
 	_GuiServerHdl=CreateThread ( 
 		NULL,									/* no security attributes */
 		0,										/* default stack size */
 		(LPTHREAD_START_ROUTINE) &_ws_thread,	/* function to call */
+		NULL,									/* parameter for function */
+		0,										/* 0=thread runs immediately after being called */
+		NULL									/* returns thread identifier */
+	);
+	CreateThread ( 
+		NULL,									/* no security attributes */
+		0,										/* default stack size */
+		(LPTHREAD_START_ROUTINE) &_ws_test_thread,	/* function to call */
 		NULL,									/* parameter for function */
 		0,										/* 0=thread runs immediately after being called */
 		NULL									/* returns thread identifier */
@@ -40,17 +57,6 @@ static void _ws_thread (void *ppar)
 {
 	printf("_ws_thread\n");
 
-	/*
-	int	i;
-	for (i=0; i<MAX_GUI_CLIENTS; i++)
-	{
-		_GuiClientSok[i]=INVALID_SOCKET;
-		_GuiClientThreadHandle[i]=NULL;
-	}
-	*/
-
-	// --- take the socket and listen ---
-	//	rt_sok_init (FALSE, GUI_HOST, GUI_PORT, &_GuiServerSok);
 	/* --- Startup Winsockets --- */
 	WSADATA	data;
 	struct	sockaddr_in baseAddr;
@@ -79,22 +85,28 @@ static void _ws_thread (void *ppar)
 	listen (_GuiServerSok, 10);
 	while(TRUE)
 	{
-		_GuiClientSok=accept (_GuiServerSok, NULL, NULL);
-		if (_GuiClientSok!=INVALID_SOCKET)
+		SOCKET sok = accept (_GuiServerSok, NULL, NULL);
+		if (sok!=INVALID_SOCKET)
 		{
-			BOOL bNoDelay = TRUE;
-			setsockopt (_GuiClientSok, IPPROTO_TCP, TCP_NODELAY, (LPSTR) &bNoDelay, sizeof (BOOL));
-
-			printf("GUI connected\n");
-			_GuiClientHdl=CreateThread ( 
-				NULL,									/* no security attributes */
-				0,										/* default stack size */
-				(LPTHREAD_START_ROUTINE) &_GuiClient_thread,	/* function to call */
-				(void*)_GuiClientSok,									/* parameter for function */
-				0,										/* 0=thread runs immediately after being called */
-				NULL									/* returns thread identifier */
-			);
-
+			for (int i=0; i<MAX_CLIENTS; i++)
+			{
+				if (_GuiClientSok[i]==INVALID_SOCKET)
+				{
+					_GuiClientSok[i] = sok;
+					BOOL bNoDelay = TRUE;
+					setsockopt (_GuiClientSok[i], IPPROTO_TCP, TCP_NODELAY, (LPSTR) &bNoDelay, sizeof (BOOL));
+					printf("GUI connected\n");
+					_GuiClientHdl=CreateThread ( 
+						NULL,									/* no security attributes */
+						0,										/* default stack size */
+						(LPTHREAD_START_ROUTINE) &_GuiClient_thread,	/* function to call */
+						(void*)i,									/* parameter for function */
+						0,										/* 0=thread runs immediately after being called */
+						NULL									/* returns thread identifier */
+					);
+					break;
+				}
+			}
 		}
 	}
 }
@@ -255,30 +267,74 @@ static int _send_message(SOCKET socket, void *msg, int len)
 static void _GuiClient_thread (void *ppar)
 {
 // https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_servers
-
-	SOCKET clientSok = (SOCKET) ppar;
-	while (clientSok!=INVALID_SOCKET)
+	int idx=(int)ppar;
+	SOCKET *psok = &_GuiClientSok[idx];
+	_GuiClientCnt++;
+	while (*psok!=INVALID_SOCKET)
 	{
 		UCHAR msg[1024];
 		UCHAR payload[1024];
 		int lenOut;
 		memset(msg, 0, sizeof(msg));
-		int len=recv(clientSok, (char*)msg, sizeof(msg), 0);
+		int len=recv(*psok, (char*)msg, sizeof(msg), 0);
 		if (len>0)
 		{
-			if (_login(clientSok,(char*)msg, len));
+			if (_login(*psok,(char*)msg, len));
 			else if (_decode_message(msg, len, payload, sizeof(payload), &lenOut))
 			{
 				printf("len=%d >>%s<<\n", lenOut, payload);
-				_send_message(clientSok, payload, lenOut);
+				_send_message(*psok, payload, lenOut);
 			}
 			else printf("recv %d bytes >>%s<<\n", len, msg);
 		}
 		else
 		{
 			printf("recv return=%d\n", len);
-			closesocket(clientSok);
-			clientSok = INVALID_SOCKET;
+			closesocket(*psok);
+			*psok = INVALID_SOCKET;
+		}
+	}
+	_GuiClientCnt--;
+}
+
+//--- ws_send ---------------------------------------------
+void ws_send(SOCKET socket, void *pmsg, int len)
+{
+	if (socket!=0 && socket!=INVALID_SOCKET) _send_message(socket, pmsg, len);
+	else for (int i=0; i<MAX_CLIENTS; i++)
+	{
+		if (_GuiClientSok[i]!=INVALID_SOCKET) _send_message(_GuiClientSok[i], pmsg, len);
+	}
+}
+
+//--- _ws_test_thread ---------------------------------
+static void _ws_test_thread (void *ppar)
+{
+	char msg[128];
+	int count=0;
+	int speed=100;
+	while(TRUE)
+	{
+		ge_thread_sleep(1000);
+
+		if (_GuiClientCnt)
+		{
+			count++;
+			sprintf(msg, "{\"msgid\":\"%s\", \"count\":%d,\"name\":\"%s\",\"speed\":%d}", "STATUS", count, "name", speed);
+			printf("msg:>>%s<<\n", msg);
+			ws_send(NULL, msg, strlen(msg));
+			/*
+			{
+				FILE *file=fopen("D:/Temp/EZ-Editor/job1.json", "r");
+				int len=fseek(file, 0, SEEK_END);
+				len = ftell(file);
+				char *data = (char*)malloc(len);
+				fseek(file, 0, SEEK_SET);
+				len=fread(data, 1, len, file);
+				_send_message(_GuiClientSok, data, len);
+				free(data);
+			}
+			*/
 		}
 	}
 }

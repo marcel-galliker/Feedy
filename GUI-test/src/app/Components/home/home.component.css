@@ -1,0 +1,15 @@
+.home-main
+{
+  background-color: rgb(230, 230, 230);
+  height:100%;
+  width:auto;
+  display:grid;
+  grid-template-rows: 25px auto;
+  grid-template-columns: 50% 50%;
+  grid-column-gap: 5px;
+}
+
+.divider {
+  width: 1px;
+  background: darkgray;
+}
